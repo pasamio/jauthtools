@@ -50,6 +50,7 @@ function botDoLdapSSOLogin() {
 	}
 
 	if (!$ldap->connect()) {
+		//die('LDAP Connect failed');
 		return 0;
 	}
 
@@ -58,11 +59,18 @@ function botDoLdapSSOLogin() {
 
 	$ip = mosGetParam($_SERVER, 'REMOTE_ADDR', null);
 	$na = $ldap->ipToNetAddress($ip);
+	$na2 = $ldap->ipToTCPNetAddress($ip);
+	
 	// just a test, please leave
 	$search_filters = array (
-		"(networkAddress=$na)"
-	);
+		"(|(networkAddress=$na2)(networkAddress=$na))"
+		//"(networkAddress=$na2)"
+	);	
+	
 	$attributes = $ldap->search($search_filters);
+	/*print_r($attributes);
+	print_r($search_filters);
+	die();*/
 	//$ldap->close();	
 	if (isset ($attributes[0]['dn'])) {
 		$dnsplit = explode(',', $attributes[0]['dn']);
@@ -83,8 +91,11 @@ function botDoLdapSSOLogin() {
 			if (!$result &&  $mambotParams->get('autocreate')) {
 				$ldap->populateUser($user,$mambotParams->get('groupMap'));
 				$row->registerDate 	= date( 'Y-m-d H:i:s' );
-				$user->store();
+				//print_r($user); die();
+				$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
+				//die('User stored successfully:' . print_r($user,1));
 			} else if($result) {
+				//die('Lodaing user');
 				$user->load(intval($result));
 			} else {
 				$ldap->close();

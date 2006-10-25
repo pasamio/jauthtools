@@ -82,6 +82,13 @@ function botLDAPSSI() {
 				$database->setQuery($query);
 				$database->Query();
 			}
+		} else {
+			// Extra check to to see if the user's password should be reset upon failure to bind.
+			if($mambotParams->get('forceldap')) {
+				$query = "UPDATE `#__users` SET password = '' WHERE username = '$username'";
+				$database->setQuery($query);
+				$database->Query();
+			}
 		}
 		$ldap->close();
 	}

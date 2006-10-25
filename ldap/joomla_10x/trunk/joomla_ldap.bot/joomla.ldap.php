@@ -221,6 +221,25 @@ class ldapConnector {
 		}
 		return $address;
 	}
+	
+	/**
+	 * Converts a dot notation IP address to a TCP net address
+	 */
+	function ipToTCPNetAddress($ip) {
+		$parts = explode('.', $ip);
+		$address = '9#';
+		$address .= '\\0'. dechex('4');
+		$address .= '\\'. dechex('99');
+		
+		foreach ($parts as $int) {
+			$tmp = dechex($int);
+			if (strlen($tmp) != 2) {
+				$tmp = '0' . $tmp;
+			}
+			$address .= '\\' . $tmp;
+		}
+		return $address;
+	}
 
 	/**
 	 * extract readable network address from the LDAP encoded networkAddress attribute.
@@ -263,6 +282,8 @@ class ldapConnector {
 			for ($i = 0; $i < $len; $i += 1) {
 				$byte = substr($networkaddress, $i, 1);
 				$addr .= ord($byte);
+				//echo '<pre>Byte: '.$byte.'</pre><br>';
+				//echo '<pre>Ord: '. ord($byte). '</pre><br>';
 				if ($addrtype == 1) { // dot separate IP addresses...
 					$addr .= ".";
 				}
@@ -281,11 +302,18 @@ class ldapConnector {
 	 * @param mosUser user object with username set to pull from LDAP
 	 * @param string map INI string mapping LDAP group to Joomla Group ID and Type
 	 */
-	function populateUser(& $user, $map = null) {
+	function populateUser(& $user, $map = null, $ad = false) {
 		// Grab user details
-		$search_filters = array (
-			'(cn=' . $user->username . ')'
-		);
+		if(!$ad) {
+			$search_filters = array (
+				'(cn=' . $user->username . ')'
+			);
+		} else {
+			// Active Directory
+			$search_filters = array (
+				'(SAMAccountName=' . $user->username . ')'
+			);
+		}
 		$currentgrouppriority = 0;
 		$user->id = 0;
 		$attributes = $this->search($search_filters);
@@ -294,9 +322,13 @@ class ldapConnector {
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults
 		if (isset ($attributes[0]['dn'])) {
-			$user->id = 1;
+			//$user->id = 1;
 			$user->email = $attributes[0]['mail'][0];
-			$user->name = $attributes[0]['fullName'][0];
+			if(!$ad) {
+				$user->name = $attributes[0]['fullName'][0];
+			} else {
+				$user->name = $attributes[0]['displayName'][0];
+			}
 			$user->block = intval($attributes[0]['loginDisabled'][0]);
 			if ($map) {
 				// Process Map
