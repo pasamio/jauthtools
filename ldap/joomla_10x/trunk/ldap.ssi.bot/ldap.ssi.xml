@@ -7,7 +7,7 @@
         <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
         <authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
         <authorUrl>www.toowoomba.qld.gov.au</authorUrl>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <description>Allows LDAP integration by synchronization.</description>
         <files>
                 <filename mambot="ldap.ssi">ldap.ssi.php</filename>
@@ -20,7 +20,11 @@
 			<param name="autocreate" type="radio" default="0" label="Auto Create Users" description="Automatically created registered users where possible">
 				<option value="0">No</option>
 				<option value="1">Yes</option>
-			</param>			
+			</param>
+			<param name="forceldap" type="radio" default="0" label="Force LDAP Authentication" description="Users Joomla password is reset upon unsuccessful bind. This ensures that new LDAP passwords are used, instead of old synchronized value.">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</param>				
 	        <param name="host" type="text" size="20" default="" label="Host" description="For example, openldap.mycompany.org" />
 	        <param name="post" type="text" size="20" default="389" label="Port" description="Default port is 389" />
 	        <param name="use_ldapV3" type="radio" default="0" label="LDAP V3" description="Default is LDAP2, but latest versions of OpenLdap require clients to use LDAPV3">
