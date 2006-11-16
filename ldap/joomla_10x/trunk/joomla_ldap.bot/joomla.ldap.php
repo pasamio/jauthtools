@@ -20,6 +20,11 @@
  * @see Joomla!Forge Project: http://forge.joomla.org/sf/sfmain/do/viewProject/projects.ldap_tools
  */
 
+/**
+ * LDAP Connector Class
+ * @package LDAP Tools
+ * @subpackage Connector
+ */
 class ldapConnector {
 	/** @var string */
 	var $host = null;

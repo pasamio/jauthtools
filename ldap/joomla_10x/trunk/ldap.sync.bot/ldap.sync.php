@@ -62,6 +62,7 @@ function botDoLdapSync() {
 					
 					// Step 3: Find out their LDAP info
 					$ldap->populateUser($tmp,$mambotParams->get('groupMap'));
+					$tmp->id = $mainframe->_session->userid; // rewrite userid since ldap removes it
 					// Step 4: Check if they're not blocked and ensure they're blocked
 					if ($tmp->block == 1) {
 						$row->block = 1;

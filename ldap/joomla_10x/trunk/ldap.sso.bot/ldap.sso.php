@@ -124,12 +124,20 @@ function botDoLdapSSOLogin() {
 			$session->userid = intval($user->id);
 			$session->usertype = $user->usertype;
 			$session->gid = intval($user->gid);
+			$userid = $user->id;
+			// Persistence
+            $query = "SELECT id, name, username, password, usertype, block, gid"
+            . "\n FROM #__users"
+            . "\n WHERE id = $userid"
+            ;
+            $database->setQuery( $query );
+            $database->loadObject($row);
+            $lifetime               = time() + 365*24*60*60;
+            $remCookieName  			= mosMainFrame::remCookieName_User();
+            $remCookieValue 			= mosMainFrame::remCookieValue_User( $row->username ) . mosMainFrame::remCookieValue_Pass( $row->password ) . $row->id;
+            setcookie( $remCookieName, $remCookieValue, $lifetime, '/' );
 			$session->store();
 
-			$remember = trim(mosGetParam($_POST, 'remember', ''));
-			if ($remember == 'yes') {
-				$session->remember($user->username, $user->password);
-			}
 			
 			// update user visit data
 			$currentDate = date("Y-m-d\TH:i:s");
