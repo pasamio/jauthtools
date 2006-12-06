@@ -58,6 +58,7 @@ class ldapConnector {
 	 * @param object An object of configuration variables
 	 */
 	function ldapConnector($configObj = null) {
+		$this->search_string = 'cn=[search]'; // Default Search String
 		if (is_object($configObj)) {
 			$vars = get_class_vars(get_class($this));
 			foreach (array_keys($vars) as $var) {
@@ -97,17 +98,14 @@ class ldapConnector {
 			if ($this->use_ldapV3) {
 				if (!ldap_set_option($this->_resource, LDAP_OPT_PROTOCOL_VERSION, 3)) {
 					return false;
-					echo "<script> alert(\" failed to set LDAP protocol V3\"); </script>\n";
 				}
 			}
 			if (!ldap_set_option($this->_resource, LDAP_OPT_REFERRALS, intval($this->no_referrals))) {
 				return false;
-				echo "<script> alert(\" failed to set LDAP_OPT_REFERRALS option\"); </script>\n";
 			}
 			if ($this->negotiate_tls) {
 				if (!ldap_start_tls($this->_resource)) {
 					return false;
-					echo "<script> alert(\" ldap_start_tls failed\"); </script>\n";
 				}
 			}
 			return true;
@@ -152,14 +150,34 @@ class ldapConnector {
 			$username = $this->username;
 		}
 		if (is_null($password)) {
-			$username = $this->password;
+			$password = $this->password;
 		}
 		$this->setDN($username);
 		$bindResult = @ ldap_bind($this->_resource, $this->getDN(), $password);
 
 		return $bindResult;
 	}
+	
+	/**
+	 * Anonymously Binds to LDAP Directory
+	 */
+	function anonymous_bind() {
+		$bindResult = @ldap_bind($this->_resource);
+		return $bindResult;
+	}
 
+	/**
+	 * Perform an LDAP search using comma seperated search strings
+	 * @param string search string of search values
+	 */
+	function simple_search($search) {
+		$results = explode(';', $search);
+		foreach($results as $key=>$result) {
+	        $results[$key] = '('.$result.')';
+		}
+		return $this->search($results);
+	}
+	
 	/**
 	 * Perform an LDAP search
 	 */
@@ -170,7 +188,7 @@ class ldapConnector {
 		} else {
 			$dn = $this->base_dn;
 		}
-		//echo '<p>DN looks like '. $dn . '</p>';
+
 		$resource = $this->_resource;
 
 		foreach ($filters as $search_filter) {
@@ -309,19 +327,11 @@ class ldapConnector {
 	 */
 	function populateUser(& $user, $map = null, $ad = false) {
 		// Grab user details
-		if(!$ad) {
-			$search_filters = array (
-				'(cn=' . $user->username . ')'
-			);
-		} else {
-			// Active Directory
-			$search_filters = array (
-				'(SAMAccountName=' . $user->username . ')'
-			);
-		}
+
+		
 		$currentgrouppriority = 0;
 		$user->id = 0;
-		$attributes = $this->search($search_filters);
+		$attributes = $this->simple_search(str_replace("[search]", $user->username, $this->search_string));
 		$user->gid = 18;
 		$user->usertype = 'Registered';
 		$user->email = $user->username; // Set Defaults
