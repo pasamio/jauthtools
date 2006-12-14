@@ -91,26 +91,27 @@ function botDoLdapSSOLogin() {
 			if (!$result &&  $mambotParams->get('autocreate')) {
 				$ldap->populateUser($user,$mambotParams->get('groupMap'));
 				$row->registerDate 	= date( 'Y-m-d H:i:s' );
-				//print_r($user); die();
-				$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
-				//die('User stored successfully:' . print_r($user,1));
+				if($user->usertype != 'Registered' && ($mambotParams->get('dontautocreateregistered'))) {
+					$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
+				} else {
+					$ldap->close();
+					return false;
+				}
 			} else if($result) {
-				//die('Lodaing user');
 				$user->load(intval($result));
 			} else {
 				$ldap->close();
 				return false;
 			}
-			
+				
 			// check to see if user is blocked from logging in (ignored)
 			if ($user->block == 1) {
 				$ldap->close();
 				return false;
 			}
-			
 			// fudge the group stuff
 			$grp = $acl->getAroGroup($user->id);
-			$row->gid = 1;
+			$user->gid = 1;
 
 			if ($acl->is_group_child_of($grp->name, 'Registered', 'ARO') || $acl->is_group_child_of($grp->name, 'Public Backend', 'ARO')) {
 				// fudge Authors, Editors, Publishers and Super Administrators into the Special Group
@@ -132,13 +133,11 @@ function botDoLdapSSOLogin() {
             ;
             $database->setQuery( $query );
             $database->loadObject($row);
-            $lifetime               = time() + 365*24*60*60;
-            $remCookieName  			= mosMainFrame::remCookieName_User();
-            $remCookieValue 			= mosMainFrame::remCookieValue_User( $row->username ) . mosMainFrame::remCookieValue_Pass( $row->password ) . $row->id;
+			$lifetime               = time() + 365*24*60*60;
+            $remCookieName  = mosMainFrame::remCookieName_User();
+            $remCookieValue = mosMainFrame::remCookieValue_User( $row->username ) . mosMainFrame::remCookieValue_Pass( $row->password ) . $row->id;
             setcookie( $remCookieName, $remCookieValue, $lifetime, '/' );
 			$session->store();
-
-			
 			// update user visit data
 			$currentDate = date("Y-m-d\TH:i:s");
 
@@ -149,8 +148,8 @@ function botDoLdapSSOLogin() {
 			$database->setQuery($query);
 			if (!$database->query()) {
 				die($database->stderr(true));
-			}			
-			
+			}	
+
 			mosCache :: cleanCache();
 			$ldap->close();
 			return true;
