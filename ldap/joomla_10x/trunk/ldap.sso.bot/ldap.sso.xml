@@ -20,10 +20,10 @@
       <option value="0">No</option>
       <option value="1">Yes</option>
     </param>
-    <param name="dontautocreateregistered" type="radio" default="0" label="Dont Auto Create Registered Users" description="Create a user only if their group mapping is higher than registered">
-      <option value="0">No</option>
-      <option value="1">Yes</option>
-    </param>
+		    <param name="autocreateregistered" type="radio" default="0" label="Auto Create Registered" description="Create a user even if their group is registered">
+		      <option value="0">No</option>
+		      <option value="1">Yes</option>
+    </param>		
     <param name="host" type="text" size="20" default="" label="Host" description="For example, openldap.mycompany.org" />
     <param name="post" type="text" size="20" default="389" label="Port" description="Default port is 389" />
     <param name="use_ldapV3" type="radio" default="0" label="LDAP V3" description="Default is LDAP2, but latest versions of OpenLdap require clients to use LDAPV3">

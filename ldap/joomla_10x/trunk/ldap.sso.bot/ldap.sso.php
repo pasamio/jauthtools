@@ -91,11 +91,11 @@ function botDoLdapSSOLogin() {
 			if (!$result &&  $mambotParams->get('autocreate')) {
 				$ldap->populateUser($user,$mambotParams->get('groupMap'));
 				$row->registerDate 	= date( 'Y-m-d H:i:s' );
-				if($user->usertype != 'Registered' && ($mambotParams->get('dontautocreateregistered'))) {
-					$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
-				} else {
+				if($user->usertype == 'Registered' && !$mambotParams->get('autocreateregistered')) {
 					$ldap->close();
 					return false;
+				} else {
+					$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
 				}
 			} else if($result) {
 				$user->load(intval($result));
