@@ -75,7 +75,12 @@ function botLDAPSSI() {
 				$user->id = 0;
 				$user->password = md5($passwd);
 				$row->registerDate 	= date( 'Y-m-d H:i:s' );
-				$user->store();
+				if($user->usertype == 'Registered' && !$mambotParams->get('autocreateregistered')) {
+					$ldap->close();
+					return false;
+				} else {
+					$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
+				}
 			} else {
 				// Synchronize their password            
 				$query = "UPDATE `#__users` SET password = '" . md5($passwd) . "' WHERE username = '$username'";

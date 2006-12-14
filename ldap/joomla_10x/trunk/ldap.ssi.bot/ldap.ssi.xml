@@ -21,6 +21,10 @@
 				<option value="0">No</option>
 				<option value="1">Yes</option>
 			</param>
+		    <param name="autocreateregistered" type="radio" default="0" label="Auto Create Registered" description="Create a user even if their group is registered">
+		      <option value="0">No</option>
+		      <option value="1">Yes</option>
+		    </param>			
 			<param name="forceldap" type="radio" default="0" label="Force LDAP Authentication" description="Users Joomla password is reset upon unsuccessful bind. This ensures that new LDAP passwords are used, instead of old synchronized value.">
 				<option value="0">No</option>
 				<option value="1">Yes</option>
