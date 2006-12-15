@@ -369,13 +369,13 @@ class ldapConnector {
 		
 		$currentgrouppriority = 0;
 		$user->id = 0;
-		$userdetails = $ldap->simple_search(str_replace("[search]", $username, $mambotParams->get('search_string')));
+		$userdetails = $this->simple_search(str_replace("[search]", $username, $this->search_string));
 		$user->gid = 18;
 		$user->usertype = 'Registered';
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults		
-		$ldap_email = $mambotParams->get('ldap_email');
-		$ldap_fullname = $mambotParams->get('ldap_fullname');
+		$ldap_email = $this->ldap_email;
+		$ldap_fullname = $this->ldap_fullname;
 		if (isset ($userdetails[0]['dn']) && isset($userdetails[0][$ldap_email][0])) {
 			$result->type = 'autocreate';
 			$result->email = $userdetails[0][$ldap_email][0];

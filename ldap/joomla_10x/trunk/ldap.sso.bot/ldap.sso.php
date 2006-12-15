@@ -87,10 +87,10 @@ function botDoLdapSSOLogin() {
 			$query = 'SELECT id FROM #__users WHERE username=' . $database->Quote($username);
 			$database->setQuery($query);
 			$userId = intval($database->loadResult());
+			$user = new mosUser($database);
 			if ($userId < 1) {
 				if(intval($mambotParams->get('autocreate'))) {
 					// Create user 
-					$user = new mosUser($database);
 					$user->username = $username;
 					$ldap->populateUser($user,$mambotParams->get('groupMap'));
 					$user->id = 0;
@@ -151,10 +151,8 @@ function botDoLdapSSOLogin() {
 			. "\n WHERE id = " . (int) $session->userid
 			;
 			$database->setQuery($query);
-					$database->Query();
-				}
-			}	
-
+			$database->Query();
+			
 			mosCache :: cleanCache();
 			$ldap->close();
 			return true;
