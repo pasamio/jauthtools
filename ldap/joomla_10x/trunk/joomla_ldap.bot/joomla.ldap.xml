@@ -27,15 +27,25 @@
 	            <option value="0">No</option>
 	            <option value="1">Yes</option>
 	        </param>
+			<param name="@spacer" type="spacer" default="" label="" description="" />
 	        <param name="base_dn" type="text" size="20" default="" label="Base DN" description="The base DN of your LDAP server, e.g o=mydomain.com" />
-			<param name="bind_method" default="authenticated" type="radio" label="Bind Method" description="The bind method to use (anonymous bind or authenticated bind)">
-				<option value="anonymous">Anonymous</option>
-				<option value="authenticated">Authenticated</option>
+			<param name="search_string" type="text" size="20" default="" label="Search string" description="A query string used for search for a given user. The [search] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[search]. Several strings can be used, separated by semicolons." />
+			<param name="auth_method" default="bind" type="list" label="Authorization Method" description="Authorization method to use to connect to the LDAP server.">
+				<option value="anonymous">Anonymous Compare</option>
+				<option value="authenticated">Authenticated Compare</option>
+				<option value="bind">Bind As User</option>
+				<option value="authbind">Authenticate then Bind</option>
 			</param>
+		<param name="username" type="text" size="20" default="" label="Connect username" description="The Connect String and Connect password define connection parameters for the DN lookup phase. 3 options are available:- Anonymous DN lookup. Leave both fields blank.- Administrative connection: &apos;Connect String&apos; is the DN of an administrative account, e.g uid=admin,ou=users,o=mydomain.com. &apos;Connect password&apos; is the actual password of your administrative account.- Connection with the user-supplied login/password: &apos;Connect String&apos; is a DN, where the [login] token will be dynamically replaced by the user login, e.g uid=[login],ou=People,dc=my-domain,dc=com. &apos;Connect password&apos; should be " />
+		<param name="password" type="password" size="20" default="" label="Connect password" description="Password used with connection string" />
 	        <param name="@spacer" type="spacer" default="" label="" description="" />
-	        <param name="connect" type="text" size="20" default="" label="Connect string" description="The Connect String and Connect password define connection parameters for the DN lookup phase. 3 options are available:- Anonymous DN lookup. Leave both fields blank.- Administrative connection: &apos;Connect String&apos; is the DN of an administrative account, e.g uid=admin,ou=users,o=mydomain.com. &apos;Connect password&apos; is the actual password of your administrative account.- Connection with the user-supplied login/password: &apos;Connect String&apos; is a DN, where the [login] token will be dynamically replaced by the user login, e.g uid=[login],ou=People,dc=my-domain,dc=com. &apos;Connect password&apos; should be " />
-	        <param name="password" type="text" size="20" default="" label="Connect password" description="" />
-	        <param name="search_string" type="text" size="20" default="" label="Search string" description="A query string used for search for a given user. The [search] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[search]. Several strings can be used, separated by semicolons." />
-	        <param name="users_dn" type="text" size="20" default="" label="Users DN" description="The [username] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[username], dc=my-domain, dc=com. Several strings can be used, separated by semicolons." />
+
+		<param name="users_dn" type="text" size="20" default="" label="Users DN" description="The [login] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[login], dc=my-domain, dc=com. Several strings can be used, separated by semicolons." />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="ldap_fullname" type="text" size="20" default="fullName" label="Map FullName" description="Map: Full Name" />
+		<param name="ldap_email" type="text" size="20" default="mail" label="Map Email" description="Map: Email" />
+		<param name="ldap_uid" type="text" size="20" default="uid" label="Map User ID" description="Map: User ID" />
+		<param name="ldap_password" type="text" size="20" default="userPassword" label="Map Password" description="Map: Password" />
+		<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
 	    </params>
 </mosinstall>
