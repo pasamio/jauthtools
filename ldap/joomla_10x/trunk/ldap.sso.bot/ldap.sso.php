@@ -43,6 +43,7 @@ function botDoLdapSSOLogin() {
 	$database->setQuery($query);
 	$params = $database->loadResult();
 	$mambotParams =& new mosParameters( $params );
+	$ldap = null;	// bad c habbit
 	if ($mambotParams->get('useglobal')) {
 		$ldap = new ldapConnector();
 	} else {
@@ -85,20 +86,24 @@ function botDoLdapSSOLogin() {
 			//load user bot group
 			$query = 'SELECT id FROM #__users WHERE username=' . $database->Quote($username);
 			$database->setQuery($query);
-			$result = intval($database->loadResult());
-			$user = new mosUser($database);
-			$user->username = $username;
-			if (!$result &&  $mambotParams->get('autocreate')) {
-				$ldap->populateUser($user,$mambotParams->get('groupMap'));
-				$row->registerDate 	= date( 'Y-m-d H:i:s' );
-				if($user->usertype == 'Registered' && !$mambotParams->get('autocreateregistered')) {
-					$ldap->close();
-					return false;
-				} else {
-					$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
+			$userId = intval($database->loadResult());
+			if ($userId < 1) {
+				if(intval($mambotParams->get('autocreate'))) {
+					// Create user 
+					$user = new mosUser($database);
+					$user->username = $username;
+					$ldap->populateUser($user,$mambotParams->get('groupMap'));
+					$user->id = 0;
+					$row->registerDate 	= date( 'Y-m-d H:i:s' );
+					if($user->usertype == 'Registered' && !$mambotParams->get('autocreateregistered')) {
+						$ldap->close();
+						return false;
+					} else {
+						$user->store() or die('Could not autocreate user:'. print_r($user,1)  );
+					}
 				}
-			} else if($result) {
-				$user->load(intval($result));
+			} else if($userId) {
+				$user->load(intval($userId));
 			} else {
 				$ldap->close();
 				return false;
@@ -127,16 +132,16 @@ function botDoLdapSSOLogin() {
 			$session->gid = intval($user->gid);
 			$userid = $user->id;
 			// Persistence
-            $query = "SELECT id, name, username, password, usertype, block, gid"
-            . "\n FROM #__users"
-            . "\n WHERE id = $userid"
-            ;
-            $database->setQuery( $query );
-            $database->loadObject($row);
+			$query = "SELECT id, name, username, password, usertype, block, gid"
+			. "\n FROM #__users"
+			. "\n WHERE id = $userid"
+			;
+			$database->setQuery( $query );
+			$database->loadObject($row);
 			$lifetime               = time() + 365*24*60*60;
-            $remCookieName  = mosMainFrame::remCookieName_User();
-            $remCookieValue = mosMainFrame::remCookieValue_User( $row->username ) . mosMainFrame::remCookieValue_Pass( $row->password ) . $row->id;
-            setcookie( $remCookieName, $remCookieValue, $lifetime, '/' );
+			$remCookieName  = mosMainFrame::remCookieName_User();
+			$remCookieValue = mosMainFrame::remCookieValue_User( $row->username ) . mosMainFrame::remCookieValue_Pass( $row->password ) . $row->id;
+			setcookie( $remCookieName, $remCookieValue, $lifetime, '/' );
 			$session->store();
 			// update user visit data
 			$currentDate = date("Y-m-d\TH:i:s");
@@ -146,8 +151,8 @@ function botDoLdapSSOLogin() {
 			. "\n WHERE id = " . (int) $session->userid
 			;
 			$database->setQuery($query);
-			if (!$database->query()) {
-				die($database->stderr(true));
+					$database->Query();
+				}
 			}	
 
 			mosCache :: cleanCache();
@@ -161,5 +166,6 @@ function botDoLdapSSOLogin() {
 		$ldap->close();
 		return false;
 	}
+	return false;
 }
 ?>
