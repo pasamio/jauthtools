@@ -365,26 +365,22 @@ class ldapConnector {
 	 */
 	function populateUser(& $user, $map = null, $ad = false) {
 		// Grab user details
-
-		
 		$currentgrouppriority = 0;
 		$user->id = 0;
-		$userdetails = $this->simple_search(str_replace("[search]", $username, $this->search_string));
+		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string));
 		$user->gid = 18;
 		$user->usertype = 'Registered';
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults		
-		$ldap_email = $this->ldap_email;
-		$ldap_fullname = $this->ldap_fullname;
+		$ldap_email = $this->ldap_email ? $this->ldap_email : 'mail';
+		$ldap_fullname = $this->ldap_fullname ? $this->ldap_fullname : 'fullName';
 		if (isset ($userdetails[0]['dn']) && isset($userdetails[0][$ldap_email][0])) {
-			$result->type = 'autocreate';
-			$result->email = $userdetails[0][$ldap_email][0];
-					if(isset($userdetails[0][$ldap_fullname][0])) {
-						$result->fullname = $userdetails[0][$ldap_fullname][0];
-					} else {
-						$result->fullname = $username;
-					}					
-		
+			$user->email = $userdetails[0][$ldap_email][0];
+			if(isset($userdetails[0][$ldap_fullname][0])) {
+				$user->name = $userdetails[0][$ldap_fullname][0];
+			} else {
+				$user->name = $user->username;
+			}
 			$user->block = intval($userdetails[0]['loginDisabled'][0]);
 			if ($map) {
 				// Process Map
@@ -415,7 +411,7 @@ class ldapConnector {
 					}
 				}
 			}
-		}
+		} else { die('Bailing?'.$userdetails[0]['dn']); }
 	}
 }
 ?>
