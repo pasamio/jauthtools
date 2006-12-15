@@ -40,7 +40,7 @@ function botLDAPSSI() {
 
 	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
 	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
-	$password = md5($passwd);
+	$password =& $passwd;
 	if ($username && $passwd) {
 		// load mambot parameters
 		$query = "SELECT params FROM #__mambots WHERE element = 'ldap.ssi' AND folder = 'system'";
@@ -58,13 +58,13 @@ function botLDAPSSI() {
 			//echo "<h1>Failed to connect to LDAP server!</h1>";
 			return 0;
 		}
-		$auth_method = $mambotParams->get('auth_method');
+		$auth_method = $mambotParams->get('auth_method','bind');
 		switch ($auth_method) {
 			case 'anonymous' :
 				// Need to do some work!
 				if ($ldap->anonymous_bind()) {
 					// Comparison time
-					$success = $ldap->compare(str_replace("[username]", $username, $mambotParams->get('users_dn')), $mambotParams->get('ldap_password'), $password);
+					$success = $ldap->compare(str_replace("[username]", $username, $mambotParams->get('users_dn')), $mambotParams->get('ldap_password'), $passwd);
 				} else {
 					//die('Anonymous bind failed');
 					return 0;
@@ -72,7 +72,7 @@ function botLDAPSSI() {
 				break;
 			case 'bind' :
 				// We just accept the result here
-				$success = $ldap->bind($username, $password);
+				$success = $ldap->bind($username, $passwd);
 				break;
 
 			case 'authbind' :
@@ -81,7 +81,7 @@ function botLDAPSSI() {
 					$ldap_uid = $mambotParams->get('ldap_uid');
 					$userdetails = $ldap->simple_search($mambotParams->get('ldap_uid') . '=' . $username);
 					if (isset ($userdetails[0][$ldap_uid][0])) {
-						$success = $ldap->bind($userdetails[0][dn], $password, 1);
+						$success = $ldap->bind($userdetails[0][dn], $passwd, 1);
 					}
 				}
 				break;
@@ -89,7 +89,7 @@ function botLDAPSSI() {
 			case 'authenticated' :
 				if ($ldap->bind()) {
 					// Comparison time
-					$success = $ldap->compare(str_replace("[username]", $username, $mambotParams->get('users_dn')), $mambotParams->get('ldap_password'), $password);
+					$success = $ldap->compare(str_replace("[username]", $username, $mambotParams->get('users_dn')), $mambotParams->get('ldap_password'), $passwd);
 				} else {
 					//die('Authenticated Bind Failed');
 					return 0;
@@ -100,13 +100,12 @@ function botLDAPSSI() {
 			$query = "SELECT `id`" .
 			"\nFROM `#__users`" .
 			"\nWHERE username=" . $database->Quote($username);
-
+			$user = new mosUser($database);
 			$database->setQuery($query);
 			$userId = intval($database->loadResult());
 			if ($userId < 1) {
 				if (intval($mambotParams->get('autocreate'))) {
 					// Create user 
-					$user = new mosUser($database);
 					$user->username = $username;
 					$ldap->populateUser($user, $mambotParams->get('groupMap'));
 					$user->id = 0;
@@ -124,6 +123,7 @@ function botLDAPSSI() {
 					$user->load(intval($userId));
 				} else {
 					$ldap->close();
+					die('About to abort');
 					return false;
 				}
 			}
