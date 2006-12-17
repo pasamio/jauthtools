@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * LDAP Single Sign In (Integrated Authentication) for Joomla! 1.0.x
  *
@@ -96,6 +94,7 @@ function botLDAPSSI() {
 				}
 				break;
 		}
+
 		if ($success) {
 			$query = "SELECT `id`" .
 			"\nFROM `#__users`" .

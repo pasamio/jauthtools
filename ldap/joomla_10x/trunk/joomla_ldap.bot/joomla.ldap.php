@@ -67,6 +67,19 @@ class ldapConnector {
 	/** @var string Current DN
 	    @access private */
 	var $_dn = null;
+	
+	/** @var string LDAP Map Full Name
+	    @access private */
+	var $ldap_fullname = '';
+	/** @var string LDAP Map Email
+	    @access private */
+	var $ldap_email = '';
+	/** @var string LDAP Map User ID
+	    @access private */
+	var $ldap_uid = '';
+	/** @var string LDAP Map Password
+	    @access private */
+	var $ldap_password = '';
 
 	/**
 	 * Constructor
@@ -221,9 +234,8 @@ class ldapConnector {
 		} else {
 			$dn = $this->base_dn;
 		}
-
-		$resource = $this->_resource;
 		
+		$resource = $this->_resource;
 		foreach ($filters as $search_filter) {
 			$search_result = ldap_search($resource, $dn, $search_filter);
 			if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0) {
@@ -381,6 +393,7 @@ class ldapConnector {
 			} else {
 				$user->name = $user->username;
 			}
+
 			$user->block = intval($userdetails[0]['loginDisabled'][0]);
 			if ($map) {
 				// Process Map
