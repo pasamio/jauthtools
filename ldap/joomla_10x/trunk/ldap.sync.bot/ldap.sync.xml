@@ -41,7 +41,7 @@
 				<option value="authbind">Authenticate then Bind</option>
 			</param>
 			<param name="username" type="text" size="20" default="" label="Connect username" description="The Connect String and Connect password define connection parameters for the DN lookup phase. 3 options are available:- Anonymous DN lookup. Leave both fields blank.- Administrative connection: &apos;Connect String&apos; is the DN of an administrative account, e.g uid=admin,ou=users,o=mydomain.com. &apos;Connect password&apos; is the actual password of your administrative account.- Connection with the user-supplied login/password: &apos;Connect String&apos; is a DN, where the [login] token will be dynamically replaced by the user login, e.g uid=[login],ou=People,dc=my-domain,dc=com. &apos;Connect password&apos; should be " />
-			<param name="password" type="password" size="20" default="" label="Connect password" description="Password used with connection string" />
+			<param name="password" type="text" size="20" default="" label="Connect password" description="Password used with connection string" />
 	        <param name="@spacer" type="spacer" default="" label="" description="" />
 	        <param name="users_dn" type="text" size="20" default="" label="Users DN" description="The [login] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[login], dc=my-domain, dc=com. Several strings can be used, separated by semicolons." />
 			<param name="@spacer" type="spacer" default="" label="" description="" />
