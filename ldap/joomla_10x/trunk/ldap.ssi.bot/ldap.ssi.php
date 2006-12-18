@@ -114,7 +114,7 @@ function botLDAPSSI() {
 						$ldap->close();
 						return false;
 					} else {
-						$user->store() or die('Could not autocreate user:' . print_r($user, 1));
+						$user->store();// or die('Could not autocreate user:' . print_r($user, 1));
 					}
 				}
 			} else {
@@ -122,7 +122,7 @@ function botLDAPSSI() {
 					$user->load(intval($userId));
 				} else {
 					$ldap->close();
-					die('About to abort');
+					//die('About to abort');
 					return false;
 				}
 			}

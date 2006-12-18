@@ -1,5 +1,4 @@
 <?php
-
 /**
  * LDAP Library
  * 
@@ -19,6 +18,8 @@
  * @version SVN: $Id:$
  * @see Joomla!Forge Project: http://forge.joomla.org/sf/sfmain/do/viewProject/projects.ldap_tools
  */
+
+if(!function_exists(ldap_connect)) { die('LDAP Not Enabled - Please install LDAP in your PHP instance to continue.'); }
 
 /**
  * LDAP Connector Class
