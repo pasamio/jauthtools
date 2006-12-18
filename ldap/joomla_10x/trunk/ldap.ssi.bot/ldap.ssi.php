@@ -23,8 +23,13 @@
 
 // no direct access
 defined('_VALID_MOS') or die('Restricted access');
-
-$_MAMBOTS->registerFunction('onAfterStart', 'botLDAPSSI');
+if(!function_exists('ldap_connect')) {
+	addLogEntry('LDAP SSI Mambot','authentication','crit','PHP LDAP Library not detected');
+} else if(!class_exists('ldapConnector')) {
+	addLogEntry('LDAP SSI Mambot','authentication','crit','Joomla! LDAP Library not detected');
+} else {
+	$_MAMBOTS->registerFunction('onAfterStart', 'botLDAPSSI');
+}
 
 /**
  * LDAP Single Sign In Procedure
@@ -54,6 +59,7 @@ function botLDAPSSI() {
 
 		if (!$ldap->connect()) {
 			//echo "<h1>Failed to connect to LDAP server!</h1>";
+			addLogEntry('LDAP SSI Mambot','authentication','err','Failed to connect to LDAP Server');
 			return 0;
 		}
 		$auth_method = $mambotParams->get('auth_method','bind');
@@ -111,10 +117,12 @@ function botLDAPSSI() {
 					$user->password = md5($passwd);
 					$row->registerDate = date('Y-m-d H:i:s');
 					if ($user->usertype == 'Registered' && !$mambotParams->get('autocreateregistered')) {
+						addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'User creation halted for '. $username .' since they would only be registered');
 						$ldap->close();
 						return false;
 					} else {
 						$user->store();// or die('Could not autocreate user:' . print_r($user, 1));
+						addLogEntry('LDAP SSI Mambot','authentication', 'err', 'Could not autocreate user:'. print_r($user,1));
 					}
 				}
 			} else {
@@ -129,6 +137,7 @@ function botLDAPSSI() {
 		} else {
 			// Extra check to to see if the user's password should be reset upon failure to bind.
 			if ($mambotParams->get('forceldap')) {
+				addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'Resetting password for '. $password .' to enforce LDAP Authentication');
 				$query = "UPDATE `#__users` SET password = '' WHERE username = '$username'";
 				$database->setQuery($query);
 				$database->Query();
@@ -138,6 +147,20 @@ function botLDAPSSI() {
 		return true;
 	} else {
 		return false; // No username and password
+	}
+}
+
+if(!function_exists(addLogEntry)) {
+	function addLogEntry($application, $type, $priority, $message) {
+		if(defined('_JLOGGER_API')) {
+			global $database;
+			$logentry = new JLogEntry($database);
+			$logentry->application = $application;
+			$logentry->type 		= $type;
+			$logentry->priority 	= $priority;
+			$logentry->message 	= $message;
+			$logentry->store() or die('Log entry save failed');
+		}
 	}
 }
 ?>
