@@ -23,7 +23,13 @@
 // no direct access
 defined('_VALID_MOS') or die('Restricted access');
 
-$_MAMBOTS->registerFunction('onAfterStart', 'botDoLdapSync');
+if(!function_exists('ldap_connect')) {
+	addLogEntry('LDAP Sync Mambot', 'authentication','crit','PHP LDAP Library not detected');
+} else if(!class_exists('ldapConnector')) {
+	addLogEntry('LDAP Sync Mambot', 'authentication','crit','Joomla! LDAP Library not detected');
+} else {
+	$_MAMBOTS->registerFunction('onAfterStart', 'botDoLdapSync');
+}
 
 /**
  * Initiates a LDAP Sync
@@ -100,5 +106,19 @@ function botDoLdapSync() {
 				} 
 			}
 		} //else die('No userid'); // else we don't care ;)
+}
+
+if(!function_exists(addLogEntry)) {
+	function addLogEntry($application, $type, $priority, $message) {
+		if(defined('_JLOGGER_API')) {
+			global $database;
+			$logentry = new JLogEntry($database);
+			$logentry->application = $application;
+			$logentry->type 		= $type;
+			$logentry->priority 	= $priority;
+			$logentry->message 	= $message;
+			$logentry->store() or die('Log entry save failed');
+		}
+	}
 }
 ?>
