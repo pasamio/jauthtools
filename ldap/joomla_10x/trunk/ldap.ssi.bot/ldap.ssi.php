@@ -100,7 +100,7 @@ function botLDAPSSI() {
 				}
 				break;
 		}
-
+		//die($success);
 		if ($success) {
 			$query = "SELECT `id`" .
 			"\nFROM `#__users`" .
@@ -127,9 +127,14 @@ function botLDAPSSI() {
 				}
 			} else {
 				if ($userId) {
-					$user->load(intval($userId));
+					addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Updating user '. $userId);
+					//$user->load(intval($userId));
+					$query = "UPDATE `#__users` SET password = '". md5($passwd) ."' WHERE username = '$username'";
+					$database->setQuery($query);
+					$database->Query(); // or die($database->getErrorMsg());
 				} else {
 					$ldap->close();
+					addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'No user found?!?');
 					//die('About to abort');
 					return false;
 				}
@@ -159,7 +164,7 @@ if(!function_exists(addLogEntry)) {
 			$logentry->type 		= $type;
 			$logentry->priority 	= $priority;
 			$logentry->message 	= $message;
-			$logentry->store() or die('Log entry save failed');
+			$logentry->store() or die('Log entry save failed: '. $message);
 		}
 	}
 }
