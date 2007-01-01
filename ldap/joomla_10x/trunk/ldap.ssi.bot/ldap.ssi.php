@@ -142,7 +142,7 @@ function botLDAPSSI() {
 		} else {
 			// Extra check to to see if the user's password should be reset upon failure to bind.
 			if ($mambotParams->get('forceldap')) {
-				addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'Resetting password for '. $password .' to enforce LDAP Authentication');
+				addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'Resetting password for '. $username .' to enforce LDAP Authentication');
 				$query = "UPDATE `#__users` SET password = '' WHERE username = '$username'";
 				$database->setQuery($query);
 				$database->Query();
