@@ -425,7 +425,9 @@ class ldapConnector {
 					}
 				}
 			}
-		} else { die('Bailing?'.$userdetails[0]['dn']); }
+		} else {
+			//die('Bailing?'.$userdetails[0]['dn']);
+		}
 	}
 }
 ?>
