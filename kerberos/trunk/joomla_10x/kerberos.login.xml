@@ -1,0 +1,15 @@
+<mosinstall version="1.0.0" type="mambot" group="system">
+        <name>Kerberos Single Signon</name>
+        <author>Joomla! Project</author>
+        <creationDate>September 2005</creationDate>
+        <copyright>(C) 2005 Open Source Matters. All rights reserved.</copyright>
+        <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+        <authorEmail>admin@joomla.org</authorEmail>
+        <authorUrl>www.joomla.org</authorUrl>
+        <version>1.0.0</version>
+        <description>Iniates Single Signon for users with Kerberos</description>
+        <files>
+                <filename mambot="kerberos.login">kerberos.login.php</filename>
+        </files>
+</mosinstall>
+
