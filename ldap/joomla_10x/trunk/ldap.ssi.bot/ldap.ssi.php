@@ -40,7 +40,8 @@ function botLDAPSSI() {
 	if ($option != 'login') { // don't run
 		return 0;
 	}
-
+	
+	$success = 0; // Ensure this is zero
 	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
 	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
 	$password =& $passwd;
@@ -83,7 +84,7 @@ function botLDAPSSI() {
 				// First bind as a search enabled account
 				if ($ldap->bind()) {
 					$ldap_uid = $mambotParams->get('ldap_uid');
-					$userdetails = $ldap->simple_search($mambotParams->get('ldap_uid') . '=' . $username);
+					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username);
 					if (isset ($userdetails[0][$ldap_uid][0])) {
 						$success = $ldap->bind($userdetails[0][dn], $passwd, 1);
 					}
