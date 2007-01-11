@@ -1,0 +1,123 @@
+<html>
+	<head>
+		<title>Kerberos For SLES9</title>
+	</head>
+
+	<body>
+		<h1>Kerberos For SLES9</h1><hr>
+<p>This document covers installing and integrating Kerberos based single sign on for PHP applications. The content in this document is specifically aimed at providing information to install Kerberos and mod_auth_kerb on the SLES9 box. The usage of this style system has been demonstrated using the colinux Debian virtual server (using standard Debian packages). This document is not yet complete.<br />
+</p>
+<p>The environment covered in this document was originally a system primarily maintained by Novell eDirectory with synchronization to Microsoft Active Directory</p>
+
+<span style="font-weight: bold;">
+RPM Packages:</span><br />
+apache2-devel-2.0.49-23.i586.rpm (Not included on CD's, available via rpmseek.com)<br />
+&nbsp;- This package is required to provide APXS for module configuration.<br />
+<br />
+<span style="font-weight: bold;">Source:</span><br />
+<span style="font-style: italic;">krb5-1.4.2</span> (Source download)<br />
+&nbsp;- Due to SLES9 being out dated, HEIMDAL is only provided, without development libraries. This is the MIT implementation of Kerberos. This is required for mod_auth_kerb to function properly (or without extra configuration and download processes).<br />
+Procedure:<br />
+$ ./configure -prefix=/usr<br />
+$ make<br />
+# make install<br />
+<br />
+<span style="font-style: italic;">mod_auth_kerb-5.0-rc6</span> (Source download)<br />
+&nbsp;- Provides the layer of Negotiate authentication.<br />
+&nbsp;- Passes a server variable down with the username so that PHP can identify the validated user.<br />
+Procedure:<br />
+There is an issue with the default configuration file which needs a minor alteration for it to work. In the configure file search for the following ilne:<br />
+set dummy apxs; ac_word=$2<br />
+and change it to:<br />
+set dummy apxs2; ac_word=$2<br />
+<br />
+$ ./configure --with-krb5=/usr/ --with-krb4=no --with-apache=/usr<br />
+$ make<br />
+# sudo make install<br />
+<br />
+Notes: Kerberos 4 isn't supported but the module will attempt to use it if it has been enabled at compile time. This explicitly disables it, forcing Kerberos 5.<br />
+<br />
+<span style="font-style: italic;">Adding the module to the configuration</span><br />
+# vi /etc/sysconfig/apache2<br />
+Edit the following line (or similar):<br />
+<span style="font-style: italic;">APACHE_MODULES=&quot;access actions alias auth auth_dbm autoindex cgi dir env expires include log_config mime negotiation setenvif ssl suexec userdir php4&quot;</span><br />
+to:<br />
+<span style="font-style: italic;">APACHE_MODULES=&quot;access actions alias auth auth_dbm autoindex cgi dir env expires include log_config mime negotiation setenvif ssl suexec userdir php4 auth_kerb&quot;</span><br />
+and restart apache and check a phpinfo() file and verify that &quot;mod_auth_kerb&quot; is loaded (under apache2handler).<br />
+<br />
+<span style="font-weight: bold;">Kerberos Configuration</span><br />
+<span style="font-style: italic;">Important:</span> Time synchronization is very important to Kerberos. Five minutes difference can cause the authentication to fail. NTP configuration should be completed and verified working before Kerberos Configuration is attempted.<br />
+The default configuration that SuSE generates appears to be invalid (which caused much headache). A sample configuration is supplied below:<br />
+<br />
+<span style="font-family: courier new,courier,monospace;">[libdefaults]</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default_realm = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">[realms]</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SITE1.PASAMIO.HOMELINUX.NET = {</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; admin_server = UHR.SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default_domain = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">[domain_realm]</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; its = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .its = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; site1.pasamio.homelinux.net = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .site1.pasamio.homelinux.net = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pasamio.homelinux.net = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .pasamio.homelinux.net = SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">[logging]</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; kdc = CONSOLE</span><br />
+<br />
+<br />
+This is a basic configuration that should allow authentication. If your Linux username is the same as your Active Directory login (e.g. pasamio for Linux and pasamio for Active Directory), then simply typing '<span style="font-style: italic;">kinit</span>' should ask to login as '<span style="font-style: italic;">pasamio @ SITE1.PASAMIO.HOMELINUX.NET</span>' (Spaces included to prevent automatic alteration). Entering your Active Directory password here should result in no error. If your password is wrong you will get a pre-authentication error.<br />
+<br />
+<span style="font-weight: bold;">Active Directory Configuration</span><br />
+Due to the nature of Kerberos, two new 'users' need to be added to the Active Directory before the Kerberos Single Sign on system will work. First of all we need to add a new &quot;computer and user account for the host and user security principals logging into the Domain&quot;. This should be the fully qualified domain name of the server (e.g. <span style="font-style: italic;">fallenwall.pasamio.homelinux.net</span>). Example from the Microsoft guide:<br />
+<span style="font-weight: bold;">1.</span> Use the Active Directory Management tool to create a new user account for the UNIX host:<br />
+<br />
+&nbsp;- Select the Users folder, right click and select New, then choose user.<br />
+<br />
+&nbsp;- Type the name of the UNIX host (e.g. <span style="font-style: italic;">fallenwall.pasamio.homelinux.net</span>);<br />
+&nbsp;The account can be created in any container. It might be useful to create a new organization unit (U) and create the accounts there.<br />
+<br />
+<span style="font-weight: bold;">2.</span> Use the Active Directory Management tool to create a user account for the UNIX service; for example create an account with the name&nbsp; fallenwall-HTTP.<br />
+<br />
+<span style="font-weight: bold;">3.</span> Use ktpass to create the keytab file and set up the account for the UNIX host and then copy the keytab file to the UNIX system and merge the keytab file into /etc/krb5.keytab, as follows: <br />
+<br />
+&nbsp;- Use the following command to generate the UNIX host and service keytab files, map the principal to the account and set the host principal password, example (Note: capitalization is important!):<br />
+<br />
+<span style="font-family: courier new,courier,monospace;">&nbsp; c:\&gt; ktpass -princ host/fallenwall.pasamio.homelinux.net@SITE1.PASAMIO.HOMELINUX.NET -mapuser fallenwall -pass secretpassword -out fallenwall.keytab</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; &lt;messages here&gt;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp; c:\&gt; ktpass -princ HTTP/fallenwall.pasamio.homelinux.net@SITE1.PASAMIO.HOMELINUX.NET -mapuser
+fallenwall-http -pass secretpassword -out fallenwall-http.keytab</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; &lt;messages here&gt;</span><br />
+<br />
+<br />
+&nbsp;- Copy the file to the UNIX server (should be done securely, email works) and import into the main Kerberos keytab:<br />
+<br />
+<span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; $ sudo /usr/sbin/ktutil</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; ktutil: rkt fallenwall.keytab</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; ktutil: rkt fallenwall-http.keytab</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; ktutil: wkt /etc/krb5.keytab</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp; ktutil: q<br />
+&nbsp;&nbsp;&nbsp; $ sudo chmod 644 /etc/krb5.keytab<br />
+</span><br />
+(This assume that there are no other keys in krb5.keytab! If so, add &quot;<span style="font-style: italic;">rkt /etc/krb5.keytab</span>&quot; before writing (wkt) the keytab. The chmod ensures that the file is readable by Apache (solves the &quot;Permission Denied&quot; error in the Apache2 Error log)).<br />
+<br />
+<span style="font-weight: bold;">Apache Configuration</span><br />
+For Kerberos authentication to be used, it must be requested at Apache authentication level, not the PHP level, similar to the basic authentication system used previously with Joomla. In both test cases (fallenwall and colinux), .htaccess files were used to provide configuration settings. Configuration can be directly made within Apache, but alterations require a restart. .htaccess files provide a method of overriding or altering the configuration of a given directory. All directives within this file are valid in the main configuration file.<br />
+<br />
+Example .htaccess file (from fallenwall downloads):<br />
+<span style="font-family: courier new,courier,monospace;">Options FollowSymLinks Indexes MultiViews</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">IndexOptions FancyIndexing</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">AuthType Kerberos</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">AuthName &quot;Enter your Active Directory Login&quot;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">KrbMethodNegotiate On</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">KrbAuthRealms SITE1.PASAMIO.HOMELINUX.NET</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">KrbSaveCredentials on</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">KrbMethodK5Passwd On</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">KrbServiceName HTTP</span><span style="font-family: courier new,courier,monospace;"></span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">require valid-user</span><br />
+<br />
+And in the main Apache configuration file:<br />
+<span style="font-family: courier new,courier,monospace;">&lt;Directory &quot;/srv/www/htdocs/downloads&quot;&gt;</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Options All</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AllowOverride All</span><br style="font-family: courier new,courier,monospace;" /><span style="font-family: courier new,courier,monospace;">&lt;/Directory&gt; </span><br />
+<br />
+Restart apache and test. Note: Due to the structure of Joomla, more extensive alterations are required before it will work properly.<br />
+<br />
+<span style="font-weight: bold;">Background Information (Structure)</span><br />
+Since Windows 2000, Kerberos has been the method of choice for authentication in Windows, supersceding NTLM authentication. This means that Kerberos aware systems can now authenticate in Windows 2000/XP/2003 environments without any extra password entry mechanisms. This is called 'single signon', and is available by default within the Windows environment if &quot;Enable Integrated Windows Authentications&quot; is ticked with in the IE configuration dialog (under Advanced tab and Security). <br />
+<br />
+Active Directory is used to primarily authenticate clients within the network. At user signon, the Active Directory issues the user with a Kerberos ticket. From here, this ticket can be sent to Kerberos aware services requesting this ticket, which is in our case, Apache. Apache then uses this ticket, plus its own keys, to authenticate both itself (with its key) and the user (with their ticket) against the Kerberos domain (namely Active Directory). Apache then places a server variable into the CGI processes which allows PHP to authenticate with its own information (e.g. PHP is given a username only, with no password). The structure looks like this:<br />
+
+<table border="1" style="width: 100%;"><tbody><tr><td>Microsoft Active Directory<br />
+</td><td><br />
+</td><td><br />
+</td></tr><tr><td>Kerberos<br />
+</td><td style="text-align: center;">&lt;-&gt;<br />
+</td><td>Apache (Kerberos Module)<br />
+</td></tr><tr><td><br />
+</td><td><br />
+</td><td>PHP ($_SERVER['remote_user'])<br />
+</td></tr></tbody></table>As you can see, once the user has authenticated with Active Directory (e.g. sign-in when the computer starts), which triggers the other two layers below it. Apache then interfaces with Kerberos to authenticate and then provides the $_SERVER['remote_user'] information. Spoofing of the server variable requires spoofing of the Kerberos authentication layer.<br />
+<br />
+<span style="font-weight: bold;">History (Kerberos and SuSE)<br />
+<span style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;"></span></span></span></span>Heimdal is shipped with SuSE due to limitations with MIT Kerberos and US export laws. These issues have been removed with the alteartion of MIT's policy on extra-US/Caneda downloads. Heimdal has certain limitations in their implementation that can cause issues and extra configuration for the Kerberos Library.<br />
+<br />
+<span style="font-weight: bold;">Resources</span><br />
+mod_auth_kerb home page: <a href="http://modauthkerb.sourceforge.net">http://modauthkerb.sourceforge.net</a><br />
+MIT Kerberos home page: <a href="http://web.mit.edu/kerberos/www/">http://web.mit.edu/kerberos/www/</a><br />
+RPMSeek: <a href="http://www.rpmseek.com">http://www.rpmseek.com</a><br />
+
+	<br />
+Note: SLES9 accepts SuSE 9.1 packages.<br />
+</div><span style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;"><span style="font-weight: bold;"></span></span></span><br />
+</span>
+
+
