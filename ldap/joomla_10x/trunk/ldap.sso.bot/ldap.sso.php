@@ -145,6 +145,7 @@ function botDoLdapSSOLogin() {
 			. "\n FROM #__users"
 			. "\n WHERE id = $userid"
 			;
+			$row = null;
 			$database->setQuery( $query );
 			$database->loadObject($row);
 			$lifetime               = time() + 365*24*60*60;
