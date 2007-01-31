@@ -24,7 +24,7 @@
 // no direct access
 defined('_VALID_MOS') or die('Restricted access');
 
-if(!function_exists(addLogEntry)) {
+if(!function_exists('addLogEntry')) {
 	function addLogEntry($application, $type, $priority, $message) {
 		if(defined('_JLOGGER_API')) {
 			global $database;
