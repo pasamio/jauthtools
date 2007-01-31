@@ -22,6 +22,21 @@
 /** ensure this file is being included by a parent file */
 // no direct access
 defined('_VALID_MOS') or die('Restricted access');
+
+if(!function_exists(addLogEntry)) {
+	function addLogEntry($application, $type, $priority, $message) {
+		if(defined('_JLOGGER_API')) {
+			global $database;
+			$logentry = new JLogEntry($database);
+			$logentry->application = $application;
+			$logentry->type 		= $type;
+			$logentry->priority 	= $priority;
+			$logentry->message 	= $message;
+			$logentry->store() or die('Log entry save failed');
+		}
+	}
+}
+
 if(!function_exists('ldap_connect')) {
 	addLogEntry('LDAP SSO Mambot', 'authentication','crit','PHP LDAP Library not detected');
 } else if(!class_exists('ldapConnector')) {
@@ -175,20 +190,6 @@ function botDoLdapSSOLogin() {
 		return false;
 	}
 	//return false;
-}
-
-if(!function_exists(addLogEntry)) {
-	function addLogEntry($application, $type, $priority, $message) {
-		if(defined('_JLOGGER_API')) {
-			global $database;
-			$logentry = new JLogEntry($database);
-			$logentry->application = $application;
-			$logentry->type 		= $type;
-			$logentry->priority 	= $priority;
-			$logentry->message 	= $message;
-			$logentry->store() or die('Log entry save failed');
-		}
-	}
 }
 
 ?>
