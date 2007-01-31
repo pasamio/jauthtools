@@ -19,7 +19,7 @@
  * @see Joomla!Forge Project: http://forge.joomla.org/sf/sfmain/do/viewProject/projects.ldap_tools
  */
 
-if(!function_exists(ldap_connect)) { die('LDAP Not Enabled - Please install LDAP in your PHP instance to continue.'); }
+if(!function_exists('ldap_connect')) { die('LDAP Not Enabled - Please install LDAP in your PHP instance to continue.'); }
 
 /**
  * LDAP Connector Class
@@ -81,6 +81,8 @@ class ldapConnector {
 	/** @var string LDAP Map Password
 	    @access private */
 	var $ldap_password = '';
+	/** @var string Bind Method */
+	var $bind_method = '';
 
 	/**
 	 * Constructor
