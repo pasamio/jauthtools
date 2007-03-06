@@ -360,13 +360,20 @@ class ldapConnector {
 			for ($i = 0; $i < $len; $i += 1) {
 				$byte = substr($networkaddress, $i, 1);
 				$addr .= ord($byte);
-				if ($addrtype == 1) { // dot separate IP addresses...
+				if ($addrtype == 1 || $addrtype == 9) { // dot separate IP addresses...
 					$addr .= ".";
 				}
 			}
-			if ($addrtype == 1) { // strip last period from end of $addr
-				$addr = substr($addr, 0, strlen($addr) - 1);
+			switch($addrtype) {
+				case 1:  // strip last period from end of $addr for ip
+					$addr = substr($addr, 0, strlen($addr) - 1);
+					break;
+				case 9: // splice out first two array elements and rejoin for tcp
+					$addr = substr($addr, 0, strlen($addr) - 1);
+					$addr = implode('.',array_slice(explode('.',$addr),2));
+					break; 
 			}
+			
 		} else {
 			$addr .= "address not available.";
 		}
