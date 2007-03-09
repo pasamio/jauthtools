@@ -12,6 +12,28 @@ defined('_VALID_MOS') or die('Direct Access to this location is not allowed.');
 
 $_MAMBOTS->registerFunction('onAfterStart', 'botDoKerberosLogin');
 
+if(!function_exists('addLogEntry')) {
+	function addLogEntry($application, $type, $priority, $message) {
+		if(defined('_JLOGGER_API')) {
+			global $database;
+			$logentry = new JLogEntry($database);
+			$logentry->application = $application;
+			$logentry->type 		= $type;
+			$logentry->priority 	= $priority;
+			$logentry->message 	= $message;
+			$logentry->store() or die('Log entry save failed');
+		}
+	}
+}
+
+if(!function_exists('ldap_connect')) {
+	addLogEntry('Kerberos SSO Mambot', 'authentication','crit','PHP LDAP Library not detected');
+} else if(!class_exists('ldapConnector')) {
+	addLogEntry('Kerberos SSO Mambot', 'authentication','crit','Joomla! LDAP Library not detected');
+} else {
+	$_MAMBOTS->registerFunction('onAfterStart', 'botDoKerberosLogin');
+}
+
 /**
  * Initiates a Kerberos login
  *
@@ -19,12 +41,17 @@ $_MAMBOTS->registerFunction('onAfterStart', 'botDoKerberosLogin');
  */
 function botDoKerberosLogin() {
 	global $database, $mainframe, $acl, $_MAMBOTS, $_LANG;
-	;
+
 	$username = mosGetParam($_SERVER, "REMOTE_USER", null);
 	if ($username != NULL) {
 			// Has a remote_user field set, get the username and attempt to sign them in.
 			$parts = split('@', $username);
 			$username = $parts[0];
+			// load mambot parameters
+			$query = "SELECT params FROM #__mambots WHERE element = 'kerberos.sso' AND folder = 'system'";
+			$database->setQuery($query);
+			$params = $database->loadResult();
+			$mambotParams =& new mosParameters( $params );
 
 			//load user bot group
 			$query = 'SELECT id FROM #__users WHERE username=' . $database->Quote($username);
@@ -32,22 +59,25 @@ function botDoKerberosLogin() {
 			$userId = intval($database->loadResult());
 			$user = new mosUser($database);
 			if ($userId < 1) {
-				/*if(intval($mambotParams->get('autocreate'))) {
+				$ldap = new ldapConnector();
+				$ldap->connect();
+				$ldap->bind();
+				if(intval($mambotParams->get('autocreate'))) {
 					// Create user 
 					$user->username = $username;
-					$ldap->populateUser($user,$mambotParams->get('groupMap'));
+					$ldap->populateUser($user, $mambotParams->get('groupMap'));
 					$user->id = 0;
 					$row->registerDate 	= date( 'Y-m-d H:i:s' );
-					if($user->usertype == 'Registered' && !$mambotParams->get('autocreateregistered')) {
-						addLogEntry('LDAP SSO Mambot', 'authentication', 'notice', 'User creation halted for '. $username .' since they would only be registered');
-						$ldap->close();
+					if($user->usertype == 'Public Frontend' && !$mambotParams->get('autocreateregistered')) {
+						addLogEntry('Kerberos SSO Mambot', 'authentication', 'notice', 'User creation halted for '. $username .' since they would only be registered');
+						//$ldap->close();
 						return false;
 					} else {
 						if(!$user->store()) {
-							addLogEntry('LDAP SSO Mambot', 'authentication', 'err', 'Could not autocreate user:'. print_r($user,1));
+							addLogEntry('Kerberos SSO Mambot', 'authentication', 'err', 'Could not autocreate user:'. print_r($user,1));
 						}
 					}
-				}*/
+				}
 			} else if($userId) {
 				$user->load(intval($userId));
 			} else {

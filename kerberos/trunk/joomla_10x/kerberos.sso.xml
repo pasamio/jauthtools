@@ -1,0 +1,26 @@
+<mosinstall version="1.0.0" type="mambot" group="system">
+        <name>Kerberos Single Signon</name>
+        <author>Sam Moffatt</author>
+        <creationDate>September 2005</creationDate>
+        <copyright>(C) 2006 Sam Moffatt/Toowoomba City Council. All rights reserved.</copyright>
+        <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+        <authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
+        <authorUrl>www.toowoomba.qld.gov.au</authorUrl>
+        <version>1.0.0</version>
+        <description>Initiates Single Signon for users with Kerberos</description>
+        <files>
+                <filename mambot="kerberos.sso">kerberos.sso.php</filename>
+        </files>
+		<params>
+			<param name="autocreate" type="radio" default="0" label="Auto Create Users" description="Automatically created registered users where possible">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</param>
+		    <param name="autocreateregistered" type="radio" default="0" label="Auto Create Registered" description="Create a user even if their group is registered">
+		  		<option value="0">No</option>
+		  		<option value="1">Yes</option>
+			</param>
+			<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
+		</params>
+</mosinstall>
+
