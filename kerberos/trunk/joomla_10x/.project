@@ -3,6 +3,7 @@
 	<name>kerberos_tools_10x</name>
 	<comment></comment>
 	<projects>
+		<project>joomla_ldap</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
