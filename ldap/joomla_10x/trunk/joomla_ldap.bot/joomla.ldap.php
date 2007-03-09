@@ -390,8 +390,8 @@ class ldapConnector {
 		$currentgrouppriority = 0;
 		$user->id = 0;
 		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string));
-		$user->gid = 18;
-		$user->usertype = 'Registered';
+		$user->gid = 29;
+		$user->usertype = 'Public Frontend';
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults		
 		$ldap_email = $this->ldap_email ? $this->ldap_email : 'mail';
