@@ -1,4 +1,5 @@
 <?php
+
 /**
  * LDAP Library
  * 
@@ -19,7 +20,9 @@
  * @see Joomla!Forge Project: http://forge.joomla.org/sf/sfmain/do/viewProject/projects.ldap_tools
  */
 
-if(!function_exists('ldap_connect')) { die('LDAP Not Enabled - Please install LDAP in your PHP instance to continue.'); }
+if (!function_exists('ldap_connect')) {
+	die('LDAP Not Enabled - Please install LDAP in your PHP instance to continue.');
+}
 
 /**
  * LDAP Connector Class
@@ -68,7 +71,7 @@ class ldapConnector {
 	/** @var string Current DN
 	    @access private */
 	var $_dn = null;
-	
+
 	/** @var string LDAP Map Full Name
 	    @access private */
 	var $ldap_fullname = '';
@@ -161,7 +164,7 @@ class ldapConnector {
 	 * @param string The username
 	 * @access public
 	 */
-	function setDN($username,$nosub=0) {
+	function setDN($username, $nosub = 0) {
 		if ($this->users_dn == '' || $nosub) {
 			$this->_dn = $username;
 		} else {
@@ -176,14 +179,14 @@ class ldapConnector {
 	function getDN() {
 		return $this->_dn;
 	}
-	
+
 	/**
 	 * Anonymously Binds to LDAP Directory
 	 */
 	function anonymous_bind() {
-		$bindResult = @ldap_bind($this->_resource);
+		$bindResult = @ ldap_bind($this->_resource);
 		return $bindResult;
-	}	
+	}
 
 	/**
 	 * Binds to the LDAP directory
@@ -193,18 +196,18 @@ class ldapConnector {
 	 * @access public
 	 */
 	function bind($username = null, $password = null, $nosub = 0) {
-		switch($this->bind_method) {
-			case 'anonymous':
-				$bindResult = @ldap_bind($this->_resource);
+		switch ($this->bind_method) {
+			case 'anonymous' :
+				$bindResult = @ ldap_bind($this->_resource);
 				break;
-			default:
+			default :
 				if (is_null($username)) {
 					$username = $this->username;
 				}
 				if (is_null($password)) {
 					$password = $this->password;
 				}
-				$this->setDN($username,$nosub);
+				$this->setDN($username, $nosub);
 				$bindResult = @ ldap_bind($this->_resource, $this->getDN(), $password);
 		}
 		return $bindResult;
@@ -216,12 +219,41 @@ class ldapConnector {
 	 */
 	function simple_search($search) {
 		$results = explode(';', $search);
-		foreach($results as $key=>$result) {
-	        $results[$key] = '('.$result.')';
+		foreach ($results as $key => $result) {
+			$results[$key] = '(' . $result . ')';
 		}
 		return $this->search($results);
 	}
 
+	/**
+	 * Hidden function to actually do the work
+	 */
+	function _search($filter, $dn, & $attributes) {
+		$resource = $this->_resource;
+		$search_result = ldap_search($resource, $dn, $filter);
+		if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0) {
+			for ($i = 0; $i < $count; $i++) {
+				$attributes[$i] = Array ();
+				if (!$i) {
+					$firstentry = ldap_first_entry($resource, $search_result);
+				} else {
+					$firstentry = ldap_next_entry($resource, $firstentry);
+				}
+				$attributes_array = ldap_get_attributes($resource, $firstentry); // load user-specified attributes
+				// ldap returns an array of arrays, fit this into attributes result array
+				foreach ($attributes_array as $ki => $ai) {
+					if (is_array($ai)) {
+						$subcount = $ai['count'];
+						$attributes[$i][$ki] = Array ();
+						for ($k = 0; $k < $subcount; $k++) {
+							$attributes[$i][$ki][$k] = $ai[$k];
+						}
+					}
+				}
+				$attributes[$i]['dn'] = ldap_get_dn($resource, $firstentry);
+			}
+		}
+	}
 	
 	/**
 	 * Perform an LDAP search
@@ -231,40 +263,20 @@ class ldapConnector {
 	 * @access public
 	 */
 	function search($filters, $dnoverride = null) {
-		$attributes = array ();
+		$result = array ();
 		if ($dnoverride) {
 			$dn = $dnoverride;
 		} else {
 			$dn = $this->base_dn;
 		}
-		
-		$resource = $this->_resource;
+
 		foreach ($filters as $search_filter) {
-			$search_result = ldap_search($resource, $dn, $search_filter);
-			if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0) {
-				for ($i = 0; $i < $count; $i++) {
-					$attributes[$i] = Array ();
-					if (!$i) {
-						$firstentry = ldap_first_entry($resource, $search_result);
-					} else {
-						$firstentry = ldap_next_entry($resource, $firstentry);
-					}
-					$attributes_array = ldap_get_attributes($resource, $firstentry); // load user-specified attributes
-					// ldap returns an array of arrays, fit this into attributes result array
-					foreach ($attributes_array as $ki => $ai) {
-						if (is_array($ai)) {
-							$subcount = $ai['count'];
-							$attributes[$i][$ki] = Array ();
-							for ($k = 0; $k < $subcount; $k++) {
-								$attributes[$i][$ki][$k] = $ai[$k];
-							}
-						}
-					}
-					$attributes[$i]['dn'] = ldap_get_dn($resource, $firstentry);
-				}
+			$dn_list = explode(';', $dn);
+			foreach ($dn_list as $dn) {
+				$this->_search($search_filter, $dn, $result);
 			}
 		}
-		return $attributes;
+		return $result;
 	}
 
 	/**
@@ -295,7 +307,7 @@ class ldapConnector {
 			$address .= '\\' . $tmp;
 		}
 		return $address;
-	}	
+	}
 
 	/**
 	 * Converts a dot notation IP address to a TCP net address
@@ -306,8 +318,8 @@ class ldapConnector {
 	function ipToTCPNetAddress($ip) {
 		$parts = explode('.', $ip);
 		$address = '9#';
-		$address .= '\\0'. dechex('4');
-		$address .= '\\'. dechex('99');
+		$address .= '\\0' . dechex('4');
+		$address .= '\\' . dechex('99');
 
 		foreach ($parts as $int) {
 			$tmp = dechex($int);
@@ -364,20 +376,23 @@ class ldapConnector {
 					$addr .= ".";
 				}
 			}
-			switch($addrtype) {
-				case 1:  // strip last period from end of $addr for ip
+			switch ($addrtype) {
+				case 1 : // strip last period from end of $addr for ip
 					$addr = substr($addr, 0, strlen($addr) - 1);
 					break;
-				case 9: // splice out first two array elements and rejoin for tcp
+				case 9 : // splice out first two array elements and rejoin for tcp
 					$addr = substr($addr, 0, strlen($addr) - 1);
-					$addr = implode('.',array_slice(explode('.',$addr),2));
-					break; 
+					$addr = implode('.', array_slice(explode('.', $addr), 2));
+					break;
 			}
-			
+
 		} else {
 			$addr .= "address not available.";
 		}
-		return Array('protocol'=>$addrtypes[$addrtype], 'address'=>$addr);
+		return Array (
+			'protocol' => $addrtypes[$addrtype],
+			'address' => $addr
+		);
 	}
 
 	/**
@@ -396,9 +411,9 @@ class ldapConnector {
 		$user->name = $user->username; // Set Defaults		
 		$ldap_email = $this->ldap_email ? $this->ldap_email : 'mail';
 		$ldap_fullname = $this->ldap_fullname ? $this->ldap_fullname : 'fullName';
-		if (isset ($userdetails[0]['dn']) && isset($userdetails[0][$ldap_email][0])) {
+		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $userdetails[0][$ldap_email][0];
-			if(isset($userdetails[0][$ldap_fullname][0])) {
+			if (isset ($userdetails[0][$ldap_fullname][0])) {
 				$user->name = $userdetails[0][$ldap_fullname][0];
 			} else {
 				$user->name = $user->username;
@@ -419,7 +434,7 @@ class ldapConnector {
 						)), 'gid' => $details[1], 'usertype' => $details[2], 'priority' => $details[3]);
 					}
 				}
-				if(isset($userdetails[0]['groupMembership'])) {
+				if (isset ($userdetails[0]['groupMembership'])) {
 					foreach ($userdetails[0]['groupMembership'] as $group) {
 						// Hi there :)
 						foreach ($groupMap as $mappedgroup) {
