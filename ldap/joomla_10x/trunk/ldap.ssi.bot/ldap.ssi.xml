@@ -45,6 +45,7 @@
 			<option value="1">Yes</option>
 		</param>		
 		<param name="base_dn" type="text" size="20" default="" label="Base DN" description="The base DN of your LDAP server, e.g o=mydomain.com" />
+		<param name="search_dn" type="text" size="20" default="" label="Search DN" description="The search DN of your LDAP server, e.g o=mydomain.com" />
 		<param name="search_string" type="text" size="20" default="" label="Search string" description="A query string used for search for a given user. The [search] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[search]. Several strings can be used, separated by semicolons." />
 		<param name="auth_method" default="bind" type="list" label="Authorization Method" description="Authorization method to use to connect to the LDAP server.">
 			<option value="anonymous">Anonymous Compare</option>

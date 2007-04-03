@@ -86,7 +86,9 @@ class ldapConnector {
 	var $ldap_password = '';
 	/** @var string Bind Method */
 	var $bind_method = '';
-
+	/** @var int Bind Result */
+	var $bind_result = 0;
+	
 	/**
 	 * Constructor
 	 * @param object An object of configuration variables
@@ -184,8 +186,8 @@ class ldapConnector {
 	 * Anonymously Binds to LDAP Directory
 	 */
 	function anonymous_bind() {
-		$bindResult = @ ldap_bind($this->_resource);
-		return $bindResult;
+		$this->bind_result = @ ldap_bind($this->_resource);
+		return $this->bind_result;
 	}
 
 	/**
@@ -208,21 +210,21 @@ class ldapConnector {
 					$password = $this->password;
 				}
 				$this->setDN($username, $nosub);
-				$bindResult = @ ldap_bind($this->_resource, $this->getDN(), $password);
+				$this->bind_result =  @ldap_bind($this->_resource, $this->getDN(), $password);
 		}
-		return $bindResult;
+		return $this->bind_result;
 	}
 
 	/**
 	 * Perform an LDAP search using comma seperated search strings
 	 * @param string search string of search values
 	 */
-	function simple_search($search) {
+	function simple_search($search,$dnlist=null) {
 		$results = explode(';', $search);
 		foreach ($results as $key => $result) {
 			$results[$key] = '(' . $result . ')';
 		}
-		return $this->search($results);
+		return $this->search($results,$dnlist);
 	}
 
 	/**
@@ -232,7 +234,7 @@ class ldapConnector {
 		$resource = $this->_resource;
 		$search_result = ldap_search($resource, $dn, $filter);
 		if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0) {
-			for ($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i == $count-1; $i++) {
 				$attributes[$i] = Array ();
 				if (!$i) {
 					$firstentry = ldap_first_entry($resource, $search_result);
@@ -273,7 +275,7 @@ class ldapConnector {
 		foreach ($filters as $search_filter) {
 			$dn_list = explode(';', $dn);
 			foreach ($dn_list as $dn) {
-				$this->_search($search_filter, $dn, $result);
+				$this->_search($search_filter, $dn, $result);				
 			}
 		}
 		return $result;
@@ -400,11 +402,11 @@ class ldapConnector {
 	 * @param mosUser user object with username set to pull from LDAP
 	 * @param string map INI string mapping LDAP group to Joomla Group ID and Type
 	 */
-	function populateUser(& $user, $map = null, $ad = false) {
+	function populateUser(& $user, $map = null, $dn=null, $ad = false) {
 		// Grab user details
 		$currentgrouppriority = 0;
 		$user->id = 0;
-		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string));
+		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string),$dn);
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
 		$user->email = $user->username; // Set Defaults
