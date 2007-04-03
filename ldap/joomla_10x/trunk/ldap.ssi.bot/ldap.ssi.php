@@ -47,6 +47,57 @@ if(!function_exists('ldap_connect')) {
 }
 
 /**
+ * Attempt to authenticate a user
+ * @param object LDAP Connector
+ * @param string auth_methord Authentication method to use
+ * @param string users_dn The user dn to use
+ * @param string username The username that we're interested in
+ * @param string password The password that we're interested in checking
+ * @param string ldap_uid LDAP User ID (used for authbind method)
+ * @param string ldap_password LDAP Password (for above)
+ */
+ function botLDAPSSI_AttemptLogin(&$ldap, $auth_method, $users_dn, $username, $password, $ldap_uid='', $ldap_password='') {
+	 	$success = 0;
+		switch ($auth_method) {
+			case 'anonymous' :
+				// Need to do some work!
+				if ($ldap->anonymous_bind()) {
+					// Comparison time
+					$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
+				} else {
+					//die('Anonymous bind failed');
+					return 0;
+				}
+				break;
+			case 'bind' :
+				// We just accept the result here
+				$success = $ldap->bind($username, $password);
+				break;
+
+			case 'authbind' :
+				// First bind as a search enabled account
+				if ($ldap->bind()) {
+					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username);
+					if (isset ($userdetails[0][$ldap_uid][0])) {
+						$success = $ldap->bind($userdetails[0][dn], $password, 1);
+					}
+				}
+				break;
+
+			case 'authenticated' :
+				if ($ldap->bind()) {
+					// Comparison time
+					$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
+				} else {
+					//die('Authenticated Bind Failed');
+					return 0;
+				}
+				break;
+		}
+		return $success;
+ }
+
+/**
  * LDAP Single Sign In Procedure
  * @return bool status; these bots are not monitored like auth bots in 1.5
  */
@@ -79,43 +130,14 @@ function botLDAPSSI() {
 			return 0;
 		}
 		$auth_method = $mambotParams->get('auth_method','bind');
-		switch ($auth_method) {
-			case 'anonymous' :
-				// Need to do some work!
-				if ($ldap->anonymous_bind()) {
-					// Comparison time
-					$success = $ldap->compare(str_replace("[username]", $username, $mambotParams->get('users_dn')), $mambotParams->get('ldap_password'), $passwd);
-				} else {
-					//die('Anonymous bind failed');
-					return 0;
-				}
-				break;
-			case 'bind' :
-				// We just accept the result here
-				$success = $ldap->bind($username, $passwd);
-				break;
-
-			case 'authbind' :
-				// First bind as a search enabled account
-				if ($ldap->bind()) {
-					$ldap_uid = $mambotParams->get('ldap_uid');
-					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username);
-					if (isset ($userdetails[0][$ldap_uid][0])) {
-						$success = $ldap->bind($userdetails[0][dn], $passwd, 1);
-					}
-				}
-				break;
-
-			case 'authenticated' :
-				if ($ldap->bind()) {
-					// Comparison time
-					$success = $ldap->compare(str_replace("[username]", $username, $mambotParams->get('users_dn')), $mambotParams->get('ldap_password'), $passwd);
-				} else {
-					//die('Authenticated Bind Failed');
-					return 0;
-				}
-				break;
+		$user_dn_list = explode(';',$mambotParams->get('users_dn'));
+		$ldap_uid = $mambotParams->get('ldap_uid');
+		$ldap_password = $mambotParams->get('ldap_password');
+		foreach($user_dn_list as $user_dn) {
+			$success = $success || botLDAPSSI_AttemptLogin($ldap, $auth_method, $user_dn, $username, $passwd, $ldap_uid, $ldap_password);
+			if($success) break; 
 		}
+		
 		//die($success);
 		if ($success) {
 			$query = "SELECT `id`" .
