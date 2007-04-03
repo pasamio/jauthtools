@@ -77,7 +77,8 @@ if(!function_exists('ldap_connect')) {
 			case 'authbind' :
 				// First bind as a search enabled account
 				if ($ldap->bind()) {
-					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username);
+					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
+					//echo '<pre>'; print_R($userdetails); die('pie');
 					if (isset ($userdetails[0][$ldap_uid][0])) {
 						$success = $ldap->bind($userdetails[0][dn], $password, 1);
 					}
@@ -111,6 +112,7 @@ function botLDAPSSI() {
 	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
 	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
 	$password =& $passwd;
+
 	if ($username && $passwd) {
 		// load mambot parameters
 		$query = "SELECT params FROM #__mambots WHERE element = 'ldap.ssi' AND folder = 'system'";
@@ -130,7 +132,7 @@ function botLDAPSSI() {
 			return 0;
 		}
 		$auth_method = $mambotParams->get('auth_method','bind');
-		$user_dn_list = explode(';',$mambotParams->get('users_dn'));
+		$user_dn_list = explode(';',$mambotParams->get('search_dn'));
 		$ldap_uid = $mambotParams->get('ldap_uid');
 		$ldap_password = $mambotParams->get('ldap_password');
 		foreach($user_dn_list as $user_dn) {
@@ -138,7 +140,6 @@ function botLDAPSSI() {
 			if($success) break; 
 		}
 		
-		//die($success);
 		if ($success) {
 			$query = "SELECT `id`" .
 			"\nFROM `#__users`" .
@@ -150,7 +151,9 @@ function botLDAPSSI() {
 				if (intval($mambotParams->get('autocreate'))) {
 					// Create user 
 					$user->username = $username;
-					$ldap->populateUser($user, $mambotParams->get('groupMap'));
+					// bind/authbind we know who they are (minor optimization)
+					if($auth_method == 'bind' || $auth_method == 'authbind') $ldap->populateUser($user, $mambotParams->get('groupMap'), $ldap->getDN());
+						else  $ldap->populateUser($user, $mambotParams->get('groupMap'));
 					$user->id = 0;
 					$user->password = md5($passwd);
 					$row->registerDate = date('Y-m-d H:i:s');
