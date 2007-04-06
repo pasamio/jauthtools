@@ -78,11 +78,10 @@ if(!function_exists('ldap_connect')) {
 				// First bind as a search enabled account
 				if ($ldap->bind()) {
 					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
-					//echo '<pre>'; print_R($userdetails); die('pie');
 					if (isset ($userdetails[0][$ldap_uid][0])) {
 						$success = $ldap->bind($userdetails[0][dn], $password, 1);
 					}
-				}
+				} else { addLogEntry('LDAP SSI Mambot','authentication', 'err', 'LDAP Bind failed for authbind method. This will prevent authentication'); }
 				break;
 
 			case 'authenticated' :
@@ -104,13 +103,16 @@ if(!function_exists('ldap_connect')) {
  */
 function botLDAPSSI() {
 	global $database, $option, $mainframe, $acl, $_MAMBOTS, $_LANG;
-	if ($option != 'login') { // don't run
+	$task = mosGetParam($_GET,'task','');
+	if ($option != 'login' && // don't run
+		($option != 'com_comprofiler' && $task != 'login') ) { // added community builder support
 		return 0;
 	}
-	
+
 	$success = 0; // Ensure this is zero
 	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
 	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
+
 	$password =& $passwd;
 
 	if ($username && $passwd) {
@@ -163,7 +165,11 @@ function botLDAPSSI() {
 						return false;
 					} else {
 						$user->store();// or die('Could not autocreate user:' . print_r($user, 1));
-						addLogEntry('LDAP SSI Mambot','authentication', 'err', 'Could not autocreate user:'. print_r($user,1));
+						if($option == 'com_comprofiler' && $mambotParams->get('cbconfirm')) {
+							$database->setQuery('INSERT INTO #__comprofiler (id, user_id, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES ('. $user->id .','. $user->id .',0,0,1,1,1,0,1)');
+							$database->Query() or die($database->getErrorMsg());
+						}
+						addLogEntry('LDAP SSI Mambot','authentication', 'err', 'Autocreated user:'. print_r($user,1));
 					}
 				}
 			} else {
@@ -188,6 +194,7 @@ function botLDAPSSI() {
 				$database->setQuery($query);
 				$database->Query();
 			}
+			addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'LDAP Authentication failed for '. $username);
 			$ldap->close();
 		}
 		return true;
