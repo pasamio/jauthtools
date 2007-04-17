@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin"  group="sso">
+	<name>SSO - HTTP</name>
+	<author>Sam Moffatt</author>
+	<creationDate>April 2007</creationDate>
+	<copyright>(C) 2007 Toowoomba City Council/Sam Moffatt. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
+	<authorUrl>imb.toowoomba.qld.gov.au</authorUrl>
+	<version>1.5</version>
+	<description>Handles user detection using HTTP Provided values, typically REMOTE_USER</description>
+	<files>
+		<filename plugin="http">http.php</filename>
+	</files>
+	<params>
+		<param name="userkey" type="text" size="20" default="REMOTE_USER" label="User Key" description="This is the key in the $_SERVER array that holds the username" />
+		<param name="username_replacement" type="text" size="20" default="" label="Username Replacement" description="This is a pipe seperated (|) list of strings to replace with blanks from the username (e.g. DOMAIN\)" />
+	</params>
+</install>
