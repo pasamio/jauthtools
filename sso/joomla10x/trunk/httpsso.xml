@@ -13,7 +13,7 @@
                 <filename mambot="httpsso">httpsso.php</filename>
         </files>
 		<params>
-			<param name="userkey" type="text" size="20" default="" label="User Key" description="Element of the server environment variable containing the user ID" />
+			<param name="userkey" type="text" size="20" default="REMOTE_USER" label="User Key" description="Element of the server environment variable containing the user ID" />
 			<param name="username_replacement" type="text" size="20" default="" label="Username Replacement" description="This is a pipe seperated (|) list of strings to replace with blanks from the username (e.g. DOMAIN\)" />
 			<param name="@spacer" type="spacer" default="" label="" description="" />	
 	    	<param name="useglobal" type="radio" default="1" label="Use Global Settings" description="Use the global Joomla! LDAP settings">
