@@ -312,28 +312,6 @@ class ldapConnector {
 	}
 
 	/**
-	 * Converts a dot notation IP address to a TCP net address
-	 * @param string IP Address (e.g. xxx.xxx.xxx.xxx)
-	 * @return string Net address
-	 * @access public
-	 */
-	function ipToTCPNetAddress($ip) {
-		$parts = explode('.', $ip);
-		$address = '9#';
-		$address .= '\\0' . dechex('4');
-		$address .= '\\' . dechex('99');
-
-		foreach ($parts as $int) {
-			$tmp = dechex($int);
-			if (strlen($tmp) != 2) {
-				$tmp = '0' . $tmp;
-			}
-			$address .= '\\' . $tmp;
-		}
-		return $address;
-	}
-
-	/**
 	  * extract readable network address from the LDAP encoded networkAddress attribute.
 	  * @author Jay Burrell, Systems & Networks, Mississippi State University
 	  * Please keep this document block and author attribution in place.
@@ -401,6 +379,8 @@ class ldapConnector {
 	 * Populates a mosUser class with name and email from LDAP
 	 * @param mosUser user object with username set to pull from LDAP
 	 * @param string map INI string mapping LDAP group to Joomla Group ID and Type
+	 * @param string dn DN String to use to search
+	 * @param bool ad Is this an AD search
 	 */
 	function populateUser(& $user, $map = null, $dn=null, $ad = false) {
 		// Grab user details
