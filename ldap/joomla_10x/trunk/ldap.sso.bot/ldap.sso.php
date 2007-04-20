@@ -81,11 +81,10 @@ function botDoLdapSSOLogin() {
 
 	$ip = mosGetParam($_SERVER, 'REMOTE_ADDR', null);
 	$na = $ldap->ipToNetAddress($ip);
-	$na2 = $ldap->ipToTCPNetAddress($ip);
 	
 	// just a test, please leave
 	$search_filters = array (
-		"(|(networkAddress=$na2)(networkAddress=$na))"
+		"(|(networkAddress=$na))"
 		//"(networkAddress=$na2)"
 	);	
 	
