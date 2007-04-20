@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall version="1.0" type="mambot" group="system">
+	<name>LDAP SSO</name>	
+	<author>Sam Moffatt/Toowoomba City Council</author>
+	<creationDate>September 2006</creationDate>
+	<copyright>(C) 2006 Toowoomba City Council/Sam Moffatt All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
+	<authorUrl>www.toowoomba.qld.gov.au</authorUrl>
+	<version>1.0.2</version>
+	<description>Initiates Single Signon for users with LDAP</description>
+	<files>
+		<filename mambot="ldap.sso">ldap.sso.php</filename>
+	</files>
+	<params>
+		<param name="useglobal" type="radio" default="1" label="Use Global Settings" description="Use the global Joomla! LDAP settings">
+		  <option value="0">No</option>
+		  <option value="1">Yes</option>
+		</param>
+		    <param name="host" type="text" size="20" default="" label="Host" description="For example, openldap.mycompany.org" />
+		    <param name="port" type="text" size="20" default="389" label="Port" description="Default port is 389" />
+		    <param name="use_ldapV3" type="radio" default="0" label="LDAP V3" description="Default is LDAP2, but latest versions of OpenLdap require clients to use LDAPV3">
+		  <option value="0">No</option>
+		  <option value="1">Yes</option>
+		</param>
+		    <param name="negotiate_tls" type="radio" default="0" label="Negociate TLS" description="Negotiate TLS encryption with the LDAP server. This requires all traffic to and from my LDAP server to be encrypted.">
+			      <option value="0">No</option>
+			      <option value="1">Yes</option>
+		</param>		
+			<param name="no_referrals" type="radio" default="0" label="Don&apos;t follow referrals" description="This option clears the LDAP_OPT_REFERRALS flag.You&apos;ll need to check it for Windows 2003 servers.">
+		  <option value="0">No</option>
+		  <option value="1">Yes</option>
+		</param>
+		    <param name="@spacer" type="spacer" default="" label="" description="" />
+			<param name="autocreate" type="radio" default="0" label="Auto Create Users" description="Automatically created registered users where possible">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</param>
+		    <param name="autocreateregistered" type="radio" default="0" label="Auto Create Registered" description="Create a user even if their group is registered">
+		  <option value="0">No</option>
+		  <option value="1">Yes</option>
+		</param>
+			<param name="forceldap" type="radio" default="0" label="Force LDAP Authentication" description="Users Joomla password is reset upon unsuccessful bind. This ensures that new LDAP passwords are used, instead of old synchronized value.">
+		  <option value="0">No</option>
+		  <option value="1">Yes</option>
+		</param>
+		<param name="base_dn" type="text" size="20" default="" label="Base DN" description="The base DN of your LDAP server, e.g o=mydomain.com" />
+		<param name="search_string" type="text" size="20" default="" label="Search string" description="A query string used for search for a given user. The [search] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[search]. Several strings can be used, separated by semicolons." />
+		<param name="username" type="text" size="20" default="" label="Connect username" description="The Connect String and Connect password define connection parameters for the DN lookup phase. 3 options are available:- Anonymous DN lookup. Leave both fields blank.- Administrative connection: &apos;Connect String&apos; is the DN of an administrative account, e.g uid=admin,ou=users,o=mydomain.com. &apos;Connect password&apos; is the actual password of your administrative account.- Connection with the user-supplied login/password: &apos;Connect String&apos; is a DN, where the [login] token will be dynamically replaced by the user login, e.g uid=[login],ou=People,dc=my-domain,dc=com. &apos;Connect password&apos; should be " />
+		<param name="password" type="text" size="20" default="" label="Connect password" description="Password used with connection string" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		
+		<param name="users_dn" type="text" size="20" default="" label="Users DN" description="The [username] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[username], dc=my-domain, dc=com. Several strings can be used, separated by semicolons." />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="ldap_fullname" type="text" size="20" default="fullName" label="Map FullName" description="Map: Full Name" />
+		<param name="ldap_email" type="text" size="20" default="mail" label="Map Email" description="Map: Email" />
+		<param name="ldap_uid" type="text" size="20" default="uid" label="Map User ID" description="Map: User ID" />
+		<param name="ldap_password" type="text" size="20" default="userPassword" label="Map Password" description="Map: Password" />
+		<param name="ldap_blocked" type="text" size="20" default="loginDisabled" label="Map User Blocked" description="LDAP Attribute to map blocked users" />
+		<param name="ldap_groups" type="text" size="20" default="groupMembership" label="Map User Groups" description="LDAP Attribute to map users groups" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="cbconfirm" type="radio" default="0" label="CB: Confirm Users" description="Enable autoconfirmation of new user accounts within CB. This is required for full autocreation">
+			<option value="0">No confirm</option>
+			<option value="1">Autoconfirm</option>
+		</param>
+		<param name="@spacer" type="spacer" default="" label="" description="" />				
+		<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
+	</params>
+</mosinstall>
