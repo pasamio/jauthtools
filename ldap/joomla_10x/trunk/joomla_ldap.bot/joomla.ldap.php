@@ -233,6 +233,7 @@ class ldapConnector {
 	function _search($filter, $dn, & $attributes) {
 		$resource = $this->_resource;
 		$search_result = ldap_search($resource, $dn, $filter);
+		addLogEntry('LDAP Library', 'search', 'debug', 'Search for '. $filter . ' in '. $dn . ' returned ' . $search_result . ' with '. ldap_count_entries($resource, $search_result) .' results');
 		if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0) {
 			for ($i = 0; $i == $count-1; $i++) {
 				$attributes[$i] = Array ();
