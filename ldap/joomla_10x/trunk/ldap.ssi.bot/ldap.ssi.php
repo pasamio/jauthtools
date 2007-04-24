@@ -62,37 +62,40 @@ if(!function_exists('ldap_connect')) {
 			case 'anonymous' :
 				// Need to do some work!
 				if ($ldap->anonymous_bind()) {
-					// Comparison time
-					$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
-				} else {
-					//die('Anonymous bind failed');
-					return 0;
-				}
-				break;
+                                        // Comparison time
+                                        $success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
+                                } else {
+                                        addLogEntry('LDAP SSI Mambot','authentication','err','Anonymous Prebind failed before search. Note: MSAD requires an auth user for searches by default.');
+                                        return 0;
+                                }
+                                break;
 			case 'bind' :
-				// We just accept the result here
-				$success = $ldap->bind($username, $password);
-				break;
+                                // We just accept the result here
+                                $success = $ldap->bind($username, $password);
+                                break;
 
-			case 'authbind' :
-				// First bind as a search enabled account
-				if ($ldap->bind()) {
-					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
-					if (isset ($userdetails[0][$ldap_uid][0])) {
-						$success = $ldap->bind($userdetails[0][dn], $password, 1);
-					}
-				} else { addLogEntry('LDAP SSI Mambot','authentication', 'err', 'LDAP Bind failed for authbind method. This will prevent authentication'); }
-				break;
+                        case 'authbind' :
+                                // First bind as a search enabled account
+                                if ($ldap->bind()) {
+                                        $userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
+                                        //echo '<pre>'; print_R($userdetails); die('pie');
+                                        if (isset ($userdetails[0][$ldap_uid][0])) {
+                                                $success = $ldap->bind($userdetails[0][dn], $password, 1);
+                                        } else addLogEntry('LDAP SSI Mambot','authentication','err','Search for user '. $username .' failed');
+                                } else {
+                                        addLogEntry('LDAP SSI Mambot','authentication','err','Prebind failed before search and bind; check credentials!');
+                                }
+                                break;
 
-			case 'authenticated' :
+                        case 'authenticated' :
 				if ($ldap->bind()) {
-					// Comparison time
-					$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
-				} else {
-					//die('Authenticated Bind Failed');
-					return 0;
-				}
-				break;
+                                        // Comparison time
+                                        $success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
+                                } else {
+                                        addLogEntry('LDAP SSI Mambot','authentication','err','Prebind failed before compare; check credentials!');
+                                        return 0;
+                                }
+                                break;
 		}
 		return $success;
  }
@@ -102,20 +105,19 @@ if(!function_exists('ldap_connect')) {
  * @return bool status; these bots are not monitored like auth bots in 1.5
  */
 function botLDAPSSI() {
-	global $database, $option, $mainframe, $acl, $_MAMBOTS, $_LANG;
-	$task = mosGetParam($_GET,'task','');
-	if ($option != 'login' && // don't run
-		($option != 'com_comprofiler' && $task != 'login') ) { // added community builder support
-		return 0;
-	}
+        global $database, $option, $mainframe, $acl, $_MAMBOTS, $_LANG;
+        $task = mosGetParam($_GET,'task','');
+        if ($option != 'login' && // don't run
+                ($option != 'com_comprofiler' && $task != 'login') ) { // added community builder support
+                return 0;
+        }
 
-	$success = 0; // Ensure this is zero
-	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
-	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
+        $success = 0; // Ensure this is zero
+        $username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
+        $passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
+        $password =& $passwd;
 
-	$password =& $passwd;
-
-	if ($username && $passwd) {
+        if ($username && $passwd) {
 		// load mambot parameters
 		$query = "SELECT params FROM #__mambots WHERE element = 'ldap.ssi' AND folder = 'system'";
 		$database->setQuery($query);
@@ -162,17 +164,17 @@ function botLDAPSSI() {
 					if ($user->usertype == 'Public Frotnend' && !$mambotParams->get('autocreateregistered')) {
 						addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'User creation halted for '. $username .' since they would only be registered');
 						$ldap->close();
-						return false;
-					} else {
-						$user->store();// or die('Could not autocreate user:' . print_r($user, 1));
-						if($option == 'com_comprofiler' && $mambotParams->get('cbconfirm')) {
-							$database->setQuery('INSERT INTO #__comprofiler (id, user_id, first_name, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES ('. $user->id .','. $user->id .',"'.$user->name/'",0,0,1,1,1,0,1)');
-							$database->Query() or die($database->getErrorMsg());
-						}
-						addLogEntry('LDAP SSI Mambot','authentication', 'err', 'Autocreated user:'. print_r($user,1));
-					}
-				}
-			} else {
+                                                return false;
+                                        } else {
+                                                $user->store();// or die('Could not autocreate user:' . print_r($user, 1));
+                                                if($option == 'com_comprofiler' && $mambotParams->get('cbconfirm')) {
+                                                        $database->setQuery('INSERT INTO #__comprofiler (id, user_id, first_name, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES ('. $user->id .','. $user->id .',"'.$user->name/'",0,0,1,1,1,0,1)');
+                                                        $database->Query() or die($database->getErrorMsg());
+                                                }
+                                                addLogEntry('LDAP SSI Mambot','authentication', 'err', 'Autocreated user:'. print_r($user,1));
+                                        }
+                                }
+                        } else {
 				if ($userId) {
 					addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Updating user '. $userId);
 					//$user->load(intval($userId));
@@ -191,15 +193,16 @@ function botLDAPSSI() {
 			if ($mambotParams->get('forceldap')) {
 				addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'Resetting password for '. $username .' to enforce LDAP Authentication');
 				$query = "UPDATE `#__users` SET password = '' WHERE username = '$username'";
-				$database->setQuery($query);
-				$database->Query();
-			}
-			addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'LDAP Authentication failed for '. $username);
-			$ldap->close();
-		}
-		return true;
-	} else {
-		return false; // No username and password
-	}
+                                $database->setQuery($query);
+                                $database->Query();
+                        }
+                        addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'LDAP Authentication failed for '. $username);
+                        $ldap->close();
+                }
+                return true;
+        } else {
+                addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Warning, no username and password detected for SSI event!');
+                return false; // No username and password
+        }
 }
 ?>
