@@ -80,11 +80,9 @@ function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $p
 			// First bind as a search enabled account
 			if ($ldap->bind()) {
 				$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
-				//echo '<pre>'; print_R($userdetails); die('pie');
 				if (isset ($userdetails[0][$ldap_uid][0])) {
 					$success = $ldap->bind($userdetails[0][dn], $password, 1);
-				} else
-					addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Search for user ' . $username . ' failed');
+				} else addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Search for user ' . $username . ' failed in DN: '. $users_dn);
 			} else {
 				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before search and bind; check credentials!');
 			}
@@ -132,7 +130,9 @@ function botLDAPSSI() {
 		} else {
 			$ldap = new ldapConnector($mambotParams);
 		}
-
+		
+		addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', '!!! Starting authentication procedure !!!');
+		
 		if (!$ldap->connect()) {
 			//echo "<h1>Failed to connect to LDAP server!</h1>";
 			addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Failed to connect to LDAP Server');
@@ -147,7 +147,7 @@ function botLDAPSSI() {
 			if ($success)
 				break;
 		}
-
+		
 		if ($success) {
 			$query = "SELECT `id`" .
 			"\nFROM `#__users`" .
