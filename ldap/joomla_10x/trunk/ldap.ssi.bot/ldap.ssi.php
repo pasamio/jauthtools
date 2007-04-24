@@ -1,4 +1,5 @@
 <?php
+
 /**
  * LDAP Single Sign In (Integrated Authentication) for Joomla! 1.0.x
  *
@@ -24,27 +25,28 @@
 // no direct access
 defined('_VALID_MOS') or die('Restricted access');
 
-if(!function_exists('addLogEntry')) {
+if (!function_exists('addLogEntry')) {
 	function addLogEntry($application, $type, $priority, $message) {
-		if(defined('_JLOGGER_API')) {
+		if (defined('_JLOGGER_API')) {
 			global $database;
 			$logentry = new JLogEntry($database);
 			$logentry->application = $application;
-			$logentry->type 		= $type;
-			$logentry->priority 	= $priority;
-			$logentry->message 	= $message;
-			$logentry->store() or die('Log entry save failed: '. $message);
+			$logentry->type = $type;
+			$logentry->priority = $priority;
+			$logentry->message = $message;
+			$logentry->store() or die('Log entry save failed: ' . $message);
 		}
 	}
 }
 
-if(!function_exists('ldap_connect')) {
-	addLogEntry('LDAP SSI Mambot','authentication','crit','PHP LDAP Library not detected');
-} else if(!class_exists('ldapConnector')) {
-	addLogEntry('LDAP SSI Mambot','authentication','crit','Joomla! LDAP Library not detected');
-} else {
-	$_MAMBOTS->registerFunction('onAfterStart', 'botLDAPSSI');
-}
+if (!function_exists('ldap_connect')) {
+	addLogEntry('LDAP SSI Mambot', 'authentication', 'crit', 'PHP LDAP Library not detected');
+} else
+	if (!class_exists('ldapConnector')) {
+		addLogEntry('LDAP SSI Mambot', 'authentication', 'crit', 'Joomla! LDAP Library not detected');
+	} else {
+		$_MAMBOTS->registerFunction('onAfterStart', 'botLDAPSSI');
+	}
 
 /**
  * Attempt to authenticate a user
@@ -56,68 +58,69 @@ if(!function_exists('ldap_connect')) {
  * @param string ldap_uid LDAP User ID (used for authbind method)
  * @param string ldap_password LDAP Password (for above)
  */
- function botLDAPSSI_AttemptLogin(&$ldap, $auth_method, $users_dn, $username, $password, $ldap_uid='', $ldap_password='') {
-	 	$success = 0;
-		switch ($auth_method) {
-			case 'anonymous' :
-				// Need to do some work!
-				if ($ldap->anonymous_bind()) {
-                                        // Comparison time
-                                        $success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
-                                } else {
-                                        addLogEntry('LDAP SSI Mambot','authentication','err','Anonymous Prebind failed before search. Note: MSAD requires an auth user for searches by default.');
-                                        return 0;
-                                }
-                                break;
-			case 'bind' :
-                                // We just accept the result here
-                                $success = $ldap->bind($username, $password);
-                                break;
+function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $password, $ldap_uid = '', $ldap_password = '') {
+	$success = 0;
+	switch ($auth_method) {
+		case 'anonymous' :
+			// Need to do some work!
+			if ($ldap->anonymous_bind()) {
+				// Comparison time
+				$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
+			} else {
+				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Anonymous Prebind failed before search. Note: MSAD requires an auth user for searches by default.');
+				return 0;
+			}
+			break;
+		case 'bind' :
+			// We just accept the result here
+			$success = $ldap->bind($username, $password);
+			break;
 
-                        case 'authbind' :
-                                // First bind as a search enabled account
-                                if ($ldap->bind()) {
-                                        $userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
-                                        //echo '<pre>'; print_R($userdetails); die('pie');
-                                        if (isset ($userdetails[0][$ldap_uid][0])) {
-                                                $success = $ldap->bind($userdetails[0][dn], $password, 1);
-                                        } else addLogEntry('LDAP SSI Mambot','authentication','err','Search for user '. $username .' failed');
-                                } else {
-                                        addLogEntry('LDAP SSI Mambot','authentication','err','Prebind failed before search and bind; check credentials!');
-                                }
-                                break;
+		case 'authbind' :
+			// First bind as a search enabled account
+			if ($ldap->bind()) {
+				$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
+				//echo '<pre>'; print_R($userdetails); die('pie');
+				if (isset ($userdetails[0][$ldap_uid][0])) {
+					$success = $ldap->bind($userdetails[0][dn], $password, 1);
+				} else
+					addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Search for user ' . $username . ' failed');
+			} else {
+				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before search and bind; check credentials!');
+			}
+			break;
 
-                        case 'authenticated' :
-				if ($ldap->bind()) {
-                                        // Comparison time
-                                        $success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
-                                } else {
-                                        addLogEntry('LDAP SSI Mambot','authentication','err','Prebind failed before compare; check credentials!');
-                                        return 0;
-                                }
-                                break;
-		}
-		return $success;
- }
+		case 'authenticated' :
+			if ($ldap->bind()) {
+				// Comparison time
+				$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
+			} else {
+				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before compare; check credentials!');
+				return 0;
+			}
+			break;
+	}
+	return $success;
+}
 
 /**
  * LDAP Single Sign In Procedure
  * @return bool status; these bots are not monitored like auth bots in 1.5
  */
 function botLDAPSSI() {
-        global $database, $option, $mainframe, $acl, $_MAMBOTS, $_LANG;
-        $task = mosGetParam($_GET,'task','');
-        if ($option != 'login' && // don't run
-                ($option != 'com_comprofiler' && $task != 'login') ) { // added community builder support
-                return 0;
-        }
+	global $database, $option, $mainframe, $acl, $_MAMBOTS, $_LANG;
+	$task = mosGetParam($_GET, 'task', '');
+	if ($option != 'login' && // don't run
+	 ($option != 'com_comprofiler' && $task != 'login')) { // added community builder support
+		return 0;
+	}
 
-        $success = 0; // Ensure this is zero
-        $username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
-        $passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
-        $password =& $passwd;
+	$success = 0; // Ensure this is zero
+	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
+	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
+	$password = & $passwd;
 
-        if ($username && $passwd) {
+	if ($username && $passwd) {
 		// load mambot parameters
 		$query = "SELECT params FROM #__mambots WHERE element = 'ldap.ssi' AND folder = 'system'";
 		$database->setQuery($query);
@@ -132,18 +135,19 @@ function botLDAPSSI() {
 
 		if (!$ldap->connect()) {
 			//echo "<h1>Failed to connect to LDAP server!</h1>";
-			addLogEntry('LDAP SSI Mambot','authentication','err','Failed to connect to LDAP Server');
+			addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Failed to connect to LDAP Server');
 			return 0;
 		}
-		$auth_method = $mambotParams->get('auth_method','bind');
-		$user_dn_list = explode(';',$mambotParams->get('search_dn'));
+		$auth_method = $mambotParams->get('auth_method', 'bind');
+		$user_dn_list = explode(';', $mambotParams->get('search_dn'));
 		$ldap_uid = $mambotParams->get('ldap_uid');
 		$ldap_password = $mambotParams->get('ldap_password');
-		foreach($user_dn_list as $user_dn) {
+		foreach ($user_dn_list as $user_dn) {
 			$success = $success || botLDAPSSI_AttemptLogin($ldap, $auth_method, $user_dn, $username, $passwd, $ldap_uid, $ldap_password);
-			if($success) break; 
+			if ($success)
+				break;
 		}
-		
+
 		if ($success) {
 			$query = "SELECT `id`" .
 			"\nFROM `#__users`" .
@@ -156,29 +160,31 @@ function botLDAPSSI() {
 					// Create user 
 					$user->username = $username;
 					// bind/authbind we know who they are (minor optimization)
-					if($auth_method == 'bind' || $auth_method == 'authbind') $ldap->populateUser($user, $mambotParams->get('groupMap'), $ldap->getDN());
-						else  $ldap->populateUser($user, $mambotParams->get('groupMap'));
+					if ($auth_method == 'bind' || $auth_method == 'authbind')
+						$ldap->populateUser($user, $mambotParams->get('groupMap'), $ldap->getDN());
+					else
+						$ldap->populateUser($user, $mambotParams->get('groupMap'));
 					$user->id = 0;
 					$user->password = md5($passwd);
 					$row->registerDate = date('Y-m-d H:i:s');
 					if ($user->usertype == 'Public Frotnend' && !$mambotParams->get('autocreateregistered')) {
-						addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'User creation halted for '. $username .' since they would only be registered');
+						addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'User creation halted for ' . $username . ' since they would only be registered');
 						$ldap->close();
-                                                return false;
-                                        } else {
-                                                $user->store();// or die('Could not autocreate user:' . print_r($user, 1));
-                                                if($option == 'com_comprofiler' && $mambotParams->get('cbconfirm')) {
-                                                        $database->setQuery('INSERT INTO #__comprofiler (id, user_id, first_name, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES ('. $user->id .','. $user->id .',"'.$user->name/'",0,0,1,1,1,0,1)');
-                                                        $database->Query() or die($database->getErrorMsg());
-                                                }
-                                                addLogEntry('LDAP SSI Mambot','authentication', 'err', 'Autocreated user:'. print_r($user,1));
-                                        }
-                                }
-                        } else {
+						return false;
+					} else {
+						$user->store(); // or die('Could not autocreate user:' . print_r($user, 1));
+						if ($option == 'com_comprofiler' && $mambotParams->get('cbconfirm')) {
+							$database->setQuery('INSERT INTO #__comprofiler (id, user_id, first_name, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES (' . $user->id . ',' . $user->id . ',"' . $user->name / '",0,0,1,1,1,0,1)');
+							$database->Query() or die($database->getErrorMsg());
+						}
+						addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Autocreated user:' . print_r($user, 1));
+					}
+				}
+			} else {
 				if ($userId) {
-					addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Updating user '. $userId);
+					addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Updating user ' . $userId);
 					//$user->load(intval($userId));
-					$query = "UPDATE `#__users` SET password = '". md5($passwd) ."' WHERE username = '$username'";
+					$query = "UPDATE `#__users` SET password = '" . md5($passwd) . "' WHERE username = '$username'";
 					$database->setQuery($query);
 					$database->Query(); // or die($database->getErrorMsg());
 				} else {
@@ -191,18 +197,18 @@ function botLDAPSSI() {
 		} else {
 			// Extra check to to see if the user's password should be reset upon failure to bind.
 			if ($mambotParams->get('forceldap')) {
-				addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'Resetting password for '. $username .' to enforce LDAP Authentication');
+				addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Resetting password for ' . $username . ' to enforce LDAP Authentication');
 				$query = "UPDATE `#__users` SET password = '' WHERE username = '$username'";
-                                $database->setQuery($query);
-                                $database->Query();
-                        }
-                        addLogEntry('LDAP SSI Mambot','authentication', 'notice', 'LDAP Authentication failed for '. $username);
-                        $ldap->close();
-                }
-                return true;
-        } else {
-                addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Warning, no username and password detected for SSI event!');
-                return false; // No username and password
-        }
+				$database->setQuery($query);
+				$database->Query();
+			}
+			addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'LDAP Authentication failed for ' . $username);
+			$ldap->close();
+		}
+		return true;
+	} else {
+		addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Warning, no username and password detected for SSI event!');
+		return false; // No username and password
+	}
 }
 ?>
