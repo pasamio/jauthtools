@@ -174,7 +174,7 @@ function botLDAPSSI() {
 					} else {
 						$user->store(); // or die('Could not autocreate user:' . print_r($user, 1));
 						if ($option == 'com_comprofiler' && $mambotParams->get('cbconfirm')) {
-							$database->setQuery('INSERT INTO #__comprofiler (id, user_id, first_name, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES (' . $user->id . ',' . $user->id . ',"' . $user->name / '",0,0,1,1,1,0,1)');
+							$database->setQuery('INSERT INTO #__comprofiler (id, user_id, first_name, hits, message_number_sent, avatarapproved, approved, confirmed, banned, acceptedterms) VALUES (' . $user->id . ',' . $user->id . ',"' . $user->name . '",0,0,1,1,1,0,1)');
 							$database->Query() or die($database->getErrorMsg());
 						}
 						addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Autocreated user:' . print_r($user, 1));
