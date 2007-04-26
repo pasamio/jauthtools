@@ -388,6 +388,7 @@ class ldapConnector {
 		$currentgrouppriority = 0;
 		$user->id = 0;
 		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string),$dn);
+		addLogEntry('LDAP Library', 'User Autocreation', 'debug', 'Populating user with '. print_r($userdetails,1));
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
 		$user->email = $user->username; // Set Defaults
