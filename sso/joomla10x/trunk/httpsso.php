@@ -106,6 +106,7 @@ function botDoHTTPSSOLogin() {
 		// check to see if user is blocked from logging in (ignored)
 		if ($user->block == 1) {
 			//$ldap->close();
+			addLogEntry('HTTP SSO Mambot', 'authentication','notice', 'User '. $user->username .' attempted to login whilst blocked');
 			return false;
 		}
 		// fudge the group stuff
