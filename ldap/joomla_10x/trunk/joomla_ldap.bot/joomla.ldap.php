@@ -84,6 +84,12 @@ class ldapConnector {
 	/** @var string LDAP Map Password
 	    @access private */
 	var $ldap_password = '';
+	/** @var string LDAP Map Group Name
+		@access private */
+	var $ldap_groupname = '';
+	/** @var string Autocreate default group
+		@access private */
+	var $defaultgroup = 'registered';
 	/** @var string Bind Method */
 	var $bind_method = '';
 	/** @var int Bind Result */
@@ -391,10 +397,27 @@ class ldapConnector {
 		addLogEntry('LDAP Library', 'User Autocreation', 'debug', 'Populating user with '. print_r($userdetails,1));
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
+		if(strlen($this->defaultgroup)) {
+			switch($this->defaultgroup) {
+				case 'registered':
+					$user->gid = 18;
+					$user->usertype = 'Registered';
+					break;
+				case 'author':
+					$user->gid = 19;
+					$user->usertype = 'Author';
+					break;
+				case 'editor':
+					$user->gid = 20;
+					$user->usertype = 'Editor';
+					break;
+			}
+		} // Note: default case taken care of already!
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults		
 		$ldap_email = $this->ldap_email ? $this->ldap_email : 'mail';
 		$ldap_fullname = $this->ldap_fullname ? $this->ldap_fullname : 'fullName';
+		$groupMembership = $this->ldap_groupname ? $this->ldap_groupname : 'groupMembership';
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $userdetails[0][$ldap_email][0];
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
@@ -418,8 +441,8 @@ class ldapConnector {
 						)), 'gid' => $details[1], 'usertype' => $details[2], 'priority' => $details[3]);
 					}
 				}
-				if (isset ($userdetails[0]['groupMembership'])) {
-					foreach ($userdetails[0]['groupMembership'] as $group) {
+				if (isset ($userdetails[0][$groupMembership])) {
+					foreach ($userdetails[0][$groupMembership] as $group) {
 						// Hi there :)
 						foreach ($groupMap as $mappedgroup) {
 							if (strtolower($mappedgroup['groupname']) == strtolower($group)) { // darn case sensitivty

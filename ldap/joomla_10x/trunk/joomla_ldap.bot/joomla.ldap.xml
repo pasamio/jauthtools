@@ -40,6 +40,12 @@
 			<param name="ldap_uid" type="text" size="20" default="uid" label="Map User ID" description="Map: User ID" />
 			<param name="ldap_password" type="text" size="20" default="userPassword" label="Map Password" description="Map: Password" />
 			<param name="ldap_groupname" type="text" size="20" default="groupMembership" label="Map Group Name" description="The attribute in LDAP storing the group name" />
+			<param name="defaultgroup" type="list" default="frontend" label="Default Group" description="The default group to autocreate users in.">
+				<option value="frontend">Frontend User</option>
+				<option value="registered">Registered</option>
+				<option value="author">Author</option>
+				<option value="editor">Editor</option>
+			</param>
 			<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
 	    </params>
 </mosinstall>
