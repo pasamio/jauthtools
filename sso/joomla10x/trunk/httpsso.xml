@@ -7,7 +7,7 @@
         <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
         <authorEmail>pasamio@gmail.com</authorEmail>
         <authorUrl>pasamio.id.au</authorUrl>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <description>Initiates Single Signon for users with HTTP Server Variables</description>
         <files>
                 <filename mambot="httpsso">httpsso.php</filename>
@@ -67,7 +67,7 @@
 			<param name="ldap_uid" type="text" size="20" default="uid" label="Map User ID" description="Map: User ID" />
 			<param name="ldap_password" type="text" size="20" default="userPassword" label="Map Password" description="Map: Password" />
 			<param name="ldap_blocked" type="text" size="20" default="loginDisabled" label="Map User Blocked" description="LDAP Attribute to map blocked users" />
-			<param name="ldap_groups" type="text" size="20" default="groupMembership" label="Map User Groups" description="LDAP Attribute to map users groups" />		
+			<param name="ldap_groupname" type="text" size="20" default="groupMembership" label="Map Group Name" description="The attribute in LDAP storing the group name" />		
 			<param name="@spacer" type="spacer" default="" label="" description="" />
 			<param name="cbconfirm" type="radio" default="0" label="CB: Confirm Users" description="Enable autoconfirmation of new user accounts within CB. This is required for full autocreation">
 				<option value="0">No confirm</option>
