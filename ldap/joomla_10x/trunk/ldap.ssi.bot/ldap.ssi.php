@@ -1,5 +1,4 @@
 <?php
-
 /**
  * LDAP Single Sign In (Integrated Authentication) for Joomla! 1.0.x
  *

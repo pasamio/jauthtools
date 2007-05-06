@@ -84,6 +84,9 @@ class ldapConnector {
 	/** @var string LDAP Map Password
 	    @access private */
 	var $ldap_password = '';
+	/** @var string LDAP Map Blocked
+	 * @access private */
+	var $ldap_blocked = 'loginDisabled';
 	/** @var string LDAP Map Group Name
 		@access private */
 	var $ldap_groupname = '';
@@ -418,6 +421,7 @@ class ldapConnector {
 		$ldap_email = $this->ldap_email ? $this->ldap_email : 'mail';
 		$ldap_fullname = $this->ldap_fullname ? $this->ldap_fullname : 'fullName';
 		$groupMembership = $this->ldap_groupname ? $this->ldap_groupname : 'groupMembership';
+		$ldap_block = $this->ldap_blocked ? $this->ldap_blocked : 'loginDisabled';
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $userdetails[0][$ldap_email][0];
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
@@ -426,7 +430,7 @@ class ldapConnector {
 				$user->name = $user->username;
 			}
 
-			$user->block = intval($userdetails[0]['loginDisabled'][0]);
+			$user->block = intval($userdetails[0][$ldap_block][0]);
 			if ($map) {
 				// Process Map
 				$groups = explode("<br />", $map);
