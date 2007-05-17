@@ -166,7 +166,7 @@ function botLDAPSSI() {
 					$user->id = 0;
 					$user->password = md5($passwd);
 					$row->registerDate = date('Y-m-d H:i:s');
-					if ($user->usertype == 'Public Frotnend' && !$mambotParams->get('autocreateregistered')) {
+					if ($user->usertype == 'Public Frontend' && !$mambotParams->get('autocreateregistered')) {
 						addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'User creation halted for ' . $username . ' since they would only be registered');
 						$ldap->close();
 						return false;
