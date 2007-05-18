@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mosinstall version="1.0.0" type="mambot" group="system">
+<mosinstall version="1.0" type="mambot" group="system">
         <name>Joomla LDAP</name>
         <author>Sam Moffatt/Toowoomba City Council</author>
         <creationDate>September 2006</creationDate>
@@ -7,7 +7,7 @@
         <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
         <authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
         <authorUrl>www.toowoomba.qld.gov.au</authorUrl>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <description>JAuthTools: Common LDAP Library</description>
         <files>
                 <filename mambot="joomla.ldap">joomla.ldap.php</filename>
