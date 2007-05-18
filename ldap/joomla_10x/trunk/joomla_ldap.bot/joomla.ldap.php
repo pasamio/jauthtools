@@ -442,7 +442,7 @@ class ldapConnector {
 							'groupname' => trim(str_replace("\n",
 							'',
 							$details[0]
-						)), 'gid' => $details[1], 'usertype' => $details[2], 'priority' => $details[3]);
+						)), 'gid' => $details[1], 'usertype' => $details[2], 'priority' => intval($details[3]));
 					}
 				}
 				if (isset ($userdetails[0][$groupMembership])) {
