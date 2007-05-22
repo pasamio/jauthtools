@@ -99,7 +99,7 @@ class ldapConnector {
 	var $bind_result = 0;
 	
 	/** @var string Group Map */
-	var $groupmap = null;
+	var $groupMap = null;
 	
 	/**
 	 * Constructor
@@ -396,10 +396,11 @@ class ldapConnector {
 	 * @param bool ad Is this an AD search
 	 */
 	function populateUser(& $user, $map = null, $dn=null, $ad = false) {
-		// Grab user details
-		if($map == null) {
-			$map = $this->groupmap;
+		// Check that the map has a length otherwise use the default one
+		if(!strlen($map)) {
+			$map = $this->groupMap;
 		}
+		// Grab user details
 		$currentgrouppriority = 0;
 		$user->id = 0;
 		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string),$dn);
