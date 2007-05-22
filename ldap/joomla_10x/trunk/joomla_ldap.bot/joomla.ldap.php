@@ -98,6 +98,9 @@ class ldapConnector {
 	/** @var int Bind Result */
 	var $bind_result = 0;
 	
+	/** @var string Group Map */
+	var $groupmap = null;
+	
 	/**
 	 * Constructor
 	 * @param object An object of configuration variables
@@ -394,6 +397,9 @@ class ldapConnector {
 	 */
 	function populateUser(& $user, $map = null, $dn=null, $ad = false) {
 		// Grab user details
+		if($map == null) {
+			$map = $this->groupmap;
+		}
 		$currentgrouppriority = 0;
 		$user->id = 0;
 		$userdetails = $this->simple_search(str_replace("[search]", $user->username, $this->search_string),$dn);
