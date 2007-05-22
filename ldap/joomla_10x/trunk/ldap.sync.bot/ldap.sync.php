@@ -112,13 +112,6 @@ function botDoLdapSync() {
 
 					$tmp->id = $row->id;
 					$tmp->store();
-					$query = "SELECT aro_id" . "\n FROM #__core_acl_aro" . "\n WHERE value = " . (int) $row->id;
-					$database->setQuery($query);
-					$aro_id = $database->loadResult();
-
-					$query = "UPDATE #__core_acl_groups_aro_map" . "\n SET group_id = " . (int) $row->gid . "\n WHERE aro_id = " . (int) $aro_id;
-					$database->setQuery($query);
-					$database->query() or die($database->stderr());
 				} else {
 					/*echo '<pre>';
 					print_R($tmp);
