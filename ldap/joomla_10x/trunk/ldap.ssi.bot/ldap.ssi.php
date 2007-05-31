@@ -107,14 +107,19 @@ function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $p
 function botLDAPSSI() {
 	global $database, $option, $mainframe, $acl, $_MAMBOTS, $_LANG;
 	$task = mosGetParam($_GET, 'task', '');
+	$submit = mosGetParam($_POST,'submit', '');
 	if ($option != 'login' && // don't run
-	 ($option != 'com_comprofiler' && $task != 'login')) { // added community builder support
+	 ($option != 'com_comprofiler' && $task != 'login') &&
+	 ($submit != 'Login')) { // added community builder support
 		return 0;
 	}
-
 	$success = 0; // Ensure this is zero
 	$username = stripslashes(strval(mosGetParam($_REQUEST, 'username', '')));
 	$passwd = stripslashes(strval(mosGetParam($_REQUEST, 'passwd', '')));
+	$usrname = stripslashes(strval(mosGetParam($_REQUEST, 'usrname', '')));
+	$pass = stripslashes(strval(mosGetParam($_REQUEST, 'pass', '')));
+	$username = $username ? $username : $usrname;
+	$passwd = $passwd ? $passwd : $pass;
 	$password = & $passwd;
 
 	if ($username && $passwd) {
@@ -129,7 +134,7 @@ function botLDAPSSI() {
 		} else {
 			$ldap = new ldapConnector($mambotParams);
 		}
-		
+
 		addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', '!!! Starting authentication procedure !!!');
 		
 		if (!$ldap->connect()) {
