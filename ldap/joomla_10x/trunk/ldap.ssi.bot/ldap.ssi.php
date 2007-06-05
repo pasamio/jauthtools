@@ -60,22 +60,21 @@ if (!function_exists('ldap_connect')) {
 function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $password, $ldap_uid = '', $ldap_password = '') {
 	$success = 0;
 	switch ($auth_method) {
+		case 'authenticated' :
 		case 'anonymous' :
+		case 'compare':
 			// Need to do some work!
-			if ($ldap->anonymous_bind()) {
+			if ($ldap->bind()) {
 				// Comparison time
 				$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
 			} else {
-				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Anonymous Prebind failed before search. Note: MSAD requires an auth user for searches by default.');
+				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before compare. Note: MSAD requires an auth user for searches by default; check credentials.');
 				return 0;
 			}
 			break;
-		case 'bind' :
-			// We just accept the result here
-			$success = $ldap->bind($username, $password);
-			break;
 
 		case 'authbind' :
+		case 'search':
 			// First bind as a search enabled account
 			if ($ldap->bind()) {
 				$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
@@ -87,15 +86,10 @@ function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $p
 			}
 			break;
 
-		case 'authenticated' :
-			if ($ldap->bind()) {
-				// Comparison time
-				$success = $ldap->compare(str_replace("[username]", $username, $users_dn, $ldap_password, $password));
-			} else {
-				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before compare; check credentials!');
-				return 0;
-			}
-			break;
+		case 'bind' :
+			// We just accept the result here
+			$success = $ldap->bind($username, $password);
+			break;			
 	}
 	return $success;
 }
