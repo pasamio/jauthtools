@@ -23,7 +23,7 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-	    <param name="negotiate_tls" type="radio" default="0" label="Negociate TLS" description="Negotiate TLS encryption with the LDAP server. This requires all traffic to and from my LDAP server to be encrypted.">
+	    <param name="negotiate_tls" type="radio" default="0" label="Negotiate TLS" description="Negotiate TLS encryption with the LDAP server. This requires all traffic to and from my LDAP server to be encrypted.">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>		
@@ -46,14 +46,10 @@
 			<option value="author">Author</option>
 			<option value="editor">Editor</option>
 		</param>
-		<param name="forceldap" type="radio" default="0" label="Force LDAP Authentication" description="Users Joomla password is reset upon unsuccessful bind. This ensures that new LDAP passwords are used, instead of old synchronized value.">
-			<option value="0">No</option>
-			<option value="1">Yes</option>
-		</param>
 		<param name="base_dn" type="text" size="20" default="" label="Base DN" description="The base DN of your LDAP server, e.g o=mydomain.com" />
 		<param name="search_string" type="text" size="20" default="" label="Search string" description="A query string used for search for a given user. The [search] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[search]. Several strings can be used, separated by semicolons." />
 		<param name="username" type="text" size="20" default="" label="Connect username" description="The Connect String and Connect password define connection parameters for the DN lookup phase. 3 options are available:- Anonymous DN lookup. Leave both fields blank.- Administrative connection: &apos;Connect String&apos; is the DN of an administrative account, e.g uid=admin,ou=users,o=mydomain.com. &apos;Connect password&apos; is the actual password of your administrative account.- Connection with the user-supplied login/password: &apos;Connect String&apos; is a DN, where the [login] token will be dynamically replaced by the user login, e.g uid=[login],ou=People,dc=my-domain,dc=com. &apos;Connect password&apos; should be the password for the user account" />
-		<param name="password" type="text" size="20" default="" label="Connect password" description="Password used with connection string" />
+		<param name="password" type="text" size="20" default="" label="Connect password" description="This should be used with the username to do prebind activities (namely with Active Directory systems)" />
 		<param name="@spacer" type="spacer" default="" label="" description="" />
 		<param name="users_dn" type="text" size="20" default="" label="Users DN" description="The [username] keyword is dynamically replaced by the user-provided login, so an example string is: uid=[username], dc=my-domain, dc=com. Several strings can be used, separated by semicolons." />
 		<param name="@spacer" type="spacer" default="" label="" description="" />
