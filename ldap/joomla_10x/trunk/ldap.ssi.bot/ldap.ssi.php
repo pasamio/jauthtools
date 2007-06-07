@@ -158,7 +158,7 @@ function botLDAPSSI() {
 					// Create user 
 					$user->username = $username;
 					// bind/authbind we know who they are (minor optimization)
-					if ($auth_method == 'bind' || $auth_method == 'authbind')
+					if ($auth_method == 'bind' || $auth_method == 'authbind' || $auth_method == 'search')
 						$ldap->populateUser($user, $mambotParams->get('groupMap'), $ldap->getDN());
 					else
 						$ldap->populateUser($user, $mambotParams->get('groupMap'));
