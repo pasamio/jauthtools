@@ -64,7 +64,7 @@ function botDoLdapSSOLogin() {
 	$params = $database->loadResult();
 	$mambotParams =& new mosParameters( $params );
 	$ldap = null;	// bad c habbit
-	if ($mambotParams->get('useglobal')) {
+	if ($mambotParams->get('useglobal',1)) {
 		$ldap = new ldapConnector();
 	} else {
 		$ldap = new ldapConnector($mambotParams);

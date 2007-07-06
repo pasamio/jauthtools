@@ -79,7 +79,7 @@ if(!function_exists('ldap_connect')) {
 				if ($ldap->bind()) {
 					$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
 					if (isset ($userdetails[0][$ldap_uid][0])) {
-						$success = $ldap->bind($userdetails[0][dn], $password, 1);
+						$success = $ldap->bind($userdetails[0]['dn'], $password, 1);
 					}
 				} else { addLogEntry('LDAP SSI Mambot','authentication', 'err', 'LDAP Bind failed for authbind method. This will prevent authentication'); }
 				break;
@@ -122,7 +122,7 @@ function botLDAPSSI() {
 		$params = $database->loadResult();
 		$mambotParams = & new mosParameters($params);
 		$ldap = null; // bad c habbit
-		if ($mambotParams->get('useglobal')) {
+		if ($mambotParams->get('useglobal',1)) {
 			$ldap = new ldapConnector();
 		} else {
 			$ldap = new ldapConnector($mambotParams);
