@@ -72,7 +72,7 @@ function botDoHTTPSSOLogin() {
 		$userId = intval($database->loadResult());
 		$user = new mosUser($database);
 		if ($userId < 1) {
-			if ($mambotParams->get('useglobal')) {
+			if ($mambotParams->get('useglobal',1)) {
 				$ldap = new ldapConnector();
 			} else {
 				$ldap = new ldapConnector($mambotParams);
