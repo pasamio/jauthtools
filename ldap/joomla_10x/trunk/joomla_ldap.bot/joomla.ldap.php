@@ -98,6 +98,13 @@ class ldapConnector {
 	/** @var int Bind Result */
 	var $bind_result = 0;
 	
+	/** @var bool use_iconv Use iconv */
+	var $use_conv = 0;
+	/** @var string iconv_from Original encoding */
+	var $iconv_from = 'ISO8559-1';
+	/** @var string iconv_to New encoding */
+	var $iconv_to = 'UTF-8';
+	
 	/** @var string Group Map */
 	var $groupMap = null;
 	
@@ -133,6 +140,12 @@ class ldapConnector {
 				}
 			}
 		}
+	}
+	
+	function convert($string) {
+		if(function_exists('iconv') && $this->use_iconv) {
+			return iconv($this->iconv_to, $this->iconv_from, $string);
+		} else return $string;
 	}
 
 	/**
@@ -430,11 +443,11 @@ class ldapConnector {
 		$groupMembership = $this->ldap_groupname ? $this->ldap_groupname : 'groupMembership';
 		$ldap_block = $this->ldap_blocked ? $this->ldap_blocked : 'loginDisabled';
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
-			$user->email = $userdetails[0][$ldap_email][0];
+			$user->email = $this->convert($userdetails[0][$ldap_email][0]);
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
-				$user->name = $userdetails[0][$ldap_fullname][0];
+				$user->name = $this->convert($userdetails[0][$ldap_fullname][0]);
 			} else {
-				$user->name = $user->username;
+				$user->name = $this->convert($user->username);
 			}
 
 			$user->block = intval($userdetails[0][$ldap_block][0]);

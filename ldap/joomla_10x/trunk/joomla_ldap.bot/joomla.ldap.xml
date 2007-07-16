@@ -7,7 +7,7 @@
         <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
         <authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
         <authorUrl>www.toowoomba.qld.gov.au</authorUrl>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
         <description>JAuthTools: Common LDAP Library</description>
         <files>
                 <filename mambot="joomla.ldap">joomla.ldap.php</filename>
@@ -48,5 +48,11 @@
 				<option value="editor">Editor</option>
 			</param>
 			<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
+			<param name="use_iconv" type="radio" default="0" label="Use iconv" description="iconv is required to convert some fields into UTF-8 that is stored in the database. You will need iconv installed (See System -> System Info -> PHP Info)	or this will error">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</param>
+			<param name="iconv_from" default="ISO8859-1" type="text" size="10" label="Original Encoding (e.g. ISO8859-1">
+			<param name="iconv_to" default="UTF-8" type="text" size="10" label="Target Encoding (e.g. your database)">
 	    </params>
 </mosinstall>
