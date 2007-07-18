@@ -50,7 +50,7 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-		<param name="iconv_from" default="ISO8859-1" type="text" size="10" label="Original Encoding (e.g. ISO8859-1">
-		<param name="iconv_to" default="UTF-8" type="text" size="10" label="Target Encoding (e.g. your database)">
+		<param name="iconv_from" default="ISO8859-1" type="text" size="10" label="Original Encoding (e.g. ISO8859-1" />
+		<param name="iconv_to" default="UTF-8" type="text" size="10" label="Target Encoding (e.g. your database)" />
 	</params>
 </mosinstall>
