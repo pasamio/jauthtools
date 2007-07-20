@@ -17,7 +17,7 @@
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
 
-jimport('joomla.application.plugin.plugin');
+jimport('joomla.event.plugin');
 /**
  * SSO eDirectory Source
  * Attempts to match a user based on their network address attribute (IP Address)
