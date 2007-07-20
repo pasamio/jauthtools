@@ -18,7 +18,7 @@
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
 
-jimport('joomla.application.plugin.plugin');
+jimport('joomla.event.plugin');
 
 /**
  * SSO Initiation
