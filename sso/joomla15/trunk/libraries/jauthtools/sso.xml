@@ -10,7 +10,8 @@
   <license>GNU/GPL</license>
   <version id="1">1.5.0</version>
   <description>The JAuthTools SSO Library</description>
-  <files folder="jauthtools">
+  <library>jauthtools</library>
+  <files>
     <filename>sso.php</filename>
   </files>
   <downloadsource>http://sammoffatt.com.au/packages/downloads/sso-library.xml</downloadsource>  
