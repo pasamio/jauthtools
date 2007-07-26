@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE install SYSTEM "/home/moffats/public_html/eclipse-remote/jinstallmanager/resources/library-install.dtd" >
+<install type="library" version="1.5.0">
+  <name>JAuthTools SSO Library</name>
+  <creationDate>26-Jul-2007</creationDate>
+  <author>Sam Moffatt</author>
+  <authorEmail>pasamio@pasamio.id.au</authorEmail>
+  <authorUrl>http://pasamio.id.au</authorUrl>
+  <copyright>2007 (c) Sam Moffatt</copyright>
+  <license>GNU/GPL</license>
+  <version id="1">1.5.0</version>
+  <description>The JAuthTools SSO Library</description>
+  <files folder="jauthtools">
+    <filename>sso.php</filename>
+  </files>
+  <downloadsource>http://sammoffatt.com.au/packages/downloads/sso-library.xml</downloadsource>  
+</install>

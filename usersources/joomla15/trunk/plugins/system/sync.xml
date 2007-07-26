@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE install SYSTEM "/home/moffats/public_html/eclipse-remote/jinstallmanager/resources/plugin-install.dtd" >
+<install group="system" type="plugin" version="1.5.0">
+  <name>JAuthTools Synchronization Plugin</name>
+  <creationDate>26-Jul-2007</creationDate>
+  <author>Sam Moffatt</author>
+  <authorEmail>pasamio@pasamio.id.au</authorEmail>
+  <authorUrl>http://pasamio.id.au</authorUrl>
+  <copyright>2007 (C) Sam Moffatt</copyright>
+  <license>GNU/GPL</license>
+  <version id="1">1.5.0</version>
+  <description>JAuthTools Synchronization utilizes user source plugins to update user details</description>
+  <files>
+    <filename plugin="sync">sync.php</filename>
+  </files>
+  <downloadsource>http://sammoffatt.com.au/packages/downloads/sync-plugin.xml</downloadsource>
+</install>
