@@ -45,6 +45,6 @@
 		<param name="ldap_blocked" type="text" size="20" default="loginDisabled" label="Map User Blocked" description="LDAP Attribute to map blocked users" />
 		<param name="ldap_groups" type="text" size="20" default="groupMembership" label="Map User Groups" description="LDAP Attribute to map users groups" />
 		<param name="@spacer" type="spacer" default="" label="" description="" />
-		<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups">
+		<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
 	</params>
 </install>
