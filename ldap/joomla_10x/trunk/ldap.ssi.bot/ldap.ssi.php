@@ -82,7 +82,7 @@ function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $p
 					$success = $ldap->bind($userdetails[0][dn], $password, 1);
 				} else addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Search for user ' . $username . ' failed in DN: '. $users_dn);
 			} else {
-				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before search and bind; check credentials!');
+				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before search and bind; check credentials:' . $ldap->getDN());
 			}
 			break;
 
