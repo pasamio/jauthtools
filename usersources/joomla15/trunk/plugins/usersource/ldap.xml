@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>imb.toowoomba.qld.gov.au</authorUrl>
-	<version>1.5</version>
+	<version id="1">1.5.0</version>
 	<description>Retrieves users from an LDAP directory</description>
 	<files>
 		<filename plugin="ldap">ldap.php</filename>
