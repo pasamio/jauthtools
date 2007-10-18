@@ -6,7 +6,7 @@
 	<description>This library provides User Sources support for Joomla! 1.5</description>
 	<packager>Sam Moffatt</packager>
 	<packagerurl>http://sammoffatt.com.au/</packagerurl>
-	<update>http://www.jsitepoint.com/update/libraries/</update>
+	<update>http://www.jsitepoint.com/update/libraries/lib_jauthtools_usersource</update>
 	<version>1.5</version>
 	<files>
 		<file>usersource.php</file>
