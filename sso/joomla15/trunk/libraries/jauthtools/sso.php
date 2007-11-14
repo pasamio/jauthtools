@@ -39,7 +39,7 @@ class JAuthSSOAuthentication extends JObservable {
 		// Load up SSO plugins
 		$plugins = JPluginHelper :: getPlugin('sso');
 		foreach ($plugins as $plugin) {
-			$className = 'plg' . $plugin->folder . $plugin->element;
+			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
 				$plugin = new $className ($this);
 			} else {

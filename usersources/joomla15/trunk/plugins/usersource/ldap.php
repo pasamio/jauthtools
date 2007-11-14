@@ -19,6 +19,7 @@
  */
 
 jimport('joomla.event.plugin');
+jimport('joomla.client.ldap');
 
 /**
  * SSO Initiation
