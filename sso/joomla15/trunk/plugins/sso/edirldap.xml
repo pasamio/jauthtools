@@ -7,7 +7,8 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>imb.toowoomba.qld.gov.au</authorUrl>
-	<version>1.5</version>
+	<versionb id="1">1.5</version>
+	<update>http://www.jsitepoint.com/update/plugins/plgssoedirldap</update>
 	<description>Handles user detection using eDirectory's networkAddress attribute</description>
 	<files>
 		<filename plugin="edirldap">edirldap.php</filename>

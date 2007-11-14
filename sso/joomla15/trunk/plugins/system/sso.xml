@@ -7,7 +7,8 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>sammoffatt.com.au/jauthtools/</authorUrl>
-	<version>1.5</version>
+	<version id="1">1.5</version>
+	<update>http://www.jsitepoint.com/update/plugins/plgsystemsso</update>
 	<description>This plugin provides the base of the JAuthTools SSO infrastructure.</description>
 	<files>
 		<filename plugin="sso">sso.php</filename>
