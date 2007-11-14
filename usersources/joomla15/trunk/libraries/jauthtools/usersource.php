@@ -43,7 +43,7 @@ class JAuthUserSource extends JObservable {
 		// Load up User Source plugins
 		$plugins = JPluginHelper :: getPlugin('usersource');
 		foreach ($plugins as $plugin) {
-			$className = 'plg' . $plugin->folder . $plugin->element;
+			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
 				$plugin = new $className ($this);
 			} else {
@@ -61,6 +61,10 @@ class JAuthUserSource extends JObservable {
 			}
 		}
 		return false;		
+	}
+	
+	function doUserSynchronization() {
+		// dummy function
 	}
 }
 ?>

@@ -18,6 +18,7 @@
  */
 
 jimport('joomla.event.plugin');
+jimport('joomla.client.ldap');
 /**
  * SSO eDirectory Source
  * Attempts to match a user based on their network address attribute (IP Address)

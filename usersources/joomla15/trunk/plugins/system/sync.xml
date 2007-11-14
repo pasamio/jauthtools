@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE install SYSTEM "/home/moffats/public_html/eclipse-remote/jinstallmanager/resources/plugin-install.dtd" >
 <install group="system" type="plugin" version="1.5.0">
-  <name>JAuthTools Synchronization Plugin</name>
+  <name>System - JAuthTools Synchronization Plugin</name>
   <creationDate>26-Jul-2007</creationDate>
   <author>Sam Moffatt</author>
   <authorEmail>pasamio@pasamio.id.au</authorEmail>
