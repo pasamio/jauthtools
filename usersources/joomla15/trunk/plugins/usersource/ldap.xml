@@ -8,6 +8,7 @@
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>imb.toowoomba.qld.gov.au</authorUrl>
 	<version id="1">1.5.0</version>
+	<update>http://www.jsitepoint.com/update/plugins/plgusersourceldap</update>
 	<description>Retrieves users from an LDAP directory</description>
 	<files>
 		<filename plugin="ldap">ldap.php</filename>
