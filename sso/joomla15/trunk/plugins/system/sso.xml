@@ -13,5 +13,10 @@
 	<files>
 		<filename plugin="sso">sso.php</filename>
 	</files>
-	<params />
+	<params>
+		<param name="autocreate" type="radio" default="0" label="Auto Create Users" description="PARAMAUTOCREATEUSERS">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+	</params>
 </install>

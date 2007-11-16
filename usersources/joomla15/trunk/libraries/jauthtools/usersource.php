@@ -54,7 +54,7 @@ class JAuthUserSource extends JObservable {
 			// Try to find user
 			$user = new JUser();
 			if($plugin->getUser($username,$user)) {
-				//print_r($user);
+				print_r($user);
 				$user->save();
 				return true;
 				break;
@@ -63,8 +63,32 @@ class JAuthUserSource extends JObservable {
 		return false;		
 	}
 	
-	function doUserSynchronization() {
-		// dummy function
+	function doUserSynchronization($username) {
+		// Load up User Source plugins
+		$plugins = JPluginHelper :: getPlugin('usersource');
+		foreach ($plugins as $plugin) {
+			$className = 'plg' . $plugin->type . $plugin->name;
+			if (class_exists($className)) {
+				$plugin = new $className ($this);
+			} else {
+				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::doUserSynchronization: Could not load ' . $className);
+				continue;
+			}
+			// Fire a user sync event
+			if($user = $plugin->doUserSync($username)) {
+				// if we succeeded then lets bail out
+				// means the first system gets priority
+				// and no other system will overwrite the values
+				// but first we need to save our user
+				$my =& JFactory::getUser(); // get who we are now
+				$my->set('gid', 25); 		// and fake things to by pass security
+				$user->save(); 				// save us, now the db is up
+				$my->load();				// reload!
+				return true;					// thats all folks
+				break;
+			}
+		}
+		return false;
 	}
 }
 ?>

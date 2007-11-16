@@ -43,7 +43,12 @@ class plgSystemSync extends JPlugin {
 		$plugin = & JPluginHelper :: getPlugin('system', 'sync');
 		$params = new JParameter($plugin->params);
 		$sso = new JAuthUserSource();
-		$sso->doUserSynchronization();
+
+		if(($user = JFactory::getUser())) {
+			if($user->username) {
+				$sso->doUserSynchronization($user->username);
+			}
+		}
 	}
 }
 
