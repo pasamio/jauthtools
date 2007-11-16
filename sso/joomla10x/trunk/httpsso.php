@@ -9,7 +9,7 @@
  *  
  * Created on Apr 18, 2007
  * 
- * @package Joomla! Authentication Tools
+ * @package JAuthTools
  * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
  * @copyright 2007 Sam Moffatt 

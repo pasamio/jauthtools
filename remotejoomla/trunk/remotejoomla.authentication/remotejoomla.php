@@ -1,8 +1,7 @@
 <?php
 /**
 * @version		$Id: example.php 7180 2007-04-23 16:51:53Z jinx $
-* @package		Joomla
-* @subpackage	JFramework
+* @package		JAuthTools
 * @copyright	Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved.
 * @license		GNU/GPL, see LICENSE.php
 * Joomla! is free software. This version may have been modified pursuant
