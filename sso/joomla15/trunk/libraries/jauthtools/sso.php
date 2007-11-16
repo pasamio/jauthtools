@@ -35,7 +35,7 @@ class JAuthSSOAuthentication extends JObservable {
 		}
 	}
 
-	function doSSOAuth($autocreate=0) {
+	function doSSOAuth($autocreate=false) {
 		// Load up SSO plugins
 		$plugins = JPluginHelper :: getPlugin('sso');
 		foreach ($plugins as $plugin) {
