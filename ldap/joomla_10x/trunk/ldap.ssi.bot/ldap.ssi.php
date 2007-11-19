@@ -123,8 +123,9 @@ function botLDAPSSI() {
 		$params = $database->loadResult();
 		$mambotParams = & new mosParameters($params);
 		$ldap = null; // bad c habbit
-		if ($mambotParams->get('useglobal')) {
+		if ($mambotParams->get('useglobal',1)) {
 			$ldap = new ldapConnector();
+			$mambotParams = $ldap->getParams();
 		} else {
 			$ldap = new ldapConnector($mambotParams);
 		}

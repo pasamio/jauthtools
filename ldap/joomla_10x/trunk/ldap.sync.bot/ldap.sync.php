@@ -65,8 +65,9 @@ function botDoLdapSync() {
 		$params = $database->loadResult();
 		$mambotParams = & new mosParameters($params);
 		$ldap = null; // bad c habbit
-		if ($mambotParams->get('useglobal')) {
+		if ($mambotParams->get('useglobal',1)) {
 			$ldap = new ldapConnector();
+			$mambotParams = $ldap->getParams();
 		} else {
 			$ldap = new ldapConnector($mambotParams);
 		}
@@ -95,9 +96,9 @@ function botDoLdapSync() {
 				// Step 5: Check demotion system
 				// Check if we can demote users, if yes continue regardless
 				// If not, we need to ensure that the user is a higher position
-				if($mambotParams->get('demoteuser') || // we can demote our user
-					$acl->is_group_child_of($tmp->usertype, $row->usertype, 'ARO' || // our user is a child of our old group (not a demotion)
-					($acl->is_group_child_of($row->usertype, 'Public Frontend', 'ARO') && ($acl->is_group_child_of($tmp->usertype, 'Public Backend')) // user was in the front end and is now in the back end
+				if($mambotParams->get('demoteuser',1) || // we can demote our user
+					$acl->is_group_child_of($tmp->usertype, $row->usertype, 'ARO') || // our user is a child of our old group (not a demotion)
+					($acl->is_group_child_of($row->usertype, 'Public Frontend', 'ARO') && $acl->is_group_child_of($tmp->usertype, 'Public Backend')) // user was in the front end and is now in the back end
 					) {
 					// Step 6: Check their group membership
 					// - We create a new user object and tell LDAP to populate it
@@ -120,12 +121,12 @@ function botDoLdapSync() {
 						$mainframe->_session->usertype = $tmp->usertype;
 						$mainframe->_session->gid = intval($gid);
 						$mainframe->_session->update();
+						addLogEntry('LDAP Sync Mambot', 'synchronisation', 'notice', 'Updated user "'.$tmp->username.'" with new group: '. $tmp->usertype);
 					} else {
-						/*echo '<pre>';
-						print_R($tmp);
-						print_R($row);
-						print_R($mainframe->_session); die();*/
+						addLogEntry('LDAP Sync Mambot', 'synchronisation', 'notice', 'No change in user groups for "'.$tmp->username.'" not updating user');
 					}
+				} else {
+						addLogEntry('LDAP Sync Mambot', 'synchronisation', 'debug', 'Demotion is disabled; User "'.$tmp->username.'" has been skipped.');
 				}
 			}
 		}

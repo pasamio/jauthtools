@@ -64,8 +64,9 @@ function botDoLdapSSOLogin() {
 	$params = $database->loadResult();
 	$mambotParams =& new mosParameters( $params );
 	$ldap = null;	// bad c habbit
-	if ($mambotParams->get('useglobal')) {
+	if ($mambotParams->get('useglobal',1)) {
 		$ldap = new ldapConnector();
+		$mambotParams = $ldap->getParams();
 	} else {
 		$ldap = new ldapConnector($mambotParams);
 	}
@@ -108,7 +109,7 @@ function botDoLdapSSOLogin() {
 			$database->setQuery($query);
 			$userId = intval($database->loadResult());
 			$user = new mosUser($database);
-			if ($userId < 1) {
+			if ($userId == 0) {
 				if(intval($mambotParams->get('autocreate'))) {
 					// Create user 
 					$user->username = $username;
@@ -124,12 +125,13 @@ function botDoLdapSSOLogin() {
 							addLogEntry('LDAP SSO Mambot', 'authentication', 'err', 'Could not autocreate user:'. print_r($user,1));
 						}
 					}
+				} else {
+					addLogEntry('LDAP SSO Mambot', 'authenticaton', 'notice', 'User was detected via LDAP but does not exist in Joomla!, however user creation is disabled so aborting execution.'.$mambotParams->get('autocreate'));
+					$ldap->close();
+					return false;
 				}
-			} else if($userId) {
-				$user->load(intval($userId));
 			} else {
-				$ldap->close();
-				return false;
+				$user->load(intval($userId));
 			}
 				
 			// check to see if user is blocked from logging in (ignored)
