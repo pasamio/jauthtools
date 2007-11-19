@@ -99,7 +99,7 @@ class ldapConnector {
 	var $bind_result = 0;
 	
 	/** @var bool use_iconv Use iconv */
-	var $use_conv = 0;
+	var $use_iconv = 0;
 	/** @var string iconv_from Original encoding */
 	var $iconv_from = 'ISO8559-1';
 	/** @var string iconv_to New encoding */
@@ -107,6 +107,9 @@ class ldapConnector {
 	
 	/** @var string Group Map */
 	var $groupMap = null;
+	
+	/** @var object params Param Object */
+	var $params = null;
 	
 	/**
 	 * Constructor
@@ -124,6 +127,7 @@ class ldapConnector {
 					}
 				}
 			}
+			$this->params = $configObj;
 		} else {
 			// Not an object, attempt auto configuration
 			global $database;
@@ -139,6 +143,7 @@ class ldapConnector {
 					}
 				}
 			}
+			$this->params = $mambotParams;
 		}
 	}
 	
@@ -483,6 +488,14 @@ class ldapConnector {
 		} else {
 			//die('Bailing?'.$userdetails[0]['dn']);
 		}
+	}
+	
+	/**
+	 * Return the params used by this instance
+	 * @return object param object
+	 */
+	function getParams() {
+		return $this->params;
 	}
 }
 ?>

@@ -1,0 +1,32 @@
+1. Copyright and disclaimer
+---------------------------
+This application is opensource software released under the GPL.  Please
+see source code and the LICENSE file
+
+
+2. Changelog
+------------
+This is a non-exhaustive (but still near complete) changelog for
+JAuthTools. Our thanks to all those people who've contributed bug reports and
+code fixes.
+
+
+Legend:
+
+* -> Security Fix
+# -> Bug Fix
++ -> Addition
+^ -> Change
+- -> Removed
+! -> Note
+
+
+19-Nov-2007 Sam Moffatt
+! Preparing for release of JAuthTools 1.0.6 and JLogger 1.0.1
+# Fixed issue with iconv param in Joomla! LDAP
+# Fixed issue with Use Global not overwriting params (resetting)
+# Fixed issue with SSO bailout when user is found but shouldn't be created
+^ Added more JLogger entries
+^ Added anti user demotion option for Sync Plugin
+^ Moved a whole heap of params around to look more consistent
+! Added a CHANGELOG file
