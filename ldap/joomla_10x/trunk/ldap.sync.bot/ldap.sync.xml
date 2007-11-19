@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>www.toowoomba.qld.gov.au</authorUrl>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<description>JAuthTools: Allows LDAP group synchronization to overwrite existing settings.</description>
 	<files>
 			<filename mambot="ldap.sync">ldap.sync.php</filename>
@@ -45,7 +45,19 @@
 		<param name="ldap_password" type="text" size="20" default="userPassword" label="Map Password" description="Map: Password" />
 		<param name="ldap_blocked" type="text" size="20" default="loginDisabled" label="Map User Blocked" description="LDAP Attribute to map blocked users" />
 		<param name="ldap_groupname" type="text" size="20" default="groupMembership" label="Map Group Name" description="The attribute in LDAP storing the group name" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		<param name="defaultgroup" type="list" default="frontend" label="Default Group" description="The default group to autocreate users in.">
+			<option value="frontend">Frontend User</option>
+			<option value="registered">Registered</option>
+			<option value="author">Author</option>
+			<option value="editor">Editor</option>
+		</param>
+		<param name="demoteuser" type="radio" default="1" label="Demote Users" description="Sometimes synchronization will cause a user to be demoted, this option toggles if this can happen">
+			<option value="0">No</option>
+			<option value="1">Yes<option>
+		</param>
 		<param name="groupMap" type="textarea" cols="30" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />		
 		<param name="use_iconv" type="radio" default="0" label="Use iconv" description="iconv is required to convert some fields into UTF-8 that is stored in the database. You will need iconv installed (See System -> System Info -> PHP Info)	or this will error">
 			<option value="0">No</option>
 			<option value="1">Yes</option>

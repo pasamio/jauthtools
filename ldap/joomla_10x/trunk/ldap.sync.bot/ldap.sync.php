@@ -92,31 +92,40 @@ function botDoLdapSync() {
 					mosErrorAlert(_LOGIN_BLOCKED);
 				}
 
-				// Step 5: Check they're group membership
-				// - We create a new user object and tell LDAP to populate it
-				// - Then we check the usertype against the one in the current session
-				// - If its the same no worries, if its different we change values ;)
-				// fudge the group stuff
-				if ($tmp->id && ($tmp->usertype != $row->usertype) || ($row->usertype != $mainframe->_session->usertype)) {
-					//	echo 'resetting';
-					$grp = $acl->getAroGroup($row->id);
-					$row->gid = 1;
-					if ($acl->is_group_child_of($grp->name, 'Registered', 'ARO') || $acl->is_group_child_of($grp->name, 'Public Backend', 'ARO')) {
-						// fudge Authors, Editors, Publishers and Super Administrators into the Special Group
-						$row->gid = 2;
+				// Step 5: Check demotion system
+				// Check if we can demote users, if yes continue regardless
+				// If not, we need to ensure that the user is a higher position
+				if($mambotParams->get('demoteuser') || // we can demote our user
+					$acl->is_group_child_of($tmp->usertype, $row->usertype, 'ARO' || // our user is a child of our old group (not a demotion)
+					($acl->is_group_child_of($row->usertype, 'Public Frontend', 'ARO') && ($acl->is_group_child_of($tmp->usertype, 'Public Backend')) // user was in the front end and is now in the back end
+					) {
+					// Step 6: Check their group membership
+					// - We create a new user object and tell LDAP to populate it
+					// - Then we check the usertype against the one in the current session
+					// - If its the same no worries, if its different we change values ;)
+					// fudge the group stuff
+					if ($tmp->id && ($tmp->usertype != $row->usertype) || ($row->usertype != $mainframe->_session->usertype)) {
+						// Update the database
+						$tmp->id = $row->id;
+						$tmp->store();
+						// Get new ACL details
+						$grp = $acl->getAroGroup($row->id);
+						$gid = 1;
+						if ($acl->is_group_child_of($grp->name, 'Registered', 'ARO') || $acl->is_group_child_of($grp->name, 'Public Backend', 'ARO')) {
+							// fudge Authors, Editors, Publishers and Super Administrators into the Special Group
+							$gid = 2;
+						}
+						// Update session
+						$row->usertype = $grp->name;
+						$mainframe->_session->usertype = $tmp->usertype;
+						$mainframe->_session->gid = intval($gid);
+						$mainframe->_session->update();
+					} else {
+						/*echo '<pre>';
+						print_R($tmp);
+						print_R($row);
+						print_R($mainframe->_session); die();*/
 					}
-					$row->usertype = $grp->name;
-					$mainframe->_session->usertype = $row->usertype;
-					$mainframe->_session->gid = intval($row->gid);
-					$mainframe->_session->update();
-
-					$tmp->id = $row->id;
-					$tmp->store();
-				} else {
-					/*echo '<pre>';
-					print_R($tmp);
-					print_R($row);
-					print_R($mainframe->_session); die();*/
 				}
 			}
 		}
