@@ -4,12 +4,14 @@ ORIGINAL=`pwd`
 FILELIST=''
 for i in `ls trunk`
 do
-	echo Building $i
-	cd trunk/$i
-	tar -zcvf ../../packages/$i.tgz *
-	echo
-	FILELIST="$FILELIST $i.tgz "
-	cd $ORIGINAL
+	if [ -d trunk/$i ]; then
+		echo Building $i
+		cd trunk/$i
+		tar -zcvf ../../packages/$i.tgz *
+		echo
+		FILELIST="$FILELIST $i.tgz "
+		cd $ORIGINAL
+	fi
 done
 
 cd packages
