@@ -71,9 +71,10 @@ function botDoHTTPSSOLogin() {
 		$database->setQuery($query);
 		$userId = intval($database->loadResult());
 		$user = new mosUser($database);
-		if ($userId < 1) {
+		if ($userId == 0) {
 			if ($mambotParams->get('useglobal',1)) {
-				$ldap = new ldapConnector();
+				$ldap = new ldapConnector();.
+				$mambotParams = $ldap->getParams();
 			} else {
 				$ldap = new ldapConnector($mambotParams);
 			}
@@ -83,25 +84,24 @@ function botDoHTTPSSOLogin() {
 				// Create user 
 				$user->username = $username;
 				$ldap->populateUser($user, $mambotParams->get('groupMap'));
+				$ldap->close();
 				$user->id = 0;
 				$row->registerDate = date('Y-m-d H:i:s');
 				if ($user->usertype == 'Public Frontend' && !$mambotParams->get('autocreateregistered')) {
 					addLogEntry('HTTP SSO Mambot', 'authentication', 'notice', 'User creation halted for ' . $username . ' since they would only be registered');
-					//$ldap->close();
 					return false;
 				} else {
 					if (!$user->store()) {
 						addLogEntry('HTTP SSO Mambot', 'authentication', 'err', 'Could not autocreate user:' . print_r($user, 1));
 					}
 				}
-			}
-		} else
-			if ($userId) {
-				$user->load(intval($userId));
 			} else {
-				//$ldap->close();
+				addLogEntry('HTTP SSO Mambot', 'authenticaton', 'notice', 'User was detected via HTTP SSO and found in LDAP but does not exist in Joomla!, however user creation is disabled so aborting execution.'.$mambotParams->get('autocreate'));
 				return false;
 			}
+		} else {
+			$user->load(intval($userId));
+		}
 
 		// check to see if user is blocked from logging in (ignored)
 		if ($user->block == 1) {
