@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>www.toowoomba.qld.gov.au</authorUrl>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	<description>JAuthTools: Common LDAP Library</description>
 	<files>
 		<filename mambot="joomla.ldap">joomla.ldap.php</filename>
