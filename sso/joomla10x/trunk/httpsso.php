@@ -86,6 +86,7 @@ function botDoHTTPSSOLogin() {
 				$ldap->populateUser($user, $mambotParams->get('groupMap'));
 				$ldap->close();
 				$user->id = 0;
+				$user->password = 'sso user';
 				$row->registerDate = date('Y-m-d H:i:s');
 				if ($user->usertype == 'Public Frontend' && !$mambotParams->get('autocreateregistered')) {
 					addLogEntry('HTTP SSO Mambot', 'authentication', 'notice', 'User creation halted for ' . $username . ' since they would only be registered');
