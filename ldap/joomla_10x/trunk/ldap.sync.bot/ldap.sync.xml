@@ -34,6 +34,10 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
+		<param name="ldap_is_ad" type="radio" default="0" label="LDAP directory is AD" description="Specifies if the LDAP directory is an Active Directory. You&apos;ll need to check it for Windows 2000 servers.">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>		
 		<param name="@spacer" type="spacer" default="" label="" description="" />
 		
 		<!-- Server Binding Settings -->
