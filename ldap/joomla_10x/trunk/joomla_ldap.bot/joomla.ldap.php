@@ -239,6 +239,7 @@ class ldapConnector {
 				if (is_null($password)) {
 					$password = $this->password;
 				}
+
 				$this->setDN($username, $nosub);
 				$this->bind_result =  @ldap_bind($this->_resource, $this->getDN(), $password);
 		}
@@ -425,6 +426,7 @@ class ldapConnector {
 		addLogEntry('LDAP Library', 'User Autocreation', 'debug', 'Populating user with '. print_r($userdetails,1));
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
+
 		if(strlen($this->defaultgroup)) {
 			switch($this->defaultgroup) {
 				case 'registered':
@@ -447,6 +449,7 @@ class ldapConnector {
 		$ldap_fullname = $this->ldap_fullname ? $this->ldap_fullname : 'fullName';
 		$groupMembership = $this->ldap_groupname ? $this->ldap_groupname : 'groupMembership';
 		$ldap_block = $this->ldap_blocked ? $this->ldap_blocked : 'loginDisabled';
+
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $this->convert($userdetails[0][$ldap_email][0]);
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
@@ -470,6 +473,27 @@ class ldapConnector {
 						)), 'gid' => $details[1], 'usertype' => $details[2], 'priority' => intval($details[3]));
 					}
 				}
+
+				// add group memberships for active directory
+				if($ad) {
+					$groupMemberships = Array();
+					$cnt = 0;
+					foreach ($groupMap as $groupMapEntry) {
+						$group = $groupMapEntry['groupname'];
+						$groupdetails = $this->simple_search($group, $dn);
+						$groupMembers = $groupdetails[0]['member'];
+						
+						foreach ($groupMembers as $groupMember) {
+							if($groupMember == $userdetails[0]['dn']) {
+								$groupMemberships[$cnt++] = $group;
+							}
+						}
+					}
+					if($cnt > 0) {
+						$userdetails[0][$groupMembership] = $groupMemberships;
+					}
+				}
+				
 				if (isset ($userdetails[0][$groupMembership])) {
 					foreach ($userdetails[0][$groupMembership] as $group) {
 						// Hi there :)

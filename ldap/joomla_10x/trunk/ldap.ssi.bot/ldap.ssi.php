@@ -54,11 +54,14 @@ if (!function_exists('ldap_connect')) {
  * @param string users_dn The user dn to use
  * @param string username The username that we're interested in
  * @param string password The password that we're interested in checking
- * @param string ldap_uid LDAP User ID (used for authbind method)
+ * @param string ldap_uid String used to identify the user in ldap
  * @param string ldap_password LDAP Password (for above)
+ * @param string ldap_bind_uid user able to connect to LDAP
+ * @param string ldap_bind_password LDAP Password (for above)
  */
-function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $password, $ldap_uid = '', $ldap_password = '') {
+function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $password, $ldap_uid = '', $ldap_password = '', $ldap_bind_uid = '', $ldap_bind_password = '') {
 	$success = 0;
+	
 	switch ($auth_method) {
 		case 'authenticated' :
 		case 'anonymous' :
@@ -76,11 +79,13 @@ function botLDAPSSI_AttemptLogin(& $ldap, $auth_method, $users_dn, $username, $p
 		case 'authbind' :
 		case 'search':
 			// First bind as a search enabled account
-			if ($ldap->bind()) {
+			if ($ldap->bind($ldap_bind_uid, $ldap_bind_password, 1)) {
 				$userdetails = $ldap->simple_search($ldap_uid . '=' . $username, $users_dn);
 				if (isset ($userdetails[0][$ldap_uid][0])) {
 					$success = $ldap->bind($userdetails[0][dn], $password, 1);
-				} else addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Search for user ' . $username . ' failed in DN: '. $users_dn);
+				} else {
+					addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Search for user ' . $username . ' failed in DN: '. $users_dn);
+				}
 			} else {
 				addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Prebind failed before search and bind; check credentials:' . $ldap->getDN());
 			}
@@ -137,12 +142,18 @@ function botLDAPSSI() {
 			addLogEntry('LDAP SSI Mambot', 'authentication', 'err', 'Failed to connect to LDAP Server');
 			return 0;
 		}
+		
+		$base_dn = $mambotParams->get('base_dn');
 		$auth_method = $mambotParams->get('auth_method', 'bind');
-		$user_dn_list = explode(';', $mambotParams->get('search_dn'));
+		$user_dn_list = explode(';', $mambotParams->get('users_dn'));
 		$ldap_uid = $mambotParams->get('ldap_uid');
 		$ldap_password = $mambotParams->get('ldap_password');
-		foreach ($user_dn_list as $user_dn) {
-			$success = $success || botLDAPSSI_AttemptLogin($ldap, $auth_method, $user_dn, $username, $passwd, $ldap_uid, $ldap_password);
+		$ldap_bind_uid = $mambotParams->get('username');
+		$ldap_bind_password = $mambotParams->get('password');
+		$ldap_is_ad = $mambotParams->get('ldap_is_ad');
+				 
+		foreach ($user_dn_list as $users_dn) {
+			$success = $success || botLDAPSSI_AttemptLogin($ldap, $auth_method, $users_dn, $username, $passwd, $ldap_uid, $ldap_password, $ldap_bind_uid, $ldap_bind_password);
 			if ($success)
 				break;
 		}
@@ -154,15 +165,20 @@ function botLDAPSSI() {
 			$user = new mosUser($database);
 			$database->setQuery($query);
 			$userId = intval($database->loadResult());
+			
 			if ($userId < 1) {
 				if (intval($mambotParams->get('autocreate'))) {
 					// Create user 
 					$user->username = $username;
+					
 					// bind/authbind we know who they are (minor optimization)
-					if ($auth_method == 'bind' || $auth_method == 'authbind' || $auth_method == 'search')
-						$ldap->populateUser($user, $mambotParams->get('groupMap'), $ldap->getDN());
-					else
-						$ldap->populateUser($user, $mambotParams->get('groupMap'));
+					if ($auth_method == 'bind' || $auth_method == 'authbind' || $auth_method == 'search') {
+						$ldap->populateUser($user, $mambotParams->get('groupMap'), $base_dn, $ldap_is_ad);
+					}
+					else {
+						$ldap->populateUser($user, $mambotParams->get('groupMap'), null, $ldap_is_ad);
+					}
+					
 					$user->id = 0;
 					$user->password = md5($passwd);
 					$row->registerDate = date('Y-m-d H:i:s');
