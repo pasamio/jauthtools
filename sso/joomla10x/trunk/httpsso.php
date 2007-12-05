@@ -3,7 +3,7 @@
 /**
  * HTTP Auth Mambot
  * 
- * This file interconnects with  
+ * This file interconnects with LDAP Tools
  * 
  * PHP4/5
  *  
@@ -126,6 +126,7 @@ function botDoHTTPSSOLogin() {
 		$session->userid = intval($user->id);
 		$session->usertype = $user->usertype;
 		$session->gid = intval($user->gid);
+		$sessuib->time = time();
 		$userid = $user->id;
 		// Persistence
 		$query = "SELECT id, name, username, password, usertype, block, gid" . "\n FROM #__users" . "\n WHERE id = $userid";
@@ -133,10 +134,23 @@ function botDoHTTPSSOLogin() {
 		$database->setQuery($query);
 		$database->loadObject($row);
 		$lifetime = time() + 365 * 24 * 60 * 60;
+		// Remember me cookie
 		$remCookieName = mosMainFrame :: remCookieName_User();
-		$remCookieValue = mosMainFrame :: remCookieValue_User($row->username) . mosMainFrame :: remCookieValue_Pass($row->password) . $row->id;
+		$remCookieValue = mosMainFrame :: remCookieValue_User($row->username) . mosMainFrame :: remCookieValue_Pass($row->password) . $row->id;		
 		setcookie($remCookieName, $remCookieValue, $lifetime, '/');
+		
+		// Session cookie
+		$sessionCookieName 		= mosMainFrame :: sessionCookieName();
+        $sessioncookie          = strval( mosGetParam( $_COOKIE, $sessionCookieName, null ) );
+        // Session ID / `value`
+        $sessionValueCheck      = mosMainFrame::sessionCookieValue( $sessioncookie );
+		
+		// create Session Tracking Cookie set to expire on session end
+        setcookie( $sessionCookieName, $session->getCookie(), false, '/' );
+        
+		
 		$session->store();
+		$session->update();
 		// update user visit data
 		$currentDate = date("Y-m-d\TH:i:s");
 
