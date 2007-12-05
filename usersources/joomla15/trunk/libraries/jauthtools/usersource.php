@@ -19,6 +19,8 @@
 
 jimport('joomla.user.helper');
 jimport('joomla.utilities.string');
+jimport('joomla.base.observable');
+
 /**
  * User Source Provider
  */

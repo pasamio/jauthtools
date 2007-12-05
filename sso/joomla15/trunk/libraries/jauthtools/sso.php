@@ -17,6 +17,8 @@
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
 
+jimport('joomla.base.observable');
+
 /**
  * SSO Auth Handler
  * 
