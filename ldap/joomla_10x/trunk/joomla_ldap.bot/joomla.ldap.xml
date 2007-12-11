@@ -97,5 +97,9 @@
 		</param>
 		<param name="iconv_from" default="ISO8859-1" type="text" size="10" label="Original Encoding (e.g. ISO8859-1)" description="This is the encoding used in your LDAP directory." />
 		<param name="iconv_to" default="UTF-8" type="text" size="10" label="Target Encoding (e.g. your database)" description="This is the encoding used in your database server (e.g. MySQL, typically UTF-8)" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		
+		<!-- LDAP SSO IP Black listing -->
+		<param name="ip_blacklist" default="127.0.0.1" type="textarea" cols="30" rows="10" label="IP Blacklist" description="IP addresses to ignore for Single Sign On (comma seperated)"/>		
 	</params>
 </mosinstall>
