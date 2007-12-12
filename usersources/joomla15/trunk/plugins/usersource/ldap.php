@@ -115,7 +115,7 @@ class plgUserSourceLDAP extends JPlugin {
 				$user->name = $user->username;
 			}
 
-			$user->block = intval($userdetails[0]['loginDisabled'][0]);
+			$user->block = intval($userdetails[0][$loginDisabled][0]);
 			if ($map) {
 				$this->_remapUser($user, $userdetails[0], $this->_parseGroupMap($map), $groupMembership);
 			}
