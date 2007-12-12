@@ -85,7 +85,7 @@ class JAuthUserSource extends JObservable {
 				$my =& JFactory::getUser(); // get who we are now
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$user->save(); 				// save us, now the db is up
-				$my->load();				// reload!
+				$my->load($my->id);				// reload!
 				return true;					// thats all folks
 				break;
 			}
