@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<mosinstall type="component" version="1.0.0">
+	<name>SSO</name>
+	<creationDate>2007-06-14</creationDate>
+	<author>Tomo Cerovsek &amp; Damjan Murn</author>
+	<copyright>Creative Commons</copyright>
+	<authorEmail>Tomo.Cerovsek@gmail.com</authorEmail>
+	<authorUrl></authorUrl>
+	<version>1.1</version>
+	<description>Single Sign-On among Mambo/Joomla portals</description>
+
+	<files>
+		<filename>index.html</filename>
+		<filename>sso.php</filename>
+		<filename>sso.html.php</filename>
+		<filename>images/index.html</filename>
+		<filename>images/offline.gif</filename>
+		<filename>images/online.gif</filename>
+		<filename>images/blank_jm.png</filename>
+		<filename>images/green_jm.png</filename>
+		<filename>images/orange_jm.png</filename>
+		<filename>images/red_jm.png</filename>
+		<filename>language/english.php</filename>
+		<filename>language/index.html</filename>
+		<filename>language/slovenian.php</filename>
+	</files>
+
+	<install>
+		<queries>
+			<query>CREATE TABLE IF NOT EXISTS `#__sso_providers` (
+			  `providerId` varchar(100) NOT NULL,
+			  `siteUrl` varchar(100) NOT NULL,
+			  `siteName` varchar(150) NOT NULL,
+			  `description` varchar(255) NOT NULL,
+			  `comments` varchar(255) NOT NULL,
+			  `abbreviation` varchar(4) NOT NULL,
+			  `ipAddress` varchar(15) NOT NULL,
+			  `country` varchar(50) NOT NULL,
+			  `countryCode` varchar(2) NOT NULL,
+			  `language` varchar(100) NOT NULL,
+			  `status` varchar(32) NOT NULL,
+			  `published` tinyint(1) NOT NULL,
+			  PRIMARY KEY  (`providerId`),
+			  UNIQUE KEY `abbreviation` (`abbreviation`)
+			) ENGINE=MyISAM;</query>
+
+			<query>CREATE TABLE IF NOT EXISTS `#__sso_handles` (
+			  `handle` varchar(128) NOT NULL default '',
+			  `spId` varchar(100) NOT NULL default '',
+			  `username` varchar(25) NOT NULL default '',
+			  `userIP` varchar(15) NOT NULL default '',
+			  `time` timestamp NOT NULL default CURRENT_TIMESTAMP,
+			  PRIMARY KEY  (`handle`)
+			) ENGINE=MyISAM;</query>
+		</queries>
+	</install>
+
+	<uninstall>
+		<queries>
+		</queries>
+	</uninstall>
+
+	<installfile>install.sso.php</installfile>
+	<uninstallfile>uninstall.sso.php</uninstallfile>
+	<administration>
+	    <menu>Mambo/Joomla Single Sign-On</menu>
+	    <submenu>
+			<menu link="option=com_sso&amp;section=providers">Providers</menu>
+			<menu link="option=com_sso&amp;section=providers&amp;task=configuration">Configuration</menu>
+	    </submenu>
+		<files>
+			<filename>admin.sso.php</filename>
+			<filename>index.html</filename>
+			<filename>install.sso.php</filename>
+			<filename>sso.xml</filename>
+			<filename>toolbar.sso.php</filename>
+			<filename>toolbar.sso.html.php</filename>
+			<filename>uninstall.sso.php</filename>
+			<filename>classes/index.html</filename>
+			<filename>classes/ssoProvider.class.php</filename>
+			<filename>classes/ssoService.class.php</filename>
+			<filename>classes/ssoUtils.class.php</filename>
+			<filename>includes/index.html</filename>
+			<filename>includes/providers.php</filename>
+			<filename>includes/providers.html.php</filename>
+			<filename>includes/ssoService.wsdl</filename>
+		</files>
+	</administration>
+</mosinstall>
