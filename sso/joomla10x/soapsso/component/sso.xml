@@ -70,7 +70,7 @@
 	<installfile>install.sso.php</installfile>
 	<uninstallfile>uninstall.sso.php</uninstallfile>
 	<administration>
-	    <menu>Joomla! Single Sign-On</menu>
+	    <menu>JAuthTools SOAP SSO</menu>
 	    <submenu>
 			<menu link="option=com_sso&amp;section=providers">Providers</menu>
 			<menu link="option=com_sso&amp;section=providers&amp;task=configuration">Configuration</menu>
