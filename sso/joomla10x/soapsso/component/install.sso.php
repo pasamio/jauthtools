@@ -13,7 +13,7 @@
 function com_install() {
 	global $database;
 
-	$fields = $database->getTableFields(array('#__users'));
+	/*$fields = $database->getTableFields(array('#__users'));
 	if ( ! array_key_exists('ssoIdentityProvider', $fields['#__users'])) {
 		$database->setQuery("ALTER TABLE #__users ADD ssoIdentityProvider VARCHAR(100) NOT NULL default '';");
 		$database->query() or die($database->stderr());
@@ -21,7 +21,7 @@ function com_install() {
 	if ( ! array_key_exists('ssoOrigUsername', $fields['#__users'])) {
 		$database->setQuery("ALTER TABLE #__users ADD ssoOrigUsername VARCHAR(25) NOT NULL default '';");
 		$database->query() or die($database->stderr());
-	}
+	}*/
 
 	?>
 	<div align="left">
@@ -30,7 +30,7 @@ function com_install() {
 	<td>
 	<code>Installation: <font color="green">successful</font></code><br />
 	<h2>
-	Thank you for installing Mambo/Joomla Single Sign-On!</h2>
+	Thank you for installing Joomla! Single Sign-On!</h2>
 	Copyright (C) 2007 Tomo Cerovsek & Damjan Murn <br />
 	Distributed under the terms of the GNU General Public License <br />
 
@@ -41,7 +41,7 @@ function com_install() {
 	<a href="index2.php?option=com_sso&section=providers&task=configuration">Configuration page</a>
 	and enter required information.
 	<br /><br />
-	The administration of Mambo/Joomla Single Sign-On component can be found under the menu Components -> Mambo/Joomla Single Sign-On.
+	The administration of Joomla! Single Sign-On component can be found under the menu Components -> Joomla! Single Sign-On.
 	</td>
 	</tr>
 	</table>

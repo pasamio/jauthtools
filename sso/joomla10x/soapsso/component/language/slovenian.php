@@ -1,7 +1,7 @@
 ﻿<?php
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
-@define('_SSO_COMP_NAME','Mambo/Joomla Single Sign-On');
+@define('_SSO_COMP_NAME','Joomla! Single Sign-On');
 @define('_SSO_LOGIN','Prijava');
 @define('_SSO_LOGOUT','Odjava');
 @define('_SSO_MAKE_SSO','Pojdi');

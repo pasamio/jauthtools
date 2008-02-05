@@ -32,7 +32,7 @@ class HTML_providers{
 				document.location.href = 'index2.php?option=<?php echo $option ?>&section=<?php echo $section ?>&task=configuration';
 			}
 			else if (pressbutton == 'add') {
-				var url = prompt('Please enter the URL of the Mambo/Joomla portal you want to add:', 'http://');
+				var url = prompt('Please enter the URL of the Joomla! portal you want to add:', 'http://');
 				if (url) {
 					document.location.href = 'index2.php?option=<?php echo $option ?>&section=<?php echo $section ?>&task=add&url=' + escape(url);
 				}
