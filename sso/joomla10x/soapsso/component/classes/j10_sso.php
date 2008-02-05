@@ -3,8 +3,12 @@
  * This file provides Joomla! 1.0 Session Hacking Support
  */
 
-function doJ10SSO($user) {
-			global $acl;
+function doJ10SSO($username) {
+			global $acl, $database, $mainframe;
+			$database->setQuery("SELECT id FROM #__users WHERE username = '". $username."'");
+			$id = $database->loadResult();
+			$user = new mosUser($database);
+			$user->load($id);
  			// fudge the group stuff
 			$grp = $acl->getAroGroup($user->id);
 			$user->gid = 1;

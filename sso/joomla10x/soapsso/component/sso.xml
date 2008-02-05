@@ -2,12 +2,13 @@
 <mosinstall type="component" version="1.0.0">
 	<name>SSO</name>
 	<creationDate>2007-06-14</creationDate>
-	<author>Tomo Cerovsek &amp; Damjan Murn</author>
+	<author>Sam Moffatt (Original Work: Tomo Cerovsek &amp; Damjan Murn)</author>
 	<copyright>Creative Commons</copyright>
+	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorEmail>Tomo.Cerovsek@gmail.com</authorEmail>
-	<authorUrl></authorUrl>
-	<version>1.1</version>
-	<description>Single Sign-On among Mambo/Joomla portals</description>
+	<authorUrl>http://sammoffatt.com.au</authorUrl>
+	<version>1.2</version>
+	<description>Single Sign-On among Joomla! portals</description>
 
 	<files>
 		<filename>index.html</filename>
@@ -52,6 +53,12 @@
 			  `time` timestamp NOT NULL default CURRENT_TIMESTAMP,
 			  PRIMARY KEY  (`handle`)
 			) ENGINE=MyISAM;</query>
+			<query>CREATE TABLE IF NOT EXISTS `#__sso_users` (
+				`id`		INTEGER(12)	NOT NULL,
+				`ssoIdentityProvider` VARCHAR(100) NOT NULL default '',
+				`ssoOrigUsername` VARCHAR(25) NOT NULL default '',
+				PRIMARY KEY (`id`)
+			) ENGINE=MyISAM;</query>
 		</queries>
 	</install>
 
@@ -63,7 +70,7 @@
 	<installfile>install.sso.php</installfile>
 	<uninstallfile>uninstall.sso.php</uninstallfile>
 	<administration>
-	    <menu>Mambo/Joomla Single Sign-On</menu>
+	    <menu>Joomla! Single Sign-On</menu>
 	    <submenu>
 			<menu link="option=com_sso&amp;section=providers">Providers</menu>
 			<menu link="option=com_sso&amp;section=providers&amp;task=configuration">Configuration</menu>

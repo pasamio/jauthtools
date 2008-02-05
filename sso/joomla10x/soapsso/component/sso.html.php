@@ -44,11 +44,11 @@ class ssoHTML {
 	function showLoginPage ( &$params, $image ) {
 		/**
 		* @version $Id: login.html.php,v 1.6 2005/01/15 06:49:01 stingrey Exp $
-		* @package Mambo
+		* @package Joomla
 		* @subpackage Users
 		* @copyright (C) 2000 - 2005 Miro International Pty Ltd
 		* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
-		* Mambo is Free Software
+		* Joomla! is Free Software
 		*/
 		global $option, $mosConfig_lang;
 		?>

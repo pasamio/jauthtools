@@ -4,6 +4,7 @@ defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.'
 require_once( $mainframe->getPath( 'front_html' ) );
 require_once("$mosConfig_absolute_path/administrator/components/$option/classes/ssoProvider.class.php");
 require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/ssoUtils.class.php" );
+require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/j10_sso.php" );
 
 if (isset($_SERVER['HTTP_SOAPACTION'])) {
 	handleSOAPRequest();
@@ -52,12 +53,8 @@ function idplogin() {
 
 	// check if the user is already logged in. If he is not show the login page.
 	// get session variable
-	if ($_VERSION->PRODUCT == 'Mambo' && substr($_VERSION->RELEASE, 0, 3) == '4.6') { // Mambo V4.6
-		$session =& mosSession::getCurrent();
-	} else { // Mambo V4.5
-		global $mainframe;
-		$session =& $mainframe->_session;
-	}
+	global $mainframe;
+	$session =& $mainframe->_session;
 
 	if ( ! $my->id) {
 		showLoginPage();
@@ -66,7 +63,7 @@ function idplogin() {
 
 	// check if local provider ($mosConfig_live_site) really is user's identity provider
     $query = "SELECT ssoIdentityProvider AS identityProvider " .
-			"FROM #__users " .
+			"FROM #__sso_users " .
 			"WHERE `id` = '".$my->id."'";
 	$database->setQuery($query);
 	$userIdP = $database->loadResult(); // user's identity provider
@@ -166,11 +163,7 @@ function splogin() {
 
 	// check if the user is already logged in.
 	// get session variable
-	if ($_VERSION->PRODUCT == 'Mambo' && substr($_VERSION->RELEASE, 0, 3) == '4.6') { // Mambo V4.6
-		$session =& mosSession::getCurrent();
-	} else { // Mambo V4.5
-		$session =& $mainframe->_session;
-	}
+	$session =& $mainframe->_session;
 
 	if ( $my->id) {
 		$mainframe->logout();
@@ -206,7 +199,7 @@ function splogin() {
 	$userAccount->email = addslashes(substr($userAccount->email, 0, 100));
 	
 	// check if the user is registered
-	$database->setQuery( "SELECT username, password, name, email FROM #__users WHERE ssoOrigUsername='$userAccount->username' AND ssoIdentityProvider='$idpId'" );
+	$database->setQuery( "SELECT a.username, a.password, a.name, a.email FROM #__users AS a LEFT JOIN #__sso_users AS b ON a.id = b.id WHERE b.ssoOrigUsername='$userAccount->username' AND b.ssoIdentityProvider='$idpId'" );
 	$database->loadObject($row);
 	if ($database->getErrorNum()) {
 		echo _SSO_ERROR . ' ' . _SSO_DATABASE_ERROR;
@@ -215,7 +208,7 @@ function splogin() {
 
 	if ( ! $row ) {
 		// user is not registered
-		$row = create_mambo_account($userAccount, $idp);
+		$row = create_account($userAccount, $idp);
 		if ($row === false) {
 			return;
 		}
@@ -224,11 +217,11 @@ function splogin() {
 		// user is already registered
         // update user's account if necessary
         if ($row->name != $userAccount->name || $row->email != $userAccount->email) {
-			$database->setQuery( "UPDATE `#__users` SET `name`='$userAccount->name', `email`='$userAccount->email' WHERE `ssoOrigUsername`='$userAccount->username' AND `ssoIdentityProvider`='$idpId'" );
+			$database->setQuery( "UPDATE `#__users` SET `name`='$userAccount->name', `email`='$userAccount->email' WHERE `id` = (SELECT `id` FROM #__sso_users WHERE `ssoOrigUsername`='$userAccount->username' AND `ssoIdentityProvider`='$idpId'" );
 			$database->query();
 		}
 	}
-
+	
 	if ( loginUser($row->username, $row->password) ) {
 		mosRedirect( "index.php" );
 	} else {
@@ -238,11 +231,11 @@ function splogin() {
 }
 
 
-function create_mambo_account(&$userAccount, &$idp) {
+function create_account(&$userAccount, &$idp) {
 	global $database, $mainframe, $option, $mosConfig_live_site, $mosConfig_sitename, $mosConfig_absolute_path;
 
 	// check if the email is already registered
-	$database->setQuery( "SELECT username, ssoOrigUsername, ssoIdentityProvider FROM #__users WHERE email='$userAccount->email'" );
+	$database->setQuery( "SELECT a.username, b.ssoOrigUsername, b.ssoIdentityProvider FROM #__users AS a LEFT JOIN #__sso_users AS b ON a.id = b.id WHERE a.email='$userAccount->email'" );
 	if ( $database->loadObject( $existingAccount ) ) {
 		// user's email is already registered
 		if ( $existingAccount->ssoIdentityProvider ) {
@@ -292,8 +285,8 @@ function create_mambo_account(&$userAccount, &$idp) {
 	$row->block = "0";
 	$row->password = md5( makePassword(30) );
 	$row->registerDate = date("Y-m-d H:i:s");
-	$row->ssoIdentityProvider = $idp->providerId;
-	$row->ssoOrigUsername = $userAccount->username;
+	//$row->ssoIdentityProvider = $idp->providerId;
+	//$row->ssoOrigUsername = $userAccount->username;
 
 	if ( ! $row->check() ) {
 		echo _SSO_ERROR . ' ';
@@ -309,46 +302,25 @@ function create_mambo_account(&$userAccount, &$idp) {
 		return false;
 	}
 	$row->checkin();
+	$database->setQuery("INSERT INTO #__sso_users VALUES(".$row->id.",'".$idp->providerId."','".$userAccount->username."')");
+	$database->Query();
+	
 	return $row;
 }
 
 
 function loginUser($username, $encodedPassword) {
-	global $_VERSION;
-	if ($_VERSION->PRODUCT == 'Mambo' && substr($_VERSION->RELEASE, 0, 3) == '4.6') { // Mambo V4.6
-		require_once(mamboCore::get('mosConfig_absolute_path').'/includes/authenticator.php');
-		$authenticator =& mamboAuthenticator::getInstance();
-		$message = '';
-		$loggedin = $authenticator->authenticateUser($message, $username, $encodedPassword);
-		if (! $loggedin) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	else { // Mambo V4.5
-		global $mainframe;
-		$mainframe->login($username, $encodedPassword);
-		return true;
-	}
+	return doJ10SSO($username);
 }
 
 function loginUserUsingPost() {
-	global $_VERSION;
-	if ($_VERSION->PRODUCT == 'Mambo' && substr($_VERSION->RELEASE, 0, 3) == '4.6') { // Mambo V4.6
-		require_once(mamboCore::get('mosConfig_absolute_path').'/includes/authenticator.php');
-		$authenticator =& mamboAuthenticator::getInstance();
-		$authenticator->loginUser();
-	}
-	else { // Mambo V4.5
-		global $mainframe;
-		$mainframe->login();
-	}
+	global $mainframe;
+	$mainframe->login();
 }
 
 function logout() {
 	global $my, $mainframe;
-	if ( $my->id ) { // user is logged in to Mambo
+	if ( $my->id ) { // user is logged in to Joomla!
 		$mainframe->logout();
 	}
 	mosRedirect( "index.php" );
@@ -389,8 +361,9 @@ function showProvidersList() {
 	$providers = $database->loadObjectList();
 
 	if ( $my->id ) {
-		$database->setQuery( "SELECT name, ssoIdentityProvider AS identityProvider FROM #__users WHERE id='$my->id'" );
+		$database->setQuery( "SELECT a.name, b.ssoIdentityProvider AS identityProvider FROM #__users AS a LEFT JOIN #__sso_users AS b ON a.id = b.id WHERE a.id='$my->id'" );
 		if ( ! $database->loadObject($user) ) {
+			echo $database->getQuery();
 			echo _SSO_ERROR . ' ' . _SSO_DATABASE_ERROR;
 			return;
 		}

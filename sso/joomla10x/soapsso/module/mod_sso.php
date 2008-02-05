@@ -21,10 +21,10 @@ if (is_file("$mosConfig_absolute_path/components/com_sso/language/$mosConfig_lan
 	include_once ("$mosConfig_absolute_path/components/com_sso/language/english.php");
 }
 
-if ( $my->id ) { // user is logged in to Mambo
-	$database->setQuery( "SELECT name, ssoIdentityProvider AS identityProvider FROM #__users WHERE id='$my->id'" );
+if ( $my->id ) { // user is logged in to Joomla!
+	$database->setQuery( "SELECT a.name, b.ssoIdentityProvider AS identityProvider FROM #__users AS a LEFT JOIN #__sso_users AS b ON a.id = b.id WHERE a.id='$my->id'" );	
 	if ( ! $database->loadObject($user) ) {
-		echo _SSO_ERROR . ' ' . _SSO_DATABASE_ERROR;
+		echo _SSO_ERROR . ' ' . _SSO_DATABASE_ERROR ;
 		return;
 	}
 
@@ -93,7 +93,7 @@ if ( $my->id ) { // user is logged in to Mambo
 	}
 }
 
-else { // user is not logged in to Mambo
+else { // user is not logged in to Joomla!
 	$query = "SELECT providerId, siteName " .
 			"FROM `#__sso_providers` " .
 			"WHERE published='1' AND providerId<>'LOCAL' AND status='REGISTERED' " .

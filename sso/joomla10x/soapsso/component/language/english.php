@@ -12,7 +12,7 @@
 
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
-@define('_SSO_COMP_NAME','Mambo/Joomla Single Sign-On');
+@define('_SSO_COMP_NAME','Joomla! Single Sign-On');
 @define('_SSO_LOGIN','Login');
 @define('_SSO_LOGOUT','Logout');
 @define('_SSO_MAKE_SSO','Go');

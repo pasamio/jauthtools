@@ -162,17 +162,20 @@ function addProvider() {
         mosRedirect("index2.php?option=$option&section=$section", $message);
 	}
 	
+	if(!class_exists('SoapClient')) {
+		$message = "SOAP is not installed! Install SOAP to continue";
+		mosRedirect("index2.php?option=$option&section=$section",$message);
+	}
     try {
-		$client = @new SoapClient($wsdlUrl);
-        $response = @$client->GetProviderInfo($mosConfig_live_site);
+		$client = new SoapClient($wsdlUrl);
+        $response = $client->GetProviderInfo($mosConfig_live_site);
     }
     catch (SoapFault $exception) {
 		if ((isset($client) && ! $client) || $exception->faultcode == 'WSDL') {
-			$message = "Error: cannot load WSDL document from $wsdlUrl. Please check the URL $url which should belong to a website based on Mambo/Joomla CMS. " .
-				"Also make sure that Mambo/Joomla Single Sign-On component is installed at $url. " .
+			$message = "Error: cannot load WSDL document from $wsdlUrl. Please check the URL $url which should belong to a website based on Joomla! CMS. " .
+				"Also make sure that Joomla! Single Sign-On component is installed at $url. " .
 				"Please ask the administrator of that site to download the component from " .
-				"<a href='http://mamboxchange.com/projects/sso/'>http://mamboxchange.com/projects/sso/</a> (Mambo) or " .
-				"<a href='http://joomlacode.org/gf/project/sso/'>http://joomlacode.org/gf/project/sso/</a> (Joomla) and install it.";
+				"<a href='http://joomlacode.org/gf/project/jauthtools/'>http://joomlacode.org/gf/project/jauthtools/</a> and install it.";
 
 			show($message);
 			return;

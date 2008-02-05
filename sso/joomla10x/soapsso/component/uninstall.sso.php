@@ -30,7 +30,7 @@ function com_uninstall() {
 	if ($providersList) {
 		$userObj = new mosUser( $database );
 
-		$query = "SELECT `id` FROM `#__users` WHERE `ssoIdentityProvider` IN ($providersList)";
+		$query = "SELECT `id` FROM `#__sso_users` WHERE `ssoIdentityProvider` IN ($providersList)";
 		$database->setQuery($query);
 		$users = $database->loadObjectList();
 		
@@ -40,12 +40,15 @@ function com_uninstall() {
 	}
 
 
-    $database->setQuery("ALTER TABLE `#__users` DROP COLUMN `ssoIdentityProvider`;");
+    /*$database->setQuery("ALTER TABLE `#__users` DROP COLUMN `ssoIdentityProvider`;");
     $database->query();
 
     $database->setQuery("ALTER TABLE `#__users` DROP COLUMN `ssoOrigUsername`;");
-    $database->query();
+    $database->query();*/
 
+    $database->setQuery("DROP TABLE IF EXISTS `#__sso_users`;");
+    $database->Query();
+    
     $database->setQuery("DROP TABLE IF EXISTS `#__sso_providers`;");
     $database->query();
 
