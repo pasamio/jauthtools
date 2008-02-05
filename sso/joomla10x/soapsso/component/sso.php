@@ -5,6 +5,7 @@ require_once( $mainframe->getPath( 'front_html' ) );
 require_once("$mosConfig_absolute_path/administrator/components/$option/classes/ssoProvider.class.php");
 require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/ssoUtils.class.php" );
 require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/j10_sso.php" );
+require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/j15_sso.php" );
 
 if (isset($_SERVER['HTTP_SOAPACTION'])) {
 	handleSOAPRequest();
@@ -310,7 +311,12 @@ function create_account(&$userAccount, &$idp) {
 
 
 function loginUser($username, $encodedPassword) {
-	return doJ10SSO($username);
+	global $_VERSION;
+	if($_VERSION->RELEASE == '1.5') {
+		return doJ15SSO($username);	
+	} else {
+		return doJ10SSO($username);
+	}
 }
 
 function loginUserUsingPost() {

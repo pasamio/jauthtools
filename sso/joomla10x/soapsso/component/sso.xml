@@ -87,6 +87,8 @@
 			<filename>classes/ssoProvider.class.php</filename>
 			<filename>classes/ssoService.class.php</filename>
 			<filename>classes/ssoUtils.class.php</filename>
+			<filename>classes/j10_sso.php</filename>
+			<filename>classes/j15_sso.php</filename>
 			<filename>includes/index.html</filename>
 			<filename>includes/providers.php</filename>
 			<filename>includes/providers.html.php</filename>
