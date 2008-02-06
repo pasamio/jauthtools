@@ -14,15 +14,14 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
-jimport('joomla.event.plugin');
-
+jimport('joomla.plugin.plugin');
 
 /**
  * Remote Joomla Plugin
  *
  * @author Sam Moffatt <sam.moffatt@joomla.org>
- * @package		Joomla
- * @subpackage	JFramework
+ * @package		JAuthTools
+ * @subpackage	Remote-Joomla
  * @since 1.5
  */
 class plgAuthenticationRemoteJoomla extends JPlugin
@@ -51,17 +50,13 @@ class plgAuthenticationRemoteJoomla extends JPlugin
 	 * @return	boolean
 	 * @since 1.5
 	 */
-	function onAuthenticate( $username, $password, &$response )
+	function onAuthenticate( $credentials, $options, &$response )
 	{
-		/*
-		 * Here you would do whatever you need for an authentication routine with the credentials
-		 *
-		 * In this example the mixed variable $return would be set to false
-		 * if the authentication routine fails or an integer userid of the authenticated
-		 * user if the routine passes
-		 */
+		$username = $credentials['username'];
+		$password = $credentials['password'];
+		
 		// Prevent recursion
-		if(defined('_REMOTE_AUTH')) { $response->status = JAUTHENTICATE_STATUS_FAILURE; $response->message = "Remote Auth already active"; return false; }
+		if(defined('_REMOTE_AUTH')) { $response->status = JAUTHENTICATE_STATUS_FAILURE; $response->error_message = "Remote Auth already active"; return false; }
 		// Params
 		$suffix = '';//'.localdomain';
 		// Grab details from the username
