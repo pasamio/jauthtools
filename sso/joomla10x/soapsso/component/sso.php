@@ -222,7 +222,6 @@ function splogin() {
 			$database->query();
 		}
 	}
-	
 	if ( loginUser($row->username, $row->password) ) {
 		mosRedirect( "index.php" );
 	} else {
@@ -236,7 +235,7 @@ function create_account(&$userAccount, &$idp) {
 	global $database, $mainframe, $option, $mosConfig_live_site, $mosConfig_sitename, $mosConfig_absolute_path;
 
 	// check if the email is already registered
-	$database->setQuery( "SELECT a.username, b.ssoOrigUsername, b.ssoIdentityProvider FROM #__users AS a LEFT JOIN #__sso_users AS b ON a.id = b.id WHERE a.email='$userAccount->email'" );
+	$database->setQuery( "SELECT a.username, a.id, b.ssoOrigUsername, b.ssoIdentityProvider FROM #__users AS a LEFT JOIN #__sso_users AS b ON a.id = b.id WHERE a.email='$userAccount->email'" );
 	if ( $database->loadObject( $existingAccount ) ) {
 		// user's email is already registered
 		if ( $existingAccount->ssoIdentityProvider ) {
@@ -247,10 +246,18 @@ function create_account(&$userAccount, &$idp) {
 			printf(_SSO_MAIL_ALREADY_REGISTERED1, $userAccount->email, $mosConfig_sitename, $existingAccount->ssoOrigUsername, $idpLink, $loginLink);
 			return false;
 		} else {
-			// user already has a local account
-			echo _SSO_ERROR . ' ';
-			printf(_SSO_MAIL_ALREADY_REGISTERED2, $userAccount->email, $mosConfig_sitename, $existingAccount->username);
-			return false;
+			if($userAccount->username != $existingAccount->username || !$idp->trusted) {
+				// user already has a local account
+				// but the usernames don't match or their identity provider isn't trusted
+				echo _SSO_ERROR . ' ';
+				printf(_SSO_MAIL_ALREADY_REGISTERED2, $userAccount->email, $mosConfig_sitename, $existingAccount->username);
+				return false;
+			} else {
+				// we found a user and we are trusted, log them into their local account
+				$user = new mosUser($database);
+				$user->load($existingAccount->id);
+				return $user;
+			}
 		}
 	}
 

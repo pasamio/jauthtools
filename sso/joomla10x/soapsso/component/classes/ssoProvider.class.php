@@ -25,6 +25,7 @@ class ssoProvider extends mosDBTable {
 	var $language = null;
 	var $status = null;
 	var $published = null;
+	var $trusted = null;
 
     function ssoProvider(&$database) {
         $this->mosDBTable('#__sso_providers', 'providerId', $database);
@@ -41,6 +42,7 @@ class ssoProvider extends mosDBTable {
 
 	function init_record() {
 		$this->published = '1';
+		$this->trusted = '0';
 	}
 
 	function loadMyself() {
@@ -241,6 +243,19 @@ class ssoProvider extends mosDBTable {
 		}
     }
 
+    function trust() {
+    	global $database;
+        $sql = "UPDATE #__sso_providers " .
+               "SET trusted ='1' " .
+               "WHERE providerId='$this->providerId'";
+        $database->setQuery($sql);
+        if ( ! $database->query()) {
+			return false;
+        } else {
+			return true;
+		}
+    }
+    
 }
 
 ?>

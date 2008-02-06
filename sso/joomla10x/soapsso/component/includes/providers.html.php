@@ -266,6 +266,14 @@ class HTML_providers{
 			<?php echo mosHTML::yesnoRadioList('published', 'class="inputbox"', $provider->published) ?>
 			</td>
 		</tr>
+		<tr>
+			<td>
+			Trusted
+			</td>
+			<td>
+			<?php echo mosHTML::yesnoRadioList('trusted', 'class="inputbox"', $provider->trusted) ?>
+			</td>
+		</tr>
 		</table>
 
 		<input type="hidden" name="providerId" value="<?php echo $provider->providerId ?>">
