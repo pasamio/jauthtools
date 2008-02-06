@@ -38,7 +38,7 @@ function doJ10SSO($username) {
 			$remCookieName  = mosMainFrame::remCookieName_User();
 			$remCookieValue = mosMainFrame::remCookieValue_User( $row->username ) . mosMainFrame::remCookieValue_Pass( $row->password ) . $row->id;
 			setcookie( $remCookieName, $remCookieValue, $lifetime, '/' );
-			$session->store();
+			if(!$session->store()) return false;
 			// update user visit data
 			$currentDate = date("Y-m-d\TH:i:s");
 
