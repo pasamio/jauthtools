@@ -1,5 +1,4 @@
 <?php
-<?php
 /**
 * @version		$Id: joomla.php 7180 2007-04-23 16:51:53Z jinx $
 * @package		JAuthTools
@@ -20,7 +19,7 @@ jimport('joomla.event.plugin');
 /**
  * Joomla! Base XML-RPC Plugin
  *
- * @author Louis Landry <louis.landry@joomla.org>
+ * @author Sam Moffatt <sam.moffatt@joomla.org>
  * @package XML-RPC
  * @since 1.5
  */
@@ -77,10 +76,10 @@ class plgXMLRPCRemoteJoomlaAuthServices
 	function remoteAuth($username, $password) {
 		// Set this here so that we prevent recursion later
 		define('_REMOTE_AUTH', 1);
-		jimport('joomla.user.authentication');
 		$result = '';
-		$auth = new JAuthentication();
-		$result = $auth->authenticate($username, $password);
+		jimport( 'joomla.user.authentication');
+		$auth = & JAuthentication::getInstance();
+		$result = $auth->authenticate(Array('username'=>$username,'password'=>$password), Array());
 		$data = array();
 		$data['email'] 		= $result->email;
 		$data['username'] 	= $result->username;
