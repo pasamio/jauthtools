@@ -41,7 +41,7 @@
 			  `language` varchar(100) NOT NULL,
 			  `status` varchar(32) NOT NULL,
 			  `published` tinyint(1) NOT NULL,
-			  trusted` TINYINT(1)  NOT NULL DEFAULT 0,
+			  `trusted` TINYINT(1)  NOT NULL DEFAULT 0,
 			  PRIMARY KEY  (`providerId`),
 			  UNIQUE KEY `abbreviation` (`abbreviation`)
 			) ENGINE=MyISAM;</query>
