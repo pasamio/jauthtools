@@ -151,6 +151,7 @@ function botLDAPSSI() {
 		$ldap_bind_uid = $mambotParams->get('username');
 		$ldap_bind_password = $mambotParams->get('password');
 		$ldap_is_ad = $mambotParams->get('ldap_is_ad');
+		$obscurepw = intval($mambotParams->get('obscurepw',0));
 				 
 		foreach ($user_dn_list as $users_dn) {
 			$success = $success || botLDAPSSI_AttemptLogin($ldap, $auth_method, $users_dn, $username, $passwd, $ldap_uid, $ldap_password, $ldap_bind_uid, $ldap_bind_password);
@@ -180,7 +181,15 @@ function botLDAPSSI() {
 					}
 					
 					$user->id = 0;
-					$user->password = md5($passwd);
+					
+					if($obscurepw) {
+						$tmppw = mosMakePassword(8);
+						$user->password = md5($tmppw);
+						$_POST['password'] = $tmppw;
+						$_POST['passwd'] = $tmppw;
+					} else {
+						$user->password = md5($passwd);
+					}
 					$row->registerDate = date('Y-m-d H:i:s');
 					if ($user->usertype == 'Public Frontend' && !$mambotParams->get('autocreateregistered')) {
 						addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'User creation halted for ' . $username . ' since they would only be registered');
@@ -199,6 +208,12 @@ function botLDAPSSI() {
 				if ($userId) {
 					addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', 'Updating user ' . $userId);
 					//$user->load(intval($userId));
+					if($obscurepw) {
+						$tmppw = mosMakePassword(8);
+						$passwd = $tmppw;
+						$_POST['password'] = $tmppw;
+						$_POST['passwd'] = $tmppw;
+					}
 					$query = "UPDATE `#__users` SET password = '" . md5($passwd) . "' WHERE username = '$username'";
 					$database->setQuery($query);
 					$database->Query(); // or die($database->getErrorMsg());

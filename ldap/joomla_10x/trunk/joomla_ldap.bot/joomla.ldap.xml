@@ -78,6 +78,10 @@
 			<option value="0">No confirm</option>
 			<option value="1">Autoconfirm</option>
 		</param>
+		<param name="obscurepw" type="radio" default="0" label="Obscure Password" description="Obscure and rewrite the users password after successful LDAP authentication">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>		
 		<param name="@spacer" type="spacer" default="" label="" description="" />		
 
 		<!-- Group Assignment Settings -->

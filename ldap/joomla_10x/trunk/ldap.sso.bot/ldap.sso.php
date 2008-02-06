@@ -83,7 +83,7 @@ function botDoLdapSSOLogin() {
 	$ip = mosGetParam($_SERVER, 'REMOTE_ADDR', null);
 	$blacklist = $mambotParams->get('ip_blacklist','');
 	$blacklist = explode(',', $blacklist);
-	if(in_array($ip, $blacklist)) {
+	if(in_array($ip, trim($blacklist))) {
 		addLogEntry('LDAP SSO Mambot','authentication','notice','User from '. $ip .' is on SSO IP blacklist');
 		return 0;
 	}
@@ -121,7 +121,7 @@ function botDoLdapSSOLogin() {
 					$user->username = $username;
 					$ldap->populateUser($user,$mambotParams->get('groupMap'));
 					$user->id = 0;
-					$user->password = 'sso user';
+					$user->password = 'sso user'; // this is an invalid password and will never authenticate
 					$row->registerDate 	= date( 'Y-m-d H:i:s' );
 					if($user->usertype == 'Public Frontend' && !$mambotParams->get('autocreateregistered')) {
 						addLogEntry('LDAP SSO Mambot', 'authentication', 'notice', 'User creation halted for '. $username .' since they would only be registered');
