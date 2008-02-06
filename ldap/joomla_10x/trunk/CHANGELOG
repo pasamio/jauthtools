@@ -20,6 +20,10 @@ Legend:
 - -> Removed
 ! -> Note
 
+06-Feb-2008 Sam Moffatt
++ Added IP blacklisting for LDAP SSO
++ Added ability to obscure passwords for LDAP SSI
+
 22-Nov-2007 Sam Moffatt
 ^ Changed systems to set a dummy password when a user is autocreated
 
