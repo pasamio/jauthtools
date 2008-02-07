@@ -3,6 +3,7 @@
 	<name>soapsso</name>
 	<comment></comment>
 	<projects>
+		<project>joomla_10</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

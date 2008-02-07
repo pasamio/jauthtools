@@ -225,7 +225,7 @@ function splogin() {
 	if ( loginUser($row->username, $row->password) ) {
 		mosRedirect( "index.php" );
 	} else {
-		echo _SSO_ERROR . ' ' . _SSO_FAILURE_LOGIN_FAILED;
+		echo _SSO_ERROR . ' ' . sprintf(_SSO_FAILURE_LOGIN_FAILED, $row->username);
 		return;
 	}
 }
@@ -327,8 +327,9 @@ function loginUser($username, $encodedPassword) {
 }
 
 function loginUserUsingPost() {
-	global $mainframe;
+	global $mainframe, $my;
 	$mainframe->login();
+	$my->load($mainframe->_session->userid); // reload $my
 }
 
 function logout() {
