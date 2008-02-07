@@ -110,7 +110,7 @@ class ssoHTML {
 					<?php echo _SSO_PASSWORD_REMINDER; ?>
 					</a>
 					<?php
-					if ( $params->get( 'registration' ) ) {
+					if ( $params->get( 'registration', 0 ) ) {
 						?>
 						<br/>
 						<?php echo _SSO_NO_ACCOUNT_YET; ?>
@@ -146,6 +146,7 @@ class ssoHTML {
 		?>
 
 		<input type="hidden" name="sp" value="<?php echo mosGetParam( $_REQUEST, 'sp', '' ) ?>" />
+		<input type="hidden" name="<?php echo josSpoofValue(1); ?>" value="1" />
 		<?php
 		global $_VERSION;
 		if ($_VERSION->PRODUCT == 'Joomla!') {
