@@ -42,6 +42,9 @@ function com_install() {
 	and enter required information.
 	<br /><br />
 	The administration of Joomla! Single Sign-On component can be found under the menu Components -> Joomla! Single Sign-On.
+	<br /><br />
+	Please note that this component requires PHP5 to operate. If you do not have PHP5 then this component will not operate.
+	Additionally this is the first release in 1.0.x/1.5(Legacy) for this component, there might still be issues. 
 	</td>
 	</tr>
 	</table>
