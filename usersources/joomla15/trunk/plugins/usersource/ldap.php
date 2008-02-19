@@ -1,5 +1,4 @@
 <?php
-
 /**
  * LDAP User Source
  *
@@ -69,6 +68,7 @@ class plgUserSourceLDAP extends JPlugin {
 	function &doUserSync($username) {
 		$plugin = & JPluginHelper :: getPlugin('usersource', 'ldap');
 		$params = new JParameter($plugin->params);
+		//echo '<pre>'; print_r($params); die();
 		$ldap = new JLDAP($params);
 		$return = false;
 		if (!$ldap->connect()) {
@@ -95,10 +95,12 @@ class plgUserSourceLDAP extends JPlugin {
 	function _updateUser(&$ldap, $username, &$user, &$params) {
 		$map = $params->getValue('groupMap',null);
 		//echo '<pre>';print_r($map); echo '</pre>';
+		//echo '<pre>';print_r($params); echo '</pre>';
 		$loginDisabled = $params->getValue('ldap_blocked','loginDisabled');
 		$groupMembership = $params->getValue('ldap_groups', 'groupMembership');
 		// Grab user details
 		//$user->id = 0;
+		//echo '<pre>'; print_r($map); die();
 		$user->username = $username;
 		$userdetails = $ldap->simple_search(str_replace("[search]", $user->username, $params->getValue('search_string')));
 		$user->gid = 29;
@@ -136,7 +138,7 @@ class plgUserSourceLDAP extends JPlugin {
 			$groups = explode("<br />", $map);
 			foreach ($groups as $group) {
 				if (trim($group)) {
-					$details = explode('|', $group);
+					$details = explode(';', $group);
 					$groupMap[] = Array (
 						'groupname' => trim(str_replace("\n",
 						'',

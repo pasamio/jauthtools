@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>imb.toowoomba.qld.gov.au</authorUrl>
-	<version id="1">1.5.0</version>
+	<version id="2">1.5.1</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgusersourceldap</update>
 	<description>Retrieves users from an LDAP directory</description>
 	<files>
@@ -33,6 +33,7 @@
 			<option value="authenticated">Authenticated Bind and Search</option>
 			<option value="bind">Bind Directly As User</option>
 		</param>
+		
 		<param name="base_dn" type="text" size="20" default="" label="Base DN" description="PARAMBASEDN" />
 		<param name="search_string" type="text" size="20" default="" label="Search string" description="PARAMSEARCHSTRING" />
 		<param name="users_dn" type="text" size="20" default="" label="Users DN" description="PARAMUSERSDN" />
