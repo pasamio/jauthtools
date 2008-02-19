@@ -17,7 +17,7 @@
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
 
-jimport('joomla.event.plugin');
+jimport('joomla.plugin.plugin');
 /**
  * SSO HTTP Source
  * Attempts to match a user based on the supplied server variables

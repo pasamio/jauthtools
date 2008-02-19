@@ -17,7 +17,7 @@
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
 
-jimport('joomla.event.plugin');
+jimport('joomla.plugin.plugin');
 jimport('joomla.client.ldap');
 /**
  * SSO eDirectory Source
