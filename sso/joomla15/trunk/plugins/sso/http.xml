@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>imb.toowoomba.qld.gov.au</authorUrl>
-	<version id="1">1.5</version>
+	<version id="2">1.5.1</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgssohttp</update>
 	<description>Handles user detection using HTTP Provided values, typically REMOTE_USER</description>
 	<files>
