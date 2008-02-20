@@ -13,5 +13,11 @@
   <files>
     <filename plugin="sync">sync.php</filename>
   </files>
+  <params>
+  		<param name="demoteuser" type="radio" default="1" label="Demote Users" description="Demote users if their group mapping or default user settings are different.">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+  </params>
   <update>http://www.jsitepoint.com/update/plugins/plgsystemsync</update>
 </install>

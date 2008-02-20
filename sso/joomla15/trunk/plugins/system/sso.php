@@ -43,6 +43,16 @@ class plgSystemSSO extends JPlugin {
 	function onAfterInitialise() {
 		$plugin = & JPluginHelper :: getPlugin('system', 'sso');
 		$params = new JParameter($plugin->params);
+		$ip_blacklist = $params->get('ip_blacklist','127.0.0.1');
+		$list = explode("\n", $ip_blacklist);
+		if(in_array($_SERVER['REMOTE_ADDR'],$list)) {
+			return false;
+		}	
+		
+		if(!$params->get('backend',0)) {
+			$app =& JFactory::getApplication();
+			if($app->isAdmin()) return false;
+		}
 		$sso = new JAuthSSOAuthentication();
 		$sso->doSSOAuth($params->getValue('autocreate',false));
 	}

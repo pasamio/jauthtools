@@ -47,7 +47,9 @@ class plgUserSourceLDAP extends JPlugin {
 	function getUser($username,&$user) {
 		$plugin = & JPluginHelper :: getPlugin('usersource', 'ldap');
 		$params = new JParameter($plugin->params);
-		
+		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
+		$ldapparams = new JParameter($ldapplugin->params);
+		$params->merge($ldapparams);
 		$ldap = new JLDAP($params);
 		if (!$ldap->connect()) {
 			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::getUser: Failed to connect to LDAP Server ' . $params->getValue('host'));
@@ -68,8 +70,11 @@ class plgUserSourceLDAP extends JPlugin {
 	function &doUserSync($username) {
 		$plugin = & JPluginHelper :: getPlugin('usersource', 'ldap');
 		$params = new JParameter($plugin->params);
-		//echo '<pre>'; print_r($params); die();
+		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
+		$ldapparams = new JParameter($ldapplugin->params);
+		$params->merge($ldapparams);
 		$ldap = new JLDAP($params);
+		
 		$return = false;
 		if (!$ldap->connect()) {
 			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::getUser: Failed to connect to LDAP Server ' . $params->getValue('host'));
@@ -94,8 +99,6 @@ class plgUserSourceLDAP extends JPlugin {
 	 */
 	function _updateUser(&$ldap, $username, &$user, &$params) {
 		$map = $params->getValue('groupMap',null);
-		//echo '<pre>';print_r($map); echo '</pre>';
-		//echo '<pre>';print_r($params); echo '</pre>';
 		$loginDisabled = $params->getValue('ldap_blocked','loginDisabled');
 		$groupMembership = $params->getValue('ldap_groups', 'groupMembership');
 		// Grab user details
@@ -112,14 +115,35 @@ class plgUserSourceLDAP extends JPlugin {
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $userdetails[0][$ldap_email][0];
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
-				$user->name = $userdetails[0][$ldap_fullname][0];
+				$user->name = $this->_convert($userdetails[0][$ldap_fullname][0], $params);
 			} else {
 				$user->name = $user->username;
 			}
 
-			$user->block = intval($userdetails[0][$loginDisabled][0]);
+			$user->block = intval($userdetails[0][$loginDisabled][0]);			
+			
 			if ($map) {
-				$this->_remapUser($user, $userdetails[0], $this->_parseGroupMap($map), $groupMembership);
+				$groupMap = $this->_parseGroupMap($map);
+				// add group memberships for active directory
+				if($params->getValue('ldap_is_ad',0)) {
+					$groupMemberships = Array();
+					$cnt = 0;
+					foreach ($groupMap as $groupMapEntry) {
+						$group = $groupMapEntry['groupname'];
+						$groupdetails = $this->simple_search($group, $dn);
+						$groupMembers = $groupdetails[0]['member'];
+						
+						foreach ($groupMembers as $groupMember) {
+							if($groupMember == $userdetails[0]['dn']) {
+								$groupMemberships[$cnt++] = $group;
+							}
+						}
+					}
+					if($cnt > 0) {
+						$groupMembership = $groupMemberships;
+					}
+				}
+				$this->_remapUser($user, $userdetails[0], $groupMap, $groupMembership);
 			}
 			return true;
 		}
@@ -182,6 +206,12 @@ class plgUserSourceLDAP extends JPlugin {
 			}
 		}
 		return true;
+	}
+	
+	function _convert($string, $params) {
+		if(function_exists('iconv') && $params->get('use_iconv',0)) {
+			return iconv($params->get('iconv_to','UTF-8'), $params->get('iconv_from','ISO8859-1'), $string);
+		} else return $string;
 	}
 }
 ?>
