@@ -44,6 +44,16 @@ class plgSSOEDirLDAP extends JPlugin {
 		// load parameters
 		$plugin = & JPluginHelper :: getPlugin('sso', 'edirldap');
 		$params = new JParameter($plugin->params);
+
+		$ip_blacklist = $params->get('ip_blacklist','127.0.0.1');
+		$list = explode("\n", $ip_blacklist);
+		if(in_array($_SERVER['REMOTE_ADDR'],$list)) {
+			return false;
+		}
+		
+		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
+		$ldapparams = new JParameter($ldapplugin->params);
+		$params->merge($ldapparams);
 		$ldap = new JLDAP($params);
 		
 		if (!$ldap->connect()) {

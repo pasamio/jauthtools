@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
 	<authorUrl>sammoffatt.com.au/jauthtools/</authorUrl>
-	<version id="1">1.5</version>
+	<version id="2">1.5.1</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgsystemsso</update>
 	<description>This plugin provides the base of the JAuthTools SSO infrastructure.</description>
 	<files>
@@ -15,6 +15,11 @@
 	</files>
 	<params>
 		<param name="autocreate" type="radio" default="0" label="Auto Create Users" description="PARAMAUTOCREATEUSERS">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="ip_blacklist" default="127.0.0.1" type="textarea" cols="30" rows="10" label="IP Blacklist" description="IP addresses to ignore for Single Sign OnIP addresses to ignore for Single Sign On (newline seperated)"/>
+		<param name="backend" type="radio" default="0" label="Enable Backend SSO" description="PARAMAUTOCREATEUSERS">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>

@@ -26,17 +26,21 @@ jimport('joomla.base.observable');
  */
 class JAuthUserSource extends JObservable {
 
+	/** @var options array options */
+	var $_options;
+
 	/**
 	 * Constructor
 	 *
 	 * @access protected
 	 */
-	function __construct() {
+	function __construct($options=Array()) {
 		// Import User Source Library Files
 		$isLoaded = JPluginHelper :: importPlugin('usersource');
 		if (!$isLoaded) {
 			JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::__construct: Could not load User Source libraries.');
 		}
+		$this->_options = $options;
 	}
 	
 	function doUserCreation($username) {
@@ -71,7 +75,7 @@ class JAuthUserSource extends JObservable {
 		foreach ($plugins as $plugin) {
 			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
-				$plugin = new $className ($this);
+				$plugin = new $className ($this, $this->_options);
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::doUserSynchronization: Could not load ' . $className);
 				continue;
@@ -83,6 +87,10 @@ class JAuthUserSource extends JObservable {
 				// and no other system will overwrite the values
 				// but first we need to save our user
 				$my =& JFactory::getUser(); // get who we are now
+				// by default we demote users
+				if(isset($options['demoteuser']) && !$options['demoteuser']) {
+					if($my->get('gid') < $user->get('gid')) continue;
+				}
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$user->save(); 				// save us, now the db is up
 				$my->load($my->id);				// reload!
