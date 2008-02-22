@@ -54,4 +54,3 @@ class plgSSOHTTP extends JPlugin {
 	}
 }
 
-?>

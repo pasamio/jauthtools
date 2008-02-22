@@ -101,4 +101,3 @@ class JAuthUserSource extends JObservable {
 		return false;
 	}
 }
-?>

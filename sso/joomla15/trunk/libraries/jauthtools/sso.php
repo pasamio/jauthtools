@@ -135,4 +135,3 @@ class JAuthSSOAuthentication extends JObservable {
 		}
 	}
 }
-?>

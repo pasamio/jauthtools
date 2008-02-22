@@ -120,7 +120,7 @@ class plgUserSourceLDAP extends JPlugin {
 				$user->name = $user->username;
 			}
 
-			$user->block = intval($userdetails[0][$loginDisabled][0]);			
+			$user->block = isset($userdetails[0][$loginDisabled]) ? intval($userdetails[0][$loginDisabled][0]) : 0;			
 			
 			if ($map) {
 				$groupMap = $this->_parseGroupMap($map);
@@ -214,4 +214,3 @@ class plgUserSourceLDAP extends JPlugin {
 		} else return $string;
 	}
 }
-?>
