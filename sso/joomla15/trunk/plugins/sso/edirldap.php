@@ -85,4 +85,3 @@ class plgSSOEDirLDAP extends JPlugin {
 		}
 	}
 }
-?>

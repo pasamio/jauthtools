@@ -57,4 +57,3 @@ class plgSystemSSO extends JPlugin {
 		$sso->doSSOAuth($params->getValue('autocreate',false));
 	}
 }
-?>
