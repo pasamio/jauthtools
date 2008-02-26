@@ -24,6 +24,20 @@ if (!function_exists('ldap_connect')) {
 	die('LDAP Not Enabled - Please install LDAP in your PHP instance to continue.');
 }
 
+if (!function_exists('addLogEntry')) {
+	function addLogEntry($application, $type, $priority, $message) {
+		if (defined('_JLOGGER_API')) {
+			global $database;
+			$logentry = new JLogEntry($database);
+			$logentry->application = $application;
+			$logentry->type = $type;
+			$logentry->priority = $priority;
+			$logentry->message = $message;
+			$logentry->store() or die('Log entry save failed: ' . $message);
+		}
+	}
+}
+
 /**
  * LDAP Connector Class
  * @package LDAP Tools
@@ -247,7 +261,7 @@ class ldapConnector {
 	}
 
 	/**
-	 * Perform an LDAP search using comma seperated search strings
+	 * Perform an LDAP search using semicolon seperated search strings
 	 * @param string search string of search values
 	 */
 	function simple_search($search,$dnlist=null) {
@@ -263,7 +277,9 @@ class ldapConnector {
 	 */
 	function _search($filter, $dn, & $attributes) {
 		$resource = $this->_resource;
+		addLogEntry('Joomla! LDAP Library Mambot', 'search', 'debug', 'Searching for '. $filter .' in DN '. $dn);
 		$search_result = ldap_search($resource, $dn, $filter);
+		addLogEntry('Joomla! LDAP Library Mambot', 'search', 'debug', 'Got search result of '. print_r($search_result,1));
 		addLogEntry('LDAP Library', 'search', 'debug', 'Search for '. $filter . ' in '. $dn . ' returned ' . $search_result . ' with '. ldap_count_entries($resource, $search_result) .' results');
 		if ($search_result && ($count = ldap_count_entries($resource, $search_result)) > 0) {
 			for ($i = 0; $i < $count; $i++) {
