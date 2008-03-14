@@ -15,5 +15,6 @@
 	</files>
 		<params>
 			<param name="ip_list" default="127.0.0.1" type="textarea" cols="30" rows="10" label="IP List" description="IP addresses to use for Single Sign On (newline seperated)"/>
+			<param name="user" default="admin" type="text" label="Username" description="User to automatically login as" />
 		</params>
 </install>
