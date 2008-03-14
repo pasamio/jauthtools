@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin"  group="sso">
+	<name>SSO - IP</name>
+	<author>Sam Moffatt</author>
+	<creationDate>March 2008</creationDate>
+	<copyright>(C) 2008 Sam Moffatt. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>sammoffat.com.au</authorUrl>
+	<version id="1">1.5</version>
+	<update>http://www.jsitepoint.com/update/plugins/plgssoip</update>
+	<description>Automatically logs users as administrator if they are on the IP list.</description>
+	<files>
+		<filename plugin="ip">ip.php</filename>
+	</files>
+		<params>
+			<param name="ip_list" default="127.0.0.1" type="textarea" cols="30" rows="10" label="IP List" description="IP addresses to use for Single Sign On (newline seperated)"/>
+		</params>
+</install>
