@@ -83,7 +83,7 @@ function botDoLdapSSOLogin() {
 	$ip = mosGetParam($_SERVER, 'REMOTE_ADDR', null);
 	$blacklist = $mambotParams->get('ip_blacklist','');
 	$blacklist = explode(',', $blacklist);
-	if(in_array($ip, trim($blacklist))) {
+	if(in_array($ip, $blacklist)) {
 		addLogEntry('LDAP SSO Mambot','authentication','notice','User from '. $ip .' is on SSO IP blacklist');
 		return 0;
 	}
