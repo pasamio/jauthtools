@@ -38,7 +38,7 @@ class JAuthUserSource extends JObservable {
 		// Import User Source Library Files
 		$isLoaded = JPluginHelper :: importPlugin('usersource');
 		if (!$isLoaded) {
-			JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::__construct: Could not load User Source libraries.');
+			JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::__construct: Could not load User Source plugins.');
 		}
 		$this->_options = $options;
 	}
@@ -60,7 +60,7 @@ class JAuthUserSource extends JObservable {
 			// Try to find user
 			$user = new JUser();
 			if($plugin->getUser($username,$user)) {
-				print_r($user);
+				//print_r($user);
 				$user->save();
 				return true;
 				break;
