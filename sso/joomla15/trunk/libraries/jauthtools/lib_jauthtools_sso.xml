@@ -5,6 +5,11 @@
 	<libraryname>jauthtools</libraryname>
 	<url>http://sammoffatt.com.au/jauthtools</url>
 	<description>This library provides Single Sign On support for Joomla! 1.5</description>
+	<author>Sam Moffatt</author>
+	<authorEmail>pasamio@pasamio.id.au</authorEmail>
+	<authorUrl>http://pasamio.id.au</authorUrl>
+	<copyright>2007 (c) Sam Moffatt</copyright>
+	<license>GNU/GPL</license>	
 	<packager>Sam Moffatt</packager>
 	<packagerurl>http://sammoffatt.com.au/</packagerurl>
 	<update>http://www.jsitepoint.com/update/libraries/lib_jauthtools_sso</update>
