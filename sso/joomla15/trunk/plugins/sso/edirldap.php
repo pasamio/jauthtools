@@ -54,6 +54,7 @@ class plgSSOEDirLDAP extends JPlugin {
 		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
 		$ldapparams = new JParameter($ldapplugin->params);
 		$params->merge($ldapparams);
+		$ldapuid = $params->get('ldap_uid','uid');
 		$ldap = new JLDAP($params);
 		
 		if (!$ldap->connect()) {
@@ -76,8 +77,8 @@ class plgSSOEDirLDAP extends JPlugin {
  		$dn = $params->getValue('base_dn');
 		$attributes = $ldap->search($search_filters,	$dn);
 		$ldap->close();
-		if (isset ($attributes[0]['uid'][0])) {
-			$username = $attributes[0]['uid'][0];
+		if (isset ($attributes[0][$ldapuid][0])) {
+			$username = $attributes[0][$ldapuid][0];
 			
 			if ($username != NULL) {
 				return $username; // eDir returns the appropriate username, no alteration required

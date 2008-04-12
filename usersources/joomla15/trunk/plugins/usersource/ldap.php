@@ -116,8 +116,6 @@ class plgUserSourceLDAP extends JPlugin {
 			$user->email = $userdetails[0][$ldap_email][0];
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
 				$user->name = $this->_convert($userdetails[0][$ldap_fullname][0], $params);
-			} else {
-				$user->name = $user->username;
 			}
 
 			$user->block = isset($userdetails[0][$loginDisabled]) ? intval($userdetails[0][$loginDisabled][0]) : 0;			
