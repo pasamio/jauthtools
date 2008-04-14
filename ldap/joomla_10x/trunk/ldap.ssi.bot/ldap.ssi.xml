@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mosinstall version="1.0" type="mambot" group="system">
 	<name>LDAP SSI</name>
-	<author>Sam Moffatt/Toowoomba City Council</author>
+	<author>Sam Moffatt/Toowoomba Regional Council</author>
 	<creationDate>September 2006</creationDate>
-	<copyright>(C) 2006 Toowoomba City Council/Sam Moffatt All rights reserved.</copyright>
+	<copyright>(C) 2008 Toowoomba Regional Council/Sam Moffatt All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<authorEmail>S.Moffatt@toowoomba.qld.gov.au</authorEmail>
-	<authorUrl>www.toowoomba.qld.gov.au</authorUrl>
+	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
+	<authorUrl>www.toowoombarc.qld.gov.au</authorUrl>
 	<version>1.0.8</version>
 	<description>JAuthTools: Allows LDAP integration by synchronization.</description>
 	<files>

@@ -13,10 +13,10 @@
  * 
  * @package LDAP Tools
  * @subpackage SSI
- * @author Sam Moffatt <S.Moffatt@toowoomba.qld.gov.au>
- * @author Toowoomba City Council Information Management Branch
+ * @author Sam Moffatt <sam.moffatt@toowoombarc.qld.gov.au>
+ * @author Toowoomba Regional Council Information Management Branch
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2006 Toowoomba City Council/Sam Moffatt 
+ * @copyright 2008 Toowoomba Regional Council/Sam Moffatt 
  * @version SVN: $Id:$
  * @see Joomla!Forge Project: http://forge.joomla.org
  */
