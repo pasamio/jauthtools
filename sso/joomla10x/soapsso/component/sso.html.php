@@ -3,8 +3,8 @@
 * @version 	$Id: sso.html.php,v V1.1 8049 bytes, 2007-06-08 10:03:46 cero Exp $
 * @package 	SSO
 * @subpackage 	sso.html.php
-* @author	<Tomo.Cerovsek.fgg.uni-lj.si> <Damjan.Murn.uni-lj.si>
-* @developers	Tomo Cerovsek, Damjan Murn
+* @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+* @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
@@ -12,6 +12,9 @@
 
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
+/**
+ * HTML Drawing Class
+ */
 class ssoHTML {
 
 	function redirect(&$sp, $handle) {

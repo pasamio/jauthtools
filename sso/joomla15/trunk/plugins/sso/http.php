@@ -21,6 +21,8 @@ jimport('joomla.plugin.plugin');
 /**
  * SSO HTTP Source
  * Attempts to match a user based on the supplied server variables
+ * @package JAuthTools
+ * @subpackage SSO 
  */
 class plgSSOHTTP extends JPlugin {
 	/**

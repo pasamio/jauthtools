@@ -1,6 +1,12 @@
 <?php
 /**
  * This file provides Joomla! 1.5 Session Hacking Support
+ * @package SSO
+ */
+
+/**
+ * Hack Joomla! 1.5 Session to login a given user
+ * @param string username Username to login
  */
 function doJ15SSO($username) {
 		// Get Database and find user

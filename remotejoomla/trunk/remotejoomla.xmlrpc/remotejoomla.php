@@ -65,8 +65,11 @@ class plgXMLRPCRemoteJoomla extends JPlugin
 	}
 }
 
-
-
+/**
+ * XML RPC Authentication Host
+ * @package JAuthTools
+ * @subpackage SSO
+ */
 class plgXMLRPCRemoteJoomlaAuthServices
 {
 	/**

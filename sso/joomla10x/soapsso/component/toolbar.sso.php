@@ -3,8 +3,8 @@
 * @version 	$Id: toolbar.sso.php,v V1.1 877 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
 * @subpackage 	toolbar.sso.php
-* @author	<Tomo.Cerovsek.fgg.uni-lj.si> <Damjan.Murn.uni-lj.si>
-* @developers	Tomo Cerovsek, Damjan Murn
+* @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+* @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
@@ -12,6 +12,7 @@
 
 defined('_VALID_MOS') or die('Direct access to this location is not allowed.');
 
+/** Load the Toolbar HTML File */
 require_once($mainframe->getPath('toolbar_html'));
 
 $section = mosGetParam($_REQUEST, 'section', 'providers');

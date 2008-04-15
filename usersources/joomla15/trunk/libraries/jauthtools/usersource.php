@@ -23,6 +23,8 @@ jimport('joomla.base.observable');
 
 /**
  * User Source Provider
+ * @package JAuthTools
+ * @subpackage User-Source
  */
 class JAuthUserSource extends JObservable {
 

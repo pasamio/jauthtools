@@ -1,4 +1,10 @@
 <?php
+/**
+ * Joomla! SOAP SSO Project
+ * @author 	Sam Moffatt <pasamio@gmail.com>
+ * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+ * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
+ */
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
 require_once( $mainframe->getPath( 'front_html' ) );

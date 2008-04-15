@@ -3,8 +3,8 @@
 * @version 	$Id: ssoService.class.php,v V1.1 12019 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
 * @subpackage 	ssoService.class.php
-* @author	<Tomo.Cerovsek.fgg.uni-lj.si> <Damjan.Murn.uni-lj.si>
-* @developers	Tomo Cerovsek, Damjan Murn
+* @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+* @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
@@ -12,9 +12,12 @@
 
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
+/** SSO Provider Class */
 require_once("$mosConfig_absolute_path/administrator/components/$option/classes/ssoProvider.class.php");
+/** SSO Utilities Class */
 require_once("$mosConfig_absolute_path/administrator/components/$option/classes/ssoUtils.class.php");
 
+/** SSO Service */
 class ssoService {
 
     function GetUserAccount($handle, $spId, $userIP) {
@@ -105,6 +108,7 @@ class ssoService {
     }
 }
 
+/** SSO Service Utility Functions
 class ssoServiceUtils {
 
 	function addProvider($remoteProviderId) {

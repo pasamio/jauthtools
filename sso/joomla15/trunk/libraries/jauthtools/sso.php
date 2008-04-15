@@ -21,7 +21,8 @@ jimport('joomla.base.observable');
 
 /**
  * SSO Auth Handler
- * 
+ * @package JAuthTools
+ * @subpackage SSO
  */
 class JAuthSSOAuthentication extends JObservable {
 	/**
@@ -33,7 +34,7 @@ class JAuthSSOAuthentication extends JObservable {
 		// Import SSO Library Files
 		$isLoaded = JPluginHelper :: importPlugin('sso');
 		if (!$isLoaded) {
-			JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthSSOAuthentication::__construct: Could not load SSO libraries.');
+			JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthSSOAuthentication::__construct: Could not load SSO plugins.');
 		}
 	}
 
