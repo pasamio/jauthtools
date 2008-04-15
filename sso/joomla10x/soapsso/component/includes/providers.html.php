@@ -3,8 +3,8 @@
 * @version 	$Id: providers.html.php,v V1.1 9918 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
 * @subpackage 	providers.html.php
-* @author	<Tomo.Cerovsek.fgg.uni-lj.si> <Damjan.Murn.uni-lj.si>
-* @developers	Tomo Cerovsek, Damjan Murn
+* @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+* @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
@@ -12,6 +12,9 @@
 
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
+/**
+ * Providers HTML drawing class
+ */
 class HTML_providers{
 
 	function show(&$rows, &$pageNav, $search, $message) {

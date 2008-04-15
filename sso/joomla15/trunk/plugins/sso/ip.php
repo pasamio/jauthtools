@@ -21,6 +21,8 @@ jimport('joomla.plugin.plugin');
 /**
  * SSO IP Source
  * Attempts to match a user based on their network address attribute (IP Address)
+ * @package JAuthTools
+ * @subpackage SSO
  */
 class plgSSOIP extends JPlugin {
 	/**

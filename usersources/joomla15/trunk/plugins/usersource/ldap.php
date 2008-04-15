@@ -21,8 +21,10 @@ jimport('joomla.plugin.plugin');
 jimport('joomla.client.ldap');
 
 /**
- * SSO Initiation
- * Kicks off SSO Authentication
+ * LDAP User Source
+ * Finds people using LDAP
+ * @package JAuthTools
+ * @subpackage User-Source
  */
 class plgUserSourceLDAP extends JPlugin {
 	/**

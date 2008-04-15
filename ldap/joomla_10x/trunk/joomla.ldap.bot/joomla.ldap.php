@@ -25,6 +25,11 @@ if (!function_exists('ldap_connect')) {
 }
 
 if (!function_exists('addLogEntry')) {
+	/**
+	 * Add a log entry to the supported logging system
+	 * @package JCMU
+	 * @ignore
+	 */
 	function addLogEntry($application, $type, $priority, $message) {
 		if (defined('_JLOGGER_API')) {
 			global $database;

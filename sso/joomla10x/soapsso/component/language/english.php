@@ -3,8 +3,8 @@
 * @version 	$Id: english.php,v V1.1 3579 bytes, 2007-06-08 09:51:30 cero Exp $
 * @package 	SSO
 * @subpackage 	english.php
-* @author	<Tomo.Cerovsek.fgg.uni-lj.si> <Damjan.Murn.uni-lj.si>
-* @developers	Tomo Cerovsek, Damjan Murn
+* @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+* @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project

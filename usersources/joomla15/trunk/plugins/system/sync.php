@@ -23,6 +23,8 @@ jimport('jauthtools.usersource');
 /**
  * User Synchronization
  * Start remote user synchronization
+ * @package JAuthTools
+ * @subpackage User-Source
  */
 class plgSystemSync extends JPlugin {
 	/**

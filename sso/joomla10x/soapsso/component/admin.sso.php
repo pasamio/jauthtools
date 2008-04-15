@@ -3,8 +3,8 @@
 * @version 	$Id: admin.sso.php,v V1.1 916 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
 * @subpackage 	admin.sso.php
-* @author	<Tomo.Cerovsek.fgg.uni-lj.si> <Damjan.Murn.uni-lj.si>
-* @developers	Tomo Cerovsek, Damjan Murn
+* @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
+* @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
@@ -20,6 +20,7 @@ if (!($acl -> acl_check('administration', 'edit', 'users', $my -> usertype, 'com
 $cid = mosGetParam($_POST, 'cid', array());
 $section = mosGetParam($_REQUEST, 'section', 'providers');
 if ($section){
+	/** Load section file */
 	include_once (dirname(__FILE__) . "/includes/$section.php");
 } else echo "Failed to detect section";
 ?>

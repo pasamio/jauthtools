@@ -1,8 +1,13 @@
 <?php
 /**
  * This file provides Joomla! 1.0 Session Hacking Support
+ * @package SSO
  */
 
+/**
+ * Hack Joomla! 1.0 Session to login a given user
+ * @param string username Username to login
+ */
 function doJ10SSO($username) {
 			global $acl, $database, $mainframe;
 			$database->setQuery("SELECT id FROM #__users WHERE username = '". $username."'");

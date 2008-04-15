@@ -24,6 +24,8 @@ jimport('jauthtools.usersource');
 /**
  * SSO Initiation
  * Kicks off SSO Authentication
+ * @package JAuthTools
+ * @subpackage SSO 
  */
 class plgSystemSSO extends JPlugin {
 	/**

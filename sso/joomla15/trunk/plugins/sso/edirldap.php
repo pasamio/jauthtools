@@ -22,6 +22,8 @@ jimport('joomla.client.ldap');
 /**
  * SSO eDirectory Source
  * Attempts to match a user based on their network address attribute (IP Address)
+ * @package JAuthTools
+ * @subpackage SSO
  */
 class plgSSOEDirLDAP extends JPlugin {
 	/**
