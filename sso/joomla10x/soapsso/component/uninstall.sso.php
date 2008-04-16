@@ -2,7 +2,6 @@
 /**
 * @version 	$Id: uninstall.sso.php,v V1.1 1657 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
-* @subpackage 	uninstall.sso.php
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
