@@ -2,7 +2,6 @@
 /**
 * @version 	$Id: toolbar.sso.html.php,v V1.1 1471 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
-* @subpackage 	toolbar.sso.html.php
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
@@ -12,6 +11,10 @@
 
 defined('_VALID_MOS') or die('Direct access to this location is not allowed.');
 
+/**
+ * Toolbar file SSO
+ * @package SSO
+ */
 class TOOLBAR_sso {
 
     function show_providers_menu() {

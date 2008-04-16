@@ -2,7 +2,6 @@
 /**
 * @version 	$Id: ssoService.class.php,v V1.1 12019 bytes, 2007-06-07 12:43:34 cero Exp $
 * @package 	SSO
-* @subpackage 	ssoService.class.php
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG
@@ -17,7 +16,10 @@ require_once("$mosConfig_absolute_path/administrator/components/$option/classes/
 /** SSO Utilities Class */
 require_once("$mosConfig_absolute_path/administrator/components/$option/classes/ssoUtils.class.php");
 
-/** SSO Service */
+/** 
+ * SSO Service
+ * @package SSO
+ */
 class ssoService {
 
     function GetUserAccount($handle, $spId, $userIP) {

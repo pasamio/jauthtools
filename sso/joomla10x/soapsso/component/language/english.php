@@ -2,7 +2,6 @@
 /**
 * @version 	$Id: english.php,v V1.1 3579 bytes, 2007-06-08 09:51:30 cero Exp $
 * @package 	SSO
-* @subpackage 	english.php
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
 * @copyright 	(C) 2007 SSO Team, UL FGG

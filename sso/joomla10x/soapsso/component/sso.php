@@ -4,6 +4,7 @@
  * @author 	Sam Moffatt <pasamio@gmail.com>
  * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
  * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
+ * @package SSO
  */
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
@@ -424,4 +425,3 @@ function checkOnline(){
 	exit;
 }
 
-?>
