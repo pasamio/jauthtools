@@ -22,6 +22,10 @@
 defined('_VALID_MOS') or die('Restricted access');
 
 if (!function_exists('addLogEntry')) {
+	/**
+	 * Log Support Function
+	 * @ignore
+	 */
 	function addLogEntry($application, $type, $priority, $message) {
 		if (defined('_JLOGGER_API')) {
 			global $database;
