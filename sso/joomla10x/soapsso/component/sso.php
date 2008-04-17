@@ -8,10 +8,15 @@
  */
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
+/** Front end HTML rendering class */
 require_once( $mainframe->getPath( 'front_html' ) );
+/** SSO Provider */
 require_once("$mosConfig_absolute_path/administrator/components/$option/classes/ssoProvider.class.php");
+/** SSO Utilities */
 require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/ssoUtils.class.php" );
+/** Joomla! 1.0 Session Hacking Function */
 require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/j10_sso.php" );
+/** Joomla! 1.5 Session Hacking Function */
 require_once( "$mosConfig_absolute_path/administrator/components/$option/classes/j15_sso.php" );
 
 if (isset($_SERVER['HTTP_SOAPACTION'])) {
@@ -20,8 +25,10 @@ if (isset($_SERVER['HTTP_SOAPACTION'])) {
 
 // include language file
 if (is_file("$mosConfig_absolute_path/components/$option/language/$mosConfig_lang.php")) {
+	/** Language File */
 	include_once ("$mosConfig_absolute_path/components/$option/language/$mosConfig_lang.php");
 } else {
+	/** Default English Language file fallback */
 	include_once ("$mosConfig_absolute_path/components/$option/language/english.php");
 }
 
