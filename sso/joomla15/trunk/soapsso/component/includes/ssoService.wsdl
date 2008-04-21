@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:tns="%SITE_URL%/wsdl/SSOService.wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="%SITE_URL%/schema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="%SITE_URL%/wsdl/SSOService.wsdl" name="SSOService">
+	<types>
+		<schema targetNamespace="%SITE_URL%/schema" xmlns="http://www.w3.org/2000/10/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+			<complexType name="UserAccount">
+				<sequence>
+					<element name="username" type="xsd:string"/>
+					<element name="name" type="xsd:string"/>
+					<element name="email" type="xsd:string"/>
+				</sequence>
+			</complexType>
+
+			<complexType name="SSOProvider">
+				<sequence>
+					<element name="providerId" type="xsd:string"/>
+					<element name="siteName" type="xsd:string"/>
+					<element name="ipAddress" type="xsd:string"/>
+					<element name="country" type="xsd:string"/>
+					<element name="country_code" type="xsd:string"/>
+					<element name="language" type="xsd:string"/>
+				</sequence>
+			</complexType>
+		</schema>
+	</types>
+	<message name="GetUserAccountInput">
+		<part name="Handle" type="xsd:string"/>
+		<part name="SpId" type="xsd:string"/>
+		<part name="UserIP" type="xsd:string"/>
+	</message>
+	<message name="GetUserAccountOutput">
+		<part name="IdpId" type="xsd:string"/>
+		<part name="UserAccount" type="xsd1:UserAccount"/>
+	</message>
+	<message name="GetProviderInfoInput">
+		<part name="LocalProviderId" type="xsd:string"/>
+	</message>
+	<message name="GetProviderInfoOutput">
+		<part name="ProviderInfo" type="xsd1:SSOProvider"/>
+	</message>
+	<message name="ManageRegistrationInput">
+		<part name="LocalProviderId" type="xsd:string"/>
+		<part name="Operation" type="xsd:string"/>
+		<part name="CurrentStatus" type="xsd:string"/>
+	</message>
+	<message name="ManageRegistrationOutput">
+		<part name="LocalProviderId" type="xsd:string"/>
+		<part name="NewStatus" type="xsd:string"/>
+		<part name="Message" type="xsd:string"/>
+	</message>
+	<message name="PingInput" />
+	<message name="PingOutput">
+		<part name="Status" type="xsd:boolean"/>
+	</message>
+	<portType name="SSOServiceSoapPortType">
+		<operation name="GetUserAccount">
+			<input message="tns:GetUserAccountInput"/>
+			<output message="tns:GetUserAccountOutput"/>
+		</operation>
+		<operation name="GetProviderInfo">
+			<input message="tns:GetProviderInfoInput"/>
+			<output message="tns:GetProviderInfoOutput"/>
+		</operation>
+		<operation name="ManageRegistration">
+			<input message="tns:ManageRegistrationInput"/>
+			<output message="tns:ManageRegistrationOutput"/>
+		</operation>
+		<operation name="Ping">
+			<input message="tns:PingInput"/>
+			<output message="tns:PingOutput"/>
+		</operation>
+	</portType>
+	<binding name="SSOServiceSoapBinding" type="tns:SSOServiceSoapPortType">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="GetUserAccount">
+			<soap:operation soapAction="GetUserAccount"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="GetProviderInfo">
+			<soap:operation soapAction="GetUserAccount"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="ManageRegistration">
+			<soap:operation soapAction="ManageRegistration"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="Ping">
+			<soap:operation soapAction="Ping"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="SSOService">
+		<documentation/>
+		<port name="SSOServiceSoapPort" binding="tns:SSOServiceSoapBinding">
+			<soap:address location="%SITE_URL%/index.php?option=com_sso"/>
+		</port>
+	</service>
+</definitions>

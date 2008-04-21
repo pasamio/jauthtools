@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall type="module" version="1.0.0">
+	<name>Single Sign-On</name>
+	<creationDate>2007-06-14</creationDate>
+	<author>Sam Moffatt (Tomo Cerovsek &amp; Damjan Murn)</author>
+	<copyright>Creative Commons</copyright>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorEmail>Tomo.Cerovsek@gmail.com</authorEmail>
+	<authorUrl>http://sammoffatt.com.au</authorUrl>
+	<version>1.0.8</version>
+	<description>Single Sign-On among Joomla! portals</description>
+
+	<files>
+		<filename module="mod_sso">mod_sso.php</filename>
+	</files>
+
+	<params>
+		<param name="moduleclass_sfx" type="text" default="" label="Module Class Suffix" description="A suffix to be applied to the css class of the module (table.moduletable), this allows individual module styling" />
+	</params>
+</mosinstall>
