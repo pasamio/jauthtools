@@ -159,7 +159,7 @@ class plgUserSourceLDAP extends JPlugin {
 		$groupMap = Array ();
 		if(!is_array($map)) { // we may have got it preprocessed into an array! probably from JParam
 			// however its probably a string
-			$groups = explode("<br />", $map);
+			$groups = explode("\n", $map);
 			foreach ($groups as $group) {
 				if (trim($group)) {
 					$details = explode(';', $group);
