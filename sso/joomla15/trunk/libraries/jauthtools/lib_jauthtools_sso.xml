@@ -13,7 +13,7 @@
 	<packager>Sam Moffatt</packager>
 	<packagerurl>http://sammoffatt.com.au/</packagerurl>
 	<update>http://www.jsitepoint.com/update/libraries/lib_jauthtools_sso</update>
-	<version id="2">1.5.1</version>
+	<version id="3">1.5.2</version>
 	<files>
 		<file>sso.php</file>
 	</files>
