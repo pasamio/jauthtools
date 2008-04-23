@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
 	<authorUrl>www.toowoombarc.qld.gov.au</authorUrl>
-	<version id="2">1.5.1</version>
+	<version id="3">1.5.2</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgssoedirldap</update>
 	<description>Handles user detection using eDirectory's networkAddress attribute</description>
 	<files>
