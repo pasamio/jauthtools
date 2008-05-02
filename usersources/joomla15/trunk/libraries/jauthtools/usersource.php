@@ -62,9 +62,10 @@ class JAuthUserSource extends JObservable {
 			// Try to find user
 			$user = new JUser();
 			if($plugin->getUser($username,$user)) {
-				//print_r($user);
-				$user->save();
-				return true;
+				$my->set('gid', 25); 		// and fake things to by pass security
+				$result = $user->save(); 	// save us, now the db is up
+				$my->load($my->id);			// reload!
+				return $result;
 				break;
 			}
 		}
