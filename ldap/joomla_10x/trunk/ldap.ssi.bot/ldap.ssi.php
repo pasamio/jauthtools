@@ -27,7 +27,6 @@ defined('_VALID_MOS') or die('Restricted access');
 if (!function_exists('addLogEntry')) {
 	/**
 	 * Add a log entry to the supported logging system
-	 * @package JCMU
 	 * @ignore
 	 */
 	function addLogEntry($application, $type, $priority, $message) {
