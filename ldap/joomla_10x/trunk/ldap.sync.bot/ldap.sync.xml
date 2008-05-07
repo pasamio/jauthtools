@@ -82,9 +82,9 @@
 			<option value="1">Autoconfirm</option>
 		</param>
 -->
-		<param name="syncloginonly" type="radio" default="0" label="Synchronisation Event" description="Only run synchronisation on login or when users are logged in (more load but faster refresh)"  />
-			<option value="0">Always Synchronise</option>
-			<option value="1">Synchronise on Login Only</option>
+		<param name="syncloginonly" type="radio" default="0" label="Synchronisation Event" description="Only run synchronisation on login or when users are logged in (more load but faster refresh)"  >
+			<option value="0">Page Load</option>
+			<option value="1">On Login</option>
 		</param>
 		<param name="@spacer" type="spacer" default="" label="" description="" />		
 

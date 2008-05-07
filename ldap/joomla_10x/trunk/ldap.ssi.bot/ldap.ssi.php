@@ -189,8 +189,10 @@ function botLDAPSSI() {
 					if($obscurepw) {
 						$tmppw = mosMakePassword(8);
 						$user->password = md5($tmppw);
-						$_POST['password'] = $tmppw;
+						$_POST['ldappw'] = $password; // save the original password
+						$_POST['password'] = $tmppw;  // override any other passwords
 						$_POST['passwd'] = $tmppw;
+						
 					} else {
 						$user->password = md5($passwd);
 					}
@@ -215,7 +217,8 @@ function botLDAPSSI() {
 					if($obscurepw) {
 						$tmppw = mosMakePassword(8);
 						$passwd = $tmppw;
-						$_POST['password'] = $tmppw;
+						$_POST['ldappw'] = $password; // save the original password
+						$_POST['password'] = $tmppw;  // override any other passwords
 						$_POST['passwd'] = $tmppw;
 					}
 					$query = "UPDATE `#__users` SET password = '" . md5($passwd) . "' WHERE username = '$username'";

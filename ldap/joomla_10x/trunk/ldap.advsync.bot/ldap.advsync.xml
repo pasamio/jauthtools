@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mosinstall version="1.0" type="mambot" group="system">
-	<name>LDAP Sync</name>
-	<author>Sam Moffatt/Toowoomba Regional Council</author>
-	<creationDate>September 2006</creationDate>
-	<copyright>(C) 2008 Toowoomba Regional Council/Sam Moffatt All rights reserved.</copyright																			 >
+	<name>LDAP Advanced Sync</name>
+	<author>Sam Moffatt</author>
+	<creationDate>May 2008</creationDate>
+	<copyright>(C) 2008 Sam Moffatt. All rights reserved.</copyright																			 >
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
-	<authorUrl>www.toowoombarc.qld.gov.au</authorUrl>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>http://sammoffatt.com.au</authorUrl>
 	<version>1.0.8</version>
-	<description>JAuthTools: Allows LDAP group synchronization to overwrite existing settings.</description>
+	<description>JAuthTools: Keeps a seperate table in sync with an LDAP user.</description>
 	<files>
-			<filename mambot="ldap.sync">ldap.sync.php</filename>
+			<filename mambot="ldap.advsync">ldap.advsync.php</filename>
 	</files>
 	<params>
 		<param name="useglobal" type="radio" default="1" label="Use Global Settings" description="Use the global Joomla! LDAP settings">
@@ -82,10 +82,10 @@
 			<option value="1">Autoconfirm</option>
 		</param>
 -->
-		<param name="syncloginonly" type="radio" default="0" label="Synchronisation Event" description="Only run synchronisation on login or when users are logged in (more load but faster refresh)"  />
-			<option value="0">Always Synchronise</option>
-			<option value="1">Synchronise on Login Only</option>
-		</param>
+		<param name="syncloginonly" type="radio" default="0" label="Synchronisation Event" description="Only run synchronisation on login or when users are logged in (more load but faster refresh)"  >
+			<option value="0">Page Load</option>
+			<option value="1">On Login</option>
+		</param>	
 		<param name="@spacer" type="spacer" default="" label="" description="" />		
 
 		<!-- Group Assignment Settings -->
@@ -105,5 +105,12 @@
 		</param>
 		<param name="iconv_from" default="ISO8859-1" type="text" size="10" label="Original Encoding (e.g. ISO8859-1)" description="This is the encoding used in your LDAP directory." />
 		<param name="iconv_to" default="UTF-8" type="text" size="10" label="Target Encoding (e.g. your database)" description="This is the encoding used in your database server (e.g. MySQL, typically UTF-8)" />
+		<param name="@spacer" type="spacer" default="" label="" description="" />
+		
+		<!-- Advanced Synchronisation Settings -->
+		<param name="externaltable" type="text" size="20" label="External Table Name" description="The name of the external table to synchronise" />
+		<param name="uidfield" type="text" size="20" label="User ID Field" description="The name of the user ID field in the external table" />
+		<param name="pkeyfield" type="text" size="20" label="Primary Key" description="The field name of the primary key" />
+		<param name="syncmap" type="textarea" cols="30" rows="10" default="" label="Synchronisation Map" description="Maps fields in the given table to fields or values from LDAP" />
 	</params>
 </mosinstall>
