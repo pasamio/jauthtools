@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
 	<authorUrl>www.toowoombarc.qld.gov.au</authorUrl>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 	<description>JAuthTools: Allows LDAP integration by synchronization.</description>
 	<files>
 	    <filename mambot="ldap.ssi">ldap.ssi.php</filename>
