@@ -62,7 +62,7 @@ function botDoLdapAdvSync() {
 	$submit = mosGetParam($_REQUEST,'submit', '');
 	
 	// Configuration: Load mambot parameters
-	$query = "SELECT params FROM #__mambots WHERE element = 'ldap.sync' AND folder = 'system'";
+	$query = "SELECT params FROM #__mambots WHERE element = 'ldap.advsync' AND folder = 'system'";
 	$database->setQuery($query);
 	$params = $database->loadResult();
 	$mambotParams = & new mosParameters($params);
@@ -93,7 +93,7 @@ function botDoLdapAdvSync() {
 	$loginonly = $mambotParams->get('syncloginonly',0);
 	
 	if($loginonly) {
-		if 	($option != 'login' && // don't run
+		if 	($option != 'login' && // check for login
  			($option != 'com_comprofiler' && $task != 'login') &&
 			($submit != 'Login')) { // added community builder support
 				return 0; // no login detected so bail
@@ -111,7 +111,6 @@ function botDoLdapAdvSync() {
 	} // final else is covered by the next if
 	
 	if(!$cuid) {
-		die('failed to find user');
 		addLogEntry('LDAP Adv Sync Mambot', 'detection', 'error', 'Failed to find user to synchronise');
 		return 0;
 	}
@@ -123,7 +122,6 @@ function botDoLdapAdvSync() {
 	$fields = $database->loadAssocList();
 	if(!count($fields)) {
 		addLogEntry('LDAP Adv Sync Mambot', 'configuration', 'error', stripslashes($database->getErrorMsg()));
-		die('failed to find fields');
 		return 0;
 	}
 	$tablefields = Array();
@@ -133,7 +131,6 @@ function botDoLdapAdvSync() {
 	
 	if(!in_array($uidfield, $tablefields)) {
 		addLogEntry('LDAP Adv Sync Mambot', 'configuration', 'error', 'UID Field "'. $uidfield .'" is not in table "'. $table.'"');
-		die('failed to find uidfield in table');
 		return 0;
 	}
 	
@@ -165,7 +162,7 @@ function botDoLdapAdvSync() {
 			}
 			foreach($rows as $row) {
 				if(!strlen(trim($row))) continue; // skip empty line
-				$parts = explode('|', $row); // look at the parts
+				$parts = explode(':', $row); // look at the parts
 				// and clean them up
 				for($i = 0; $i < count($parts); $i++) $parts[$i] = trim($parts[$i]);
 				if(in_array($parts[0], $tablefields)) {
@@ -187,12 +184,22 @@ function botDoLdapAdvSync() {
 						$value = $parts[1];
 					}
 					if($ldap) {
-						$dbtable->$fieldname = $userdetails[$value][$index]; 
+						if(isset($userdetails[$value])) {
+							if(isset($userdetails[$value][$index])) {
+								$dbtable->$fieldname = $userdetails[$value][$index];
+							} else if(isset($userdetails[$value][0])) {
+								$dbtable->$fieldname = $userdetails[$value][0];
+							} else {
+								$dbtable->$fieldname = $userdetails[$value];
+							}
+						} else {
+							addLogEntry('LDAP Adv Sync Mambot', 'parser', 'notice', 'Ignoring field mapping for "'. $fieldname .'": cannot find field "'. $value .'" in LDAP');
+						} 
 					} else {
 						$dbtable->$fieldname = $value;
 					}
 				} else {
-					addLogEntry('LDAP Adv Sync Mambot', 'parser', 'notice', 'Ignoring field mapping for "'. $parts[0].'"; cannot find field in table');
+					addLogEntry('LDAP Adv Sync Mambot', 'parser', 'notice', 'Ignoring field mapping for "'. $parts[0].'": cannot find field in table');
 				}
 			}
 			$result = $dbtable->store();

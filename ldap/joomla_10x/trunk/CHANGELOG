@@ -20,6 +20,11 @@ Legend:
 - -> Removed
 ! -> Note
 
+07-May-2008 Sam Moffatt
++ Added advanced LDAP synchronisation tool
+^ Altered obscure password system to copy password to seperate request variable
++ Added trigger for sync to limit sync to just login
+
 06-Feb-2008 Sam Moffatt
 + Added IP blacklisting for LDAP SSO
 + Added ability to obscure passwords for LDAP SSI
