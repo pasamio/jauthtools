@@ -135,8 +135,10 @@ function botLDAPSSI() {
 		if ($mambotParams->get('useglobal',1)) {
 			$ldap = new ldapConnector();
 			$mambotParams = $ldap->getParams();
+			$ldap->source = 'joomla.ldap';
 		} else {
 			$ldap = new ldapConnector($mambotParams);
+			$ldap->source = 'ldap.ssi';
 		}
 
 		addLogEntry('LDAP SSI Mambot', 'authentication', 'notice', '!!! Starting authentication procedure !!!');

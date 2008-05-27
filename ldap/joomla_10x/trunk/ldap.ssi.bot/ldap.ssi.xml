@@ -22,6 +22,7 @@
 		
 		<!-- Server connection settings -->
 		<param name="host" type="text" size="20" default="" label="Host" description="For example, openldap.mycompany.org" />
+		<param name="alternatehost" type="text" size="20" default="" label="Alternate Host" description="Backup server for failover" />
 		<param name="port" type="text" size="20" default="389" label="Port" description="Default port is 389" />
 		<param name="use_ldapV3" type="radio" default="0" label="LDAP V3" description="Default is LDAP2, but latest versions of OpenLdap require clients to use LDAPV3">
 			<option value="0">No</option>
