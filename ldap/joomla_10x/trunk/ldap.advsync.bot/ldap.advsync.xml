@@ -21,6 +21,7 @@
 		
 		<!-- Server connection settings -->
 		<param name="host" type="text" size="20" default="" label="Host" description="For example, openldap.mycompany.org" />
+		<param name="alternatehost" type="text" size="20" default="" label="Alternate Host" description="Backup server for failover" />
 		<param name="port" type="text" size="20" default="389" label="Port" description="Default port is 389" />
 		<param name="use_ldapV3" type="radio" default="0" label="LDAP V3" description="Default is LDAP2, but latest versions of OpenLdap require clients to use LDAPV3">
 			<option value="0">No</option>
@@ -66,13 +67,11 @@
 		<param name="autocreateregistered" type="radio" default="0" label="Auto Create Public Frontend" description="Create a user even if their group is only 'Public Frontend'. By default public front end is the lowest group so you should map to default users. Useful if you want to restrict autocreation to special groups.">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
-		</param>
--->		
+		</param>		
 		<param name="demoteuser" type="radio" default="1" label="Demote Users" description="Demote users if their group mapping or default user settings are different.">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
-		</param>			
-<!--
+		</param>
 		<param name="forceldap" type="radio" default="0" label="Force LDAP Authentication" description="Users Joomla password is reset upon unsuccessful bind. This ensures that new LDAP passwords are used, instead of old synchronized value.">
 			<option value="0">No</option>
 			<option value="1">Yes</option>

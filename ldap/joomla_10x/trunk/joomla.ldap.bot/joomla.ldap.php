@@ -52,12 +52,18 @@ class ldapConnector {
 	/** @var string Hostname of LDAP server
 	    @access public */
 	var $host = null;
+	/** @var string Alternate Hostname of an LDAP server (for redundancy)
+	 * @access public */
+	var $alternatehost = null;
 	/** @var bool Authorization Method to use
 	    @access public */
 	var $auth_method = null;
 	/** @var int Port of LDAP server
 	    @access public */
 	var $port = null;
+	/** @var int Alternate Port of LDAP server
+	    @access public */
+	var $alternateport = null;
 	/** @var string Base DN (e.g. o=MyDir)
 	    @access public */
 	var $base_dn = null;
@@ -127,6 +133,9 @@ class ldapConnector {
 	/** @var string Group Map */
 	var $groupMap = null;
 	
+	/** @var object source Source of the configuration mambot (the name in #__mambots) */
+	var $source = null;	
+	
 	/** @var object params Param Object */
 	var $params = null;
 	
@@ -177,11 +186,15 @@ class ldapConnector {
 	 * @return boolean True if successful
 	 * @access public
 	 */
-	function connect() {
+	function connect($usealt=false,$applyfailover=true) {
 		if ($this->host == '') {
 			return false;
 		}
-		$this->_resource = @ ldap_connect($this->host, $this->port);
+		if(!$usealt) {
+			$this->_resource = @ ldap_connect($this->host, $this->port);
+		} else {
+			$this->_resource = @ ldap_connect($this->alternatehost, $this->alternateport);
+		}
 		if ($this->_resource) {
 			if ($this->use_ldapV3) {
 				if (!ldap_set_option($this->_resource, LDAP_OPT_PROTOCOL_VERSION, 3)) {
@@ -198,7 +211,16 @@ class ldapConnector {
 			}
 			return true;
 		} else {
-			return false;
+			if($this->alternatehost && !$usealt) {
+				if($this->connect($usealt)) {
+					// we failed to connect to the first server
+					// but the second did, enact failover
+					if($applyfailover) $this->_enactFailover($this->alternatehost, $this->host);
+					return true;
+				} else {
+					return false;
+				}
+			} else return false;
 		}
 	}
 
@@ -236,6 +258,18 @@ class ldapConnector {
 	 */
 	function anonymous_bind() {
 		$this->bind_result = @ ldap_bind($this->_resource);
+		if(!$this->bind_result && ldap_errno($this->_resource) == -1) {
+			// we failed to connect to the server, attempt failover
+			if($this->connect(true,false)) {
+				// rebind with the new server if this fails then it doesn't matter'
+				$this->bind_result = @ ldap_bind($this->_resource);
+				if($this->bind_result) {
+					// we bound successfully
+					$this->_enactFailover($this->alternatehost, $this->host);
+				}
+			}
+		}
+		// return whatever the final result was
 		return $this->bind_result;
 	}
 
@@ -249,7 +283,7 @@ class ldapConnector {
 	function bind($username = null, $password = null, $nosub = 0) {
 		switch ($this->bind_method) {
 			case 'anonymous' :
-				$bindResult = @ ldap_bind($this->_resource);
+				$bindResult = $this->anonymous_bind(); // use the anonymous bind
 				break;
 			default :
 				if (is_null($username)) {
@@ -261,6 +295,17 @@ class ldapConnector {
 
 				$this->setDN($username, $nosub);
 				$this->bind_result =  @ldap_bind($this->_resource, $this->getDN(), $password);
+				if(!$this->bind_result && ldap_errno($this->_resource) == -1) {
+					// we failed to connect to the server, attempt failover
+					if($this->connect(true,false)) {
+						// rebind with the new server if this fails then it doesn't matter'
+						$this->bind_result = @ ldap_bind($this->_resource, $this->getDN(), $password);
+						if($this->bind_result) {
+							// we bound successfully, this server must be good
+							$this->_enactFailover($this->alternatehost, $this->host);
+						}
+					}
+				}
 		}
 		return $this->bind_result;
 	}
@@ -542,5 +587,32 @@ class ldapConnector {
 	function getParams() {
 		return $this->params;
 	}
+	
+	/**
+	 * Handle failover
+	 * @param string new primary server
+	 * @param string new alternate server
+	 */
+	function _enactFailover($primary, $secondary) {
+		global $database;
+		if(is_object($database) && $this->source) {
+			$database->setQuery('SELECT params FROM #__mambots WHERE folder = "system" AND element = "'. $this->source .'"');
+			$params = $database->loadResult();
+			if($params) {
+				$regexs = Array('/^host=[0-9.A-Za-z ]*/','/^alternatehost=[0-9.A-Za-z ]*/');
+				$replacement = Array('host='.$primary,'alternatehost='.$secondary);
+				$params = implode("\n",preg_replace($regexs, $replacement, explode("\n",$params)));
+				$database->setQuery('UPDATE #__mambots SET params = "'. $database->getEscaped($params).'"');
+				if($database->Query()) {
+					addLogEntry('LDAP Library', 'Failover', 'notice', 'Enacting failover to new primary: '. $primary .'; Old server: '. $secondary);
+				} else {
+					addLogEntry('LDAP Library', 'Failover', 'error', 'Failed to apply failover: '. $database->getErrorMsg());
+				}
+			} else {
+				addLogEntry('LDAP Library', 'Failover', 'error', 'Failed to find source configuration: '. $this->source);
+			}
+		} else {
+			echo "Failing over to $primary from $secondary not supported without database\n";
+		}
+	}
 }
-?>

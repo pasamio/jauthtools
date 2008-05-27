@@ -70,8 +70,10 @@ function botDoLdapAdvSync() {
 	if ($mambotParams->get('useglobal',1)) { // If we use global set this
 		$ldap = new ldapConnector();
 		$mambotParams = $ldap->getParams();
+		$ldap->source = 'joomla.ldap';
 	} else {
 		$ldap = new ldapConnector($mambotParams);
+		$ldap->source = 'ldap.advsync';
 	}
 	
 	// Valid our basic params

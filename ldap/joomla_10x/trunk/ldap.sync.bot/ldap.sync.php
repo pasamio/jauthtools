@@ -74,8 +74,10 @@ function botDoLdapSync() {
 	if ($mambotParams->get('useglobal',1)) {
 		$ldap = new ldapConnector();
 		$mambotParams = $ldap->getParams();
+		$ldap->source = 'joomla.ldap';
 	} else {
 		$ldap = new ldapConnector($mambotParams);
+		$ldap->source = 'ldap.sync';
 	}
 	
 	$option = mosGetParam($_REQUEST, 'option','');
