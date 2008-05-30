@@ -63,6 +63,7 @@
 		<param name="ldap_password" type="text" size="20" default="userPassword" label="Map Password" description="The LDAP attribute that store the password for your user." />
 		<param name="ldap_blocked" type="text" size="20" default="loginDisabled" label="Map User Blocked" description="An LDAP Attribute to map blocked users. This should be a boolean value (true or false)" />
 		<param name="ldap_groupname" type="text" size="20" default="groupMembership" label="Map Group Name" description="The attribute in LDAP storing the group name. This is used by the group mapping system." />
+		<param name="ldap_groupmember" type="text" size="20" default="member" label="Map Group Members" description="The attribute in LDAP storing the member of a given group. This is used by the group mapping system in reverse." />		
 		<param name="@spacer" type="spacer" default="" label="" description="" />
 		
 		<!-- User Creation and Synchronisation -->

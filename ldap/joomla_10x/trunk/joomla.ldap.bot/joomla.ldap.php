@@ -2,20 +2,20 @@
 
 /**
  * LDAP Library
- * 
- * This bot is the basis of the LDAP Library 
- * 
+ *
+ * This bot is the basis of the LDAP Library
+ *
  * PHP4
  * MySQL 4
- *  
+ *
  * Created on Oct 3, 2006
- * 
+ *
  * @package LDAP Tools
  * @subpackage Library
  * @author Sam Moffatt <sam.moffatt@toowoombarc.qld.gov.au>
  * @author Toowoomba Regional Council Information Management Branch
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Toowoomba Regional Council/Sam Moffatt 
+ * @copyright 2008 Toowoomba Regional Council/Sam Moffatt
  * @version SVN: $Id:$
  * @see Joomla!Forge Project: http://forge.joomla.org/sf/sfmain/do/viewProject/projects.ldap_tools
  */
@@ -115,6 +115,9 @@ class ldapConnector {
 	/** @var string LDAP Map Group Name
 		@access private */
 	var $ldap_groupname = '';
+	/**@var string LDAP Map Group Member	
+	 * @access private */
+	var $ldap_groupmember = '';
 	/** @var string Autocreate default group
 		@access private */
 	var $defaultgroup = 'registered';
@@ -541,13 +544,25 @@ class ldapConnector {
 				}
 
 				// add group memberships for active directory
-				if($ad) {
+				// Also if no groups found maybe group membership attribute
+				// is not auto.  Lets look in all groups given to see if user
+				// is in these group.  Use the group attribute as the name of the
+				// group member attribute.
+				if($ad || !isset($userdetails[0][$groupMembership])) {
 					$groupMemberships = Array();
 					$cnt = 0;
+				    if(!$ad) {
+                        // since we are bound as the user, we have to bind as
+                        // admin in order to search the groups and their attributes
+                        $ldap_bind_uid = $this->params->get('username');
+                        $ldap_bind_password = $this->params->get('password');
+                        $this->bind($ldap_bind_uid , $ldap_bind_password , 1);
+                     }			
+                     		
 					foreach ($groupMap as $groupMapEntry) {
 						$group = $groupMapEntry['groupname'];
 						$groupdetails = $this->simple_search($group, $dn);
-						$groupMembers = $groupdetails[0]['member'];
+						$groupMembers = isset($groupdetails[0][$this->ldap_groupmember]) ? $groupdetails[0][$this->ldap_groupmember] : Array();
 						
 						foreach ($groupMembers as $groupMember) {
 							if($groupMember == $userdetails[0]['dn']) {
