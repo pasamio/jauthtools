@@ -17,7 +17,17 @@
 		<!-- LDAP Specific Details -->
 		<param name="ldap_blocked" type="text" size="20" default="loginDisabled" label="Map User Blocked" description="LDAP Attribute to map blocked users" />
 		<param name="ldap_groups" type="text" size="20" default="groupMembership" label="Map User Groups" description="LDAP Attribute to map users groups" />
+		<param name="ldap_groupmember" type="text" size="20" default="member" label="Map Group Members" description="The attribute in LDAP storing the member of a given group. This is used by the group mapping system in reverse." />
 		<param name="groupMap" type="textarea" cols="100" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
+		<!--  Group Mapping Details -->
+		<param name="reversegroupmembership" type="radio" default="0" label="Use reverse group membership" description="Look at the group to find if the user is a member instead of looking at the user; use for Apache DS or environments that may not have dynamic attributes">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="authenticategroupsearch" type="radio" default="0" label="Authenticate Group Search" description="Use the connect username and password to login before doing a reverse group search">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
 		<!-- Internationalisation Support -->
 		<param name="use_iconv" type="radio" default="0" label="Use iconv" description="iconv is required to convert some fields into UTF-8 that is stored in the database. You will need iconv installed (See System -> System Info -> PHP Info) or this will error">
 			<option value="0">No</option>
