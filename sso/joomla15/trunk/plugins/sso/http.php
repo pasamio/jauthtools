@@ -42,7 +42,7 @@ class plgSSOHTTP extends JPlugin {
 	function detectRemoteUser() {
 		$plugin = & JPluginHelper :: getPlugin('sso', 'http');
 		$params = new JParameter($plugin->params);
-		$ip_blacklist = $params->get('ip_blacklist','127.0.0.1');
+		$ip_blacklist = $params->get('ip_blacklist','');
 		$list = explode("\n", $ip_blacklist);
 		if(in_array($_SERVER['REMOTE_ADDR'],$list)) {
 			return false;

@@ -45,7 +45,7 @@ class plgSSOIP extends JPlugin {
 		// load parameters
 		$plugin = & JPluginHelper :: getPlugin('sso', 'ip');
 		$params = new JParameter($plugin->params);
-		$ip_list = $params->get('ip_list','127.0.0.1');
+		$ip_list = $params->get('ip_list','');
 		$user = $params->get('user','admin');
 		$list = explode("\n", $ip_list);
 		$ip = $_SERVER['REMOTE_ADDR'];
