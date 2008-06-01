@@ -48,7 +48,7 @@ class plgSSOHTTP extends JPlugin {
 			return false;
 		}		
 		$remote_user = JArrayHelper::getValue($_SERVER,$params->getValue('userkey','REMOTE_USER'),'');
-		$replace_set = explode('|', $params->getValue('username_replace',''));
+		$replace_set = explode('|', $params->getValue('username_replacement',''));
 		foreach($replace_set as $replacement) {
 			$remote_user = str_replace($replacement,'',$remote_user);
 		}
