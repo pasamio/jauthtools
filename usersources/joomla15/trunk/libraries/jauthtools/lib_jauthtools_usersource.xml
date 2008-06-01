@@ -8,7 +8,7 @@
 	<packager>Sam Moffatt</packager>
 	<packagerurl>http://sammoffatt.com.au/</packagerurl>
 	<update>http://www.jsitepoint.com/update/libraries/lib_jauthtools_usersource</update>
-	<version id="3">1.5.2</version>
+	<version id="4">1.5.3</version>
 	<files>
 		<file>usersource.php</file>
 	</files>
