@@ -103,9 +103,7 @@ class plgUserSourceLDAP extends JPlugin {
 		$map = $params->getValue('groupMap',null);
 		$loginDisabled = $params->getValue('ldap_blocked','loginDisabled');
 		$groupMembership = $params->getValue('ldap_groups', 'groupMembership');
-		// Grab user details
-		//$user->id = 0;
-		//echo '<pre>'; print_r($map); die();
+		$groupmember = $params->getValue('ldap_groupmember','member');
 		$user->username = $username;
 		$userdetails = $ldap->simple_search(str_replace("[search]", $user->username, $params->getValue('search_string')));
 		$user->gid = 29;
@@ -114,24 +112,38 @@ class plgUserSourceLDAP extends JPlugin {
 		$user->name = $user->username; // Set Defaults		
 		$ldap_email = $params->getValue('ldap_email','mail');
 		$ldap_fullname = $params->getValue('ldap_fullname', 'fullName');
+		// we need at least a DN and a potentially valid email
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $userdetails[0][$ldap_email][0];
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
 				$user->name = $this->_convert($userdetails[0][$ldap_fullname][0], $params);
 			}
 
-			$user->block = isset($userdetails[0][$loginDisabled]) ? intval($userdetails[0][$loginDisabled][0]) : 0;			
-			
+			$user->block = isset($userdetails[0][$loginDisabled]) ? intval($userdetails[0][$loginDisabled][0]) : 0;
+	
 			if ($map) {
 				$groupMap = $this->_parseGroupMap($map);
 				// add group memberships for active directory
-				if($params->getValue('ldap_is_ad',0)) {
+				if($params->getValue('reversegroupmembership',0)) {
 					$groupMemberships = Array();
 					$cnt = 0;
+				    if($params->getValue('authenticategroupsearch',0)) {
+                        // since we are bound as the user, we have to bind as
+                        // admin in order to search the groups and their attributes
+                        $ldap_bind_uid = $params->get('username');
+                        $ldap_bind_password = $params->get('password');
+                        $ldap->bind($ldap_bind_uid , $ldap_bind_password , 1);
+                     }
+                     		
 					foreach ($groupMap as $groupMapEntry) {
 						$group = $groupMapEntry['groupname'];
-						$groupdetails = $this->simple_search($group, $dn);
-						$groupMembers = $groupdetails[0]['member'];
+						//Build search conext by splitting the cn=GROUPNAME from the search context
+						$sSearch = substr($group, 0, strpos($group,','));
+						$sContext = substr($group,strpos($group,',')+1,strlen($group));
+						
+						//query for the group
+						$groupdetails = $ldap->search(array($sSearch),$sContext);
+						$groupMembers = isset($groupdetails[0][$groupmember]) ? $groupdetails[0][$groupmember] : Array();
 						
 						foreach ($groupMembers as $groupMember) {
 							if($groupMember == $userdetails[0]['dn']) {
@@ -140,10 +152,10 @@ class plgUserSourceLDAP extends JPlugin {
 						}
 					}
 					if($cnt > 0) {
-						$groupMembership = $groupMemberships;
+						$userdetails[0][$groupMembership] = $groupMemberships;
 					}
 				}
-				$this->_remapUser($user, $userdetails[0], $groupMap, $groupMembership);
+				$this->_reMapUser($user, $userdetails[0], $groupMap, $groupMembership);
 			}
 			return true;
 		}
