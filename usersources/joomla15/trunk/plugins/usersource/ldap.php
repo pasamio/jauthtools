@@ -37,7 +37,7 @@ class plgUserSourceLDAP extends JPlugin {
 	 * @param object $subject The object to observe
 	 * @since 1.5
 	 */
-	function plgUserSourceLDAP(& $subject) {
+	function plgUserSourceLDAP(& $subject ) {
 		parent :: __construct($subject);
 	}
 
@@ -52,6 +52,7 @@ class plgUserSourceLDAP extends JPlugin {
 		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
 		$ldapparams = new JParameter($ldapplugin->params);
 		$params->merge($ldapparams);
+		$this->params = $params; // reset our internal params to include the merged values
 		$ldap = new JLDAP($params);
 		if (!$ldap->connect()) {
 			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::getUser: Failed to connect to LDAP Server ' . $params->getValue('host'));
@@ -63,7 +64,7 @@ class plgUserSourceLDAP extends JPlugin {
 			return false;
 		}
 		
-		return $this->_updateUser($ldap, $username, $user, $params);
+		return $this->_updateUser($ldap, $username, $user);
 	} 
 	
 	/**
@@ -75,6 +76,7 @@ class plgUserSourceLDAP extends JPlugin {
 		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
 		$ldapparams = new JParameter($ldapplugin->params);
 		$params->merge($ldapparams);
+		$this->params = $params; // reset our internal params to include the merged values
 		$ldap = new JLDAP($params);
 		
 		$return = false;
@@ -90,7 +92,7 @@ class plgUserSourceLDAP extends JPlugin {
 		
 		$user = new JUser();
 		$user->load(JUserHelper::getUserId($username));
-		if($this->_updateUser($ldap, $username, $user, $params)) {
+		if($this->_updateUser($ldap, $username, $user)) {
 			$return = $user;
 		}
 		return $return;
@@ -99,39 +101,39 @@ class plgUserSourceLDAP extends JPlugin {
 	/**
 	 * Update user
 	 */
-	function _updateUser(&$ldap, $username, &$user, &$params) {
-		$map = $params->getValue('groupMap',null);
-		$loginDisabled = $params->getValue('ldap_blocked','loginDisabled');
-		$groupMembership = $params->getValue('ldap_groups', 'groupMembership');
-		$groupmember = $params->getValue('ldap_groupmember','member');
+	function _updateUser(&$ldap, $username, &$user) {
+		$map = $this->params->getValue('groupMap',null);
+		$loginDisabled = $this->params->getValue('ldap_blocked','loginDisabled');
+		$groupMembership = $this->params->getValue('ldap_groups', 'groupMembership');
+		$groupmember = $this->params->getValue('ldap_groupmember','member');
 		$user->username = $username;
-		$userdetails = $ldap->simple_search(str_replace("[search]", $user->username, $params->getValue('search_string')));
+		$userdetails = $ldap->simple_search(str_replace("[search]", $user->username, $this->params->getValue('search_string')));
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults		
-		$ldap_email = $params->getValue('ldap_email','mail');
-		$ldap_fullname = $params->getValue('ldap_fullname', 'fullName');
+		$ldap_email = $this->params->getValue('ldap_email','mail');
+		$ldap_fullname = $this->params->getValue('ldap_fullname', 'fullName');
 		// we need at least a DN and a potentially valid email
 		if (isset ($userdetails[0]['dn']) && isset ($userdetails[0][$ldap_email][0])) {
 			$user->email = $userdetails[0][$ldap_email][0];
 			if (isset ($userdetails[0][$ldap_fullname][0])) {
-				$user->name = $this->_convert($userdetails[0][$ldap_fullname][0], $params);
+				$user->name = $this->_convert($userdetails[0][$ldap_fullname][0]);
 			}
 
 			$user->block = isset($userdetails[0][$loginDisabled]) ? intval($userdetails[0][$loginDisabled][0]) : 0;
 	
 			if ($map) {
 				$groupMap = $this->_parseGroupMap($map);
-				// add group memberships for active directory
-				if($params->getValue('reversegroupmembership',0)) {
+				// add group memberships for active directory or other systems that don't store it in the user
+				if($this->params->getValue('reversegroupmembership',0)) {
 					$groupMemberships = Array();
 					$cnt = 0;
-				    if($params->getValue('authenticategroupsearch',0)) {
+				    if($this->params->getValue('authenticategroupsearch',0)) {
                         // since we are bound as the user, we have to bind as
                         // admin in order to search the groups and their attributes
-                        $ldap_bind_uid = $params->get('username');
-                        $ldap_bind_password = $params->get('password');
+                        $ldap_bind_uid = $this->params->get('username');
+                        $ldap_bind_password = $this->params->get('password');
                         $ldap->bind($ldap_bind_uid , $ldap_bind_password , 1);
                      }
                      		
@@ -152,9 +154,41 @@ class plgUserSourceLDAP extends JPlugin {
 						}
 					}
 					if($cnt > 0) {
-						$userdetails[0][$groupMembership] = $groupMemberships;
+						if(!isset($userdetails[0][$groupMembership])) {
+							// its not set, just overwrite
+							$userdetails[0][$groupMembership] = $groupMemberships;
+						} else {
+							// its set, try array merge
+							$userdetails[0][$groupMembership] = array_merge($userdetails[0][$groupMembership], $groupMemberships);
+						}
 					}
 				}
+				
+				// find any recursive group memberships based on existing memberships
+				if($this->params->getValue('recursivegroupmembership',0)) {
+					if(count($userdetails[0][$groupMembership])) {
+						$groupMemberships = Array();
+						$cnt = 0;
+						$userGroups = $this->_getUserGroups($ldap,$userdetails[0]);
+						foreach ($groupMap as $groupMapEntry) {
+							$group = $groupMapEntry['groupname'];
+							if ($this->in_array_nocase($group, $userGroups)){ 
+								$groupMemberships[$cnt++] = $group;
+							}
+						}
+					}
+
+					if($cnt > 0) {
+						if(!isset($userdetails[0][$groupMembership])) {
+							// its not set, just overwrite
+							$userdetails[0][$groupMembership] = $groupMemberships;
+						} else {
+							// its set, try array merge
+							$userdetails[0][$groupMembership] = array_merge($userdetails[0][$groupMembership], $groupMemberships);
+						}
+					}					
+				}
+				
 				$this->_reMapUser($user, $userdetails[0], $groupMap, $groupMembership);
 			}
 			return true;
@@ -220,9 +254,9 @@ class plgUserSourceLDAP extends JPlugin {
 		return true;
 	}
 	
-	function _convert($string, $params) {
-		if(function_exists('iconv') && $params->get('use_iconv',0)) {
-			return iconv($params->get('iconv_to','UTF-8'), $params->get('iconv_from','ISO8859-1'), $string);
+	function _convert($string) {
+		if(function_exists('iconv') && $this->params->get('use_iconv',0)) {
+			return iconv($this->params->get('iconv_to','UTF-8'), $this->params->get('iconv_from','ISO8859-1'), $string);
 		} else return $string;
 	}
 	
@@ -233,7 +267,7 @@ class plgUserSourceLDAP extends JPlugin {
 	 */
 	function _getUserGroups(&$ldap, $user) {
 		// TODO: Change this to be dynamic
-		$userBaseGroups = $user['memberOf'];
+		$userBaseGroups = $user[$this->params->getValue('ldap_groups','groupMembership')];
 		$userGroups = Array();
 		foreach ($userBaseGroups as $id => $group) {
 			$extraGroups = $this->_recurseGroups($ldap, $group);
@@ -253,13 +287,15 @@ class plgUserSourceLDAP extends JPlugin {
 
 		$ret_groups = Array();
 		// TODO: Change this to be dynamic
-		$search_string = "sAMAccountName=".$this->_simple_name($group);
-		$objGroup = $ldap->simple_search("sAMAccountName=".$this->_simple_name($group));
-		
+		//$search_string = "sAMAccountName=".$this->_simple_name($group);
+		// Pull this out of the ldap auth params
+		$search_string = str_replace('[search]', $this->_simple_name($group), $this->params->getValue('search_string',''));
+		$objGroup = $ldap->simple_search( $search_string );
+		$groupmembers = $this->params->getValue('ldap_groups','groupMembership');
 		if ($objGroup && $objGroup[0]) {
 			// TODO: These two as well
-			if (isset($objGroup[0]['memberOf'])) { 
-				$objGroups = $objGroup[0]['memberOf']; 
+			if (isset($objGroup[0][$groupmembers])) { 
+				$objGroups = $objGroup[0][$groupmembers]; 
 				$ret_groups=array_merge($ret_groups, $objGroups);
 				foreach ($objGroups as $id => $group_dn){
 					$child_groups=$this->_recurseGroups($ldap, $group_dn);
@@ -280,7 +316,7 @@ class plgUserSourceLDAP extends JPlugin {
 		$bits=explode(",",$group);
 		$eq = strpos($bits[0], '=');
 		if($eq) { // it shouldn't be zero
-			$group_name=substr($bits[0],$eq);
+			$group_name=substr($bits[0],$eq+1);
 		} else { // well guess what it was zero
 			$group_name = $bits[0]; // return it as it is
 		}

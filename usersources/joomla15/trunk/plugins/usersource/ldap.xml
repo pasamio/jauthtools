@@ -28,6 +28,10 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
+		<param name="recursivegroupmembership" type="radio" default="0" label="Use recursive group membership" description="Uses the users existing group memberships to recurse up the tree to include its potential parent groups. Useful in Microsoft Active Directory's nested group structure.">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>		
 		<!-- Internationalisation Support -->
 		<param name="use_iconv" type="radio" default="0" label="Use iconv" description="iconv is required to convert some fields into UTF-8 that is stored in the database. You will need iconv installed (See System -> System Info -> PHP Info) or this will error">
 			<option value="0">No</option>
