@@ -225,4 +225,79 @@ class plgUserSourceLDAP extends JPlugin {
 			return iconv($params->get('iconv_to','UTF-8'), $params->get('iconv_from','ISO8859-1'), $string);
 		} else return $string;
 	}
+	
+	// 	Functions contributed by David Kamphuis with noted alterations 
+	/**
+	 * Return an Array of all a users group memberships
+	 * Used for Active Directory nested groups
+	 */
+	function _getUserGroups(&$ldap, $user) {
+		// TODO: Change this to be dynamic
+		$userBaseGroups = $user['memberOf'];
+		$userGroups = Array();
+		foreach ($userBaseGroups as $id => $group) {
+			$extraGroups = $this->_recurseGroups($ldap, $group);
+			$userGroups=array_merge($userGroups, $extraGroups);
+		}
+		$userBaseGroups = array_merge($userBaseGroups, $userGroups);
+		$userBaseGroups = array_unique($userBaseGroups);
+		return $userBaseGroups;
+	}
+	
+	/**
+	 * Return an Array of unique nested groups
+	 * Used for Active Directory nested groups
+	 */
+	function _recurseGroups(&$ldap, $group) {
+		if ($group==NULL){ return (false); }
+
+		$ret_groups = Array();
+		// TODO: Change this to be dynamic
+		$search_string = "sAMAccountName=".$this->_simple_name($group);
+		$objGroup = $ldap->simple_search("sAMAccountName=".$this->_simple_name($group));
+		
+		if ($objGroup && $objGroup[0]) {
+			// TODO: These two as well
+			if (isset($objGroup[0]['memberOf'])) { 
+				$objGroups = $objGroup[0]['memberOf']; 
+				$ret_groups=array_merge($ret_groups, $objGroups);
+				foreach ($objGroups as $id => $group_dn){
+					$child_groups=$this->_recurseGroups($ldap, $group_dn);
+					$ret_groups=array_merge($ret_groups, $child_groups);
+					$ret_groups = array_unique($ret_groups);
+				}
+			}
+		}
+		return $ret_groups;
+	}
+
+	/**
+	 * Return the name of an object
+	 * ie. given CN=john.smith,ou=users,dc=domain,dc=com
+	 * 	it will return john.smith
+	 */
+	function _simple_name($group) {
+		$bits=explode(",",$group);
+		$eq = strpos($bits[0], '=');
+		if($eq) { // it shouldn't be zero
+			$group_name=substr($bits[0],$eq);
+		} else { // well guess what it was zero
+			$group_name = $bits[0]; // return it as it is
+		}
+		return $group_name;	
+	}
+
+	/**
+	 * Determine if a string is in an array
+	 */
+	function in_array_nocase($search, &$array) {
+  		$search = strtolower($search);
+  		foreach ($array as $item) {
+    			if (strtolower($item) == $search) {
+	      			return TRUE;
+			}
+		}
+ 		return FALSE;
+	}	
+	
 }
