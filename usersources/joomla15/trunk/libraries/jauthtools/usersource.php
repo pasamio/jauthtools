@@ -59,12 +59,14 @@ class JAuthUserSource extends JObservable {
 				continue;
 			}
 
+			$my =& JFactory::getUser(); // get who we are now
 			// Try to find user
 			$user = new JUser();
 			if($plugin->getUser($username,$user)) {
+				$oldgid = $my->get('gid');
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$result = $user->save(); 	// save us, now the db is up
-				$my->load($my->id);			// reload!
+				$my->get('gid', $oldgid);	// set back to old value 
 				return $result;
 				break;
 			}
@@ -92,12 +94,14 @@ class JAuthUserSource extends JObservable {
 				$my =& JFactory::getUser(); // get who we are now
 				// by default we demote users
 				if(isset($options['demoteuser']) && !$options['demoteuser']) {
-					if($my->get('gid') < $user->get('gid')) continue;
+					// reset the gid
+					if($my->get('gid') < $user->get('gid')) $user->set('gid',$my->get('gid')); 
 				}
+				$oldgid = $my->get('gid');	// grab the current gid
 				$my->set('gid', 25); 		// and fake things to by pass security
-				$user->save(); 				// save us, now the db is up
-				$my->load($my->id);				// reload!
-				return true;					// thats all folks
+				$result = $user->save(); 	// save us, now the db is up
+				$my->get('gid', $oldgid);	// set back to old value
+				return true;				// thats all folks
 				break;
 			}
 		}
