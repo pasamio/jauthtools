@@ -43,6 +43,7 @@ class plgSSOJAuthGoogle extends JPlugin {
 		$params = new JParameter($plugin->params);
  	 	$supplier = $params->getValue('supplier','http://localhost:8080'); //dev server 
  	 	$supplier = $params->getValue('supplier','http://jauthtools.appspot.com'); //prod server
+		$suffix = $params->getValue('suffix','');
 
 		// grab the file
 		if(function_exists('curl_init'))
@@ -61,7 +62,7 @@ class plgSSOJAuthGoogle extends JPlugin {
 					if($child->name() == 'user') {
 						$userattr = $child->attributes();
 						$userdetails = new stdClass();
-						$userdetails->username = $userattr['email'];
+						$userdetails->username = str_replace($suffix,'',$userattr['email']);
 						$userdetails->name = $userattr['nickname'];
 						$userdetails->email = $userattr['email'];
 						
