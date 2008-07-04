@@ -57,9 +57,11 @@ class plgUserSourceSession extends JPlugin {
 			}
 			foreach($details as $detail) {
 				if(is_object($detail) && $detail->username == $username) {
+					// These three should be set by the plugin
 					$user->username = $detail->username;
 					$user->name = $detail->name;
 					$user->email = $detail->email;
+					// These two will be overriden in future
 					$user->gid = 18;
 			 	 	$user->usertype = 'Registered';
 					return true;					
