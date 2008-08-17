@@ -78,8 +78,13 @@ class plgUserLDAP extends JPlugin {
 		$ldapuid = $params->get('ldap_uid','uid');	
 		$defaultdn = $params->get('defaultdn','');
 		$ldap = new JLDAP($params);
-		$ldap->connect() or die('failed to connect');
-		$ldap->bind() or die('failed to bind: '. $ldap->getErrorMsg());
+		if(!$ldap->connect()) {
+			JError::raiseWarning(39, JText::_('Failed to connect to LDAP server').': '. $ldap->getErrorMsg());
+			return false;
+		}
+		if(!$ldap->bind()) {
+			JError::raiseWarning(40, JText::_('Failed to bind to LDAP Server'). ': '. $ldap->getErrorMsg());
+		}
 		// set up the user
 		$ldapuser = Array();
 		$ldapuser['cn'] = $user['username'];
@@ -111,7 +116,9 @@ class plgUserLDAP extends JPlugin {
 			if(count($result) == 1) {
 				if(!isset($ldapuser['initials'])) $ldapuser['initials'] = array();
 				if(!isset($ldapuser['givenname'])) $ldapuser['givenname'] = array();
-				$ldap->modify($result[0]['dn'],$ldapuser) or die('modify failed');
+				if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
+					JError::raiseWarning(44, JText::_('LDAP Modify failed'));
+				}
 			} else {
 				$this->_createUser($ldap, $dn, $ldapuser);
 			}
@@ -165,7 +172,7 @@ class plgUserLDAP extends JPlugin {
 		$c = count($result);
 		if($c == 1) {
 			$ldap->delete($result[0]['dn']);// or die('failed to delete user');
-			JError::raiseWarning(41, JText::_('User deleted'));
+			JError::raiseWarning(41, JText::_('LDAP User deleted'));
 		} else if($c > 1) {
 			// there was more than one DN returned, special situation!
 			JError::raiseWarning(42,JText::_('Too many users found in LDAP'));			
