@@ -75,8 +75,9 @@ class plgUserLDAP extends JPlugin {
 		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
 		$ldapparams = new JParameter($ldapplugin->params);
 		$params->merge($ldapparams);
-		$ldapuid = $params->get('ldap_uid','uid');	
+		$ldapuid = $params->get('ldap_uid','uid');
 		$defaultdn = $params->get('defaultdn','');
+		$ldap_rdnprefix = $params->get('ldap_rdnprefix', $ldapuid);
 		$ldap = new JLDAP($params);
 		if(!$ldap->connect()) {
 			JError::raiseWarning(39, JText::_('Failed to connect to LDAP server').': '. $ldap->getErrorMsg());
@@ -84,6 +85,7 @@ class plgUserLDAP extends JPlugin {
 		}
 		if(!$ldap->bind()) {
 			JError::raiseWarning(40, JText::_('Failed to bind to LDAP Server'). ': '. $ldap->getErrorMsg());
+			return false;
 		}
 		// set up the user
 		$ldapuser = Array();
@@ -103,7 +105,8 @@ class plgUserLDAP extends JPlugin {
 
 		// create the user in the default location
 		// this can be moved later
-		$dn = $ldapuid.'='. $user['username'].','.$defaultdn;
+		
+		$dn = $ldap_rdnprefix.'='. $user['username'].','.$defaultdn;
 		if ($isnew)
 		{
 			$this->_createUser($ldap, $dn, $ldapuser);
@@ -129,10 +132,6 @@ class plgUserLDAP extends JPlugin {
 		//echo '<hr />';
 		//die(print_r($temp,1).'<br />'.print_r($user,1));
 		return true;
-	}
-	
-	function onBeforeDeleteUser($user, $success, $msg) {
-			
 	}
 
 	/**
@@ -165,8 +164,14 @@ class plgUserLDAP extends JPlugin {
 		$params->merge($ldapparams);
 		$ldapuid = $params->get('ldap_uid','uid');
 		$ldap = new JLDAP($params);
-		$ldap->connect();
-		$ldap->bind();
+		if(!$ldap->connect()) {
+			JError::raiseWarning(39, JText::_('Failed to connect to LDAP server').': '. $ldap->getErrorMsg());
+			return false;
+		}
+		if(!$ldap->bind()) {
+			JError::raiseWarning(40, JText::_('Failed to bind to LDAP Server'). ': '. $ldap->getErrorMsg());
+			return false;
+		}
 		// search for the user
 		$result = $ldap->simple_search($ldapuid.'='.$user['username']);
 		$c = count($result);
@@ -180,59 +185,6 @@ class plgUserLDAP extends JPlugin {
 			// didn't find a result
 			JError::raiseWarning(43,JText::_('No matching LDAP user found'));
 		}
-	}
-
-	/**
-	 * This method should handle any login logic and report back to the subject
-	 *
-	 * @access	public
-	 * @param 	array 	holds the user data
-	 * @param 	array    extra options
-	 * @return	boolean	True on success
-	 * @since	1.5
-	 */
-	function onLoginUser($user, $options)
-	{
-		// Initialize variables
-		$success = false;
-		$success = true;
-
-		// Here you would do whatever you need for a login routine with the credentials
-		//
-		// Remember, this is not the authentication routine as that is done separately.
-		// The most common use of this routine would be logging the user into a third party
-		// application.
-		//
-		// In this example the boolean variable $success would be set to true
-		// if the login routine succeeds
-
-		// ThirdPartyApp::loginUser($user['username'], $user['password']);
-
-		return $success;
-	}
-
-	/**
-	 * This method should handle any logout logic and report back to the subject
-	 *
-	 * @access public
-	 * @param array holds the user data
-	 * @return boolean True on success
-	 * @since 1.5
-	 */
-	function onLogoutUser($user)
-	{
-		// Initialize variables
-		$success = false;
-		$success = true;
-
-		// Here you would do whatever you need for a logout routine with the credentials
-		//
-		// In this example the boolean variable $success would be set to true
-		// if the logout routine succeeds
-
-		// ThirdPartyApp::loginUser($user['username'], $user['password']);
-
-		return $success;
 	}
 	
 	/**

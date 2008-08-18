@@ -14,5 +14,6 @@
 	</files>
 	<params>
 		<param name="defaultdn" type="text" default="" label="Default DN" description="Default DN of the container for users to be created" />
+		<param name="ldap_rdnprefix" type="text" default="" label="Default RDN Prefix" description="Default RDN prefix to use (e.g. cn); if not specified the LDAP User ID will be used (see LDAP Authentication Plugin)" />
 	</params>
 </install>
