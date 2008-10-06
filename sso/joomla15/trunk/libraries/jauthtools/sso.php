@@ -1,18 +1,18 @@
 <?php
 /**
  * JAuthTools: SSO Authentication System
- * 
+ *
  * This file handles SSO based Authentication
- * 
+ *
  * PHP4/5
- *  
+ *
  * Created on Apr 17, 2007
- * 
+ *
  * @package JAuthTools
  * @author Sam Moffatt <sam.moffatt@toowoombarc.qld.gov.au>
  * @author Toowoomba Regional Council Information Management Department
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Toowoomba Regional Council/Sam Moffatt 
+ * @copyright 2008 Toowoomba Regional Council/Sam Moffatt
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -68,71 +68,46 @@ class JAuthSSOAuthentication extends JObservable {
 	function doSSOSessionSetup($username) {
 		// Get Database and find user
 		$database = JFactory::getDBO();
-		$query = 'SELECT id FROM #__users WHERE username=' . $database->Quote($username);
+		$query = 'SELECT * FROM #__users WHERE username=' . $database->Quote($username);
 		$database->setQuery($query);
-		$result = $database->loadResult();
-		// If the user already exists, create their session
-		if ($result > 0) {
-			// load plugin parameters
-			$plugin = & JPluginHelper :: getPlugin('user', 'joomla');
-			$params = new JParameter($plugin->params);
-
-			$my = new JUser();
-			jimport('joomla.user.helper');
-			if ($id = intval(JUserHelper :: getUserId($username))) {
-				$my->load($id);
-			} else {
-				return JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthSSOAuthentication::doSSOSessionSetup: Failed to load user');
+		$result = $database->loadAssocList();
+		// If the user already exists, create their session; don't create users
+		if (count($result)) {
+			
+			$options = Array();
+			$app =& JFactory::getApplication();
+			if($app->isAdmin()) {
+				// The minimum group
+				$options['group'] = 'Public Backend';
 			}
+			
+			//Make sure users are not autoregistered
+			$options['autoregister'] = false;
+			
+			// Import the user plugin group
+			JPluginHelper::importPlugin('user');
 
-			// If the user is blocked, redirect with an error
-			if ($my->get('block') == 1) {
-				return JError :: raiseWarning('SOME_ERROR_CODE', JText :: _('E_NOLOGIN_BLOCKED'));
+			// OK, the credentials are authenticated.  Lets fire the onLogin event
+			$results = $this->triggerEvent('onLoginUser', array($result, $options));
+			if (!in_array(false, $results, true)) {
+				// Set the remember me cookie if enabled
+				if (isset($options['remember']) && $options['remember'])
+				{
+					jimport('joomla.utilities.simplecrypt');
+					jimport('joomla.utilities.utility');
+					
+					//Create the encryption key, apply extra hardening using the user agent string
+					$key = JUtility::getHash(@$_SERVER['HTTP_USER_AGENT']);
+					
+					$crypt = new JSimpleCrypt($key);
+					$rcookie = $crypt->encrypt(serialize($credentials));
+					$lifetime = time() + 365*24*60*60;
+					setcookie( JUtility::getHash('JLOGIN_REMEMBER'), $rcookie, $lifetime, '/' );
+				}
+				return true;
 			}
-
-			//Mark the user as logged in
-			$my->set('guest', 0);
-
-			// Discover the access group identifier
-			// NOTE : this is a very basic for of permission handling, will be replaced by a full ACL in 1.6
-			jimport('joomla.factory');
-			$acl = & JFactory :: getACL();
-			$grp = $acl->getAroGroup($my->get('id'));
-
-			$my->set('aid', 1);
-			if ($acl->is_group_child_of($grp->name, 'Registered', 'ARO') || $acl->is_group_child_of($grp->name, 'Public Backend', 'ARO')) {
-				// fudge Authors, Editors, Publishers and Super Administrators into the special access group
-				$my->set('aid', 2);
-			}
-
-			//Set the usertype based on the ACL group name
-			$my->set('usertype', $grp->name);
-
-			// Register the needed session variables
-			$session = & JFactory :: getSession();
-			$session->set('user', $my);
-
-			// Get the session object
-			$table = & JTable :: getInstance('session');
-			$table->load($session->getId());
-
-			$table->guest = $my->get('guest');
-			$table->username = $my->get('username');
-			$table->userid = intval($my->get('id'));
-			$table->usertype = $my->get('usertype');
-			$table->gid = intval($my->get('gid'));
-
-			$table->update();
-
-			// Hit the user last visit field
-			$my->setLastVisit();
-
-			// Set remember me option
-			$lifetime = time() + 365 * 24 * 60 * 60;
-			setcookie('usercookie[username]', $my->get('username'), $lifetime, '/');
-			setcookie('usercookie[password]', $my->get('password'), $lifetime, '/');
-			$auth = true;
-			return true;
+			$this->triggerEvent('onLoginFailure', array($result));
+			return false;
 		}
 	}
 }
