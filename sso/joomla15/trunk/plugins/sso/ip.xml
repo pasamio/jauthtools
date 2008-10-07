@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>sammoffat.com.au</authorUrl>
-	<version id="4">1.5.3</version>
+	<version id="5">1.5.4</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgssoip</update>
 	<description>Automatically logs users as administrator if they are on the IP list.</description>
 	<files>
