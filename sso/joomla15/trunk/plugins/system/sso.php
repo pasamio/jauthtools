@@ -55,6 +55,12 @@ class plgSystemSSO extends JPlugin {
 			$app =& JFactory::getApplication();
 			if($app->isAdmin()) return false;
 		}
+		
+		if(!$params->get('override',0)) {
+			$user =& JFactory::getUser();
+			if($user->id) return false;
+		}
+		
 		$sso = new JAuthSSOAuthentication();
 		$sso->doSSOAuth($params->getValue('autocreate',false));
 	}

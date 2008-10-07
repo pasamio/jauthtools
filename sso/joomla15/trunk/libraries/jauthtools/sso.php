@@ -17,6 +17,7 @@
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
 
+defined('JPATH_BASE') or die('sos');
 jimport('joomla.base.observable');
 
 /**
@@ -73,7 +74,7 @@ class JAuthSSOAuthentication extends JObservable {
 		$result = $database->loadAssocList();
 		// If the user already exists, create their session; don't create users
 		if (count($result)) {
-			
+			$result = $result[0];
 			$options = Array();
 			$app =& JFactory::getApplication();
 			if($app->isAdmin()) {
@@ -86,9 +87,19 @@ class JAuthSSOAuthentication extends JObservable {
 			
 			// Import the user plugin group
 			JPluginHelper::importPlugin('user');
-
+			
+			$dispatcher =& JDispatcher::getInstance();
+			
+			// Log out the existing user if someone is logged into this client
+			$user =& JFactory::getUser();
+			if($user->id) {                
+				// Build the credentials array
+                $parameters['username'] = $user->get('username');
+                $parameters['id']       = $user->get('id');
+				$dispatcher->trigger('onLogoutUser', Array($parameters, Array('clientid'=>Array($app->getClientId()))));
+			}
 			// OK, the credentials are authenticated.  Lets fire the onLogin event
-			$results = $this->triggerEvent('onLoginUser', array($result, $options));
+			$results = $dispatcher->trigger('onLoginUser', array($result, $options));
 			if (!in_array(false, $results, true)) {
 				// Set the remember me cookie if enabled
 				if (isset($options['remember']) && $options['remember'])
