@@ -1,8 +1,8 @@
 <?php
 /**
- * SSO JAuthTools Google Plugin 
+ * SSO JAuthTools SimpleSSO Plugin 
  * 
- * This file handles Google SSO 
+ * This file handles Simple SSO 
  * 
  * PHP4/5
  *  
@@ -19,10 +19,10 @@
 jimport('joomla.plugin.plugin');
 
 /**
- * SSO JAuthTools Google
- * Attempts to match a user based on a key which is valid with JAuthTools
+ * SSO SimpleSSO
+ * Attempts to match a user based on a key which is valid with SimpleSSO
  */
-class plgSSOJAuthGoogle extends JPlugin {
+class plgSSOSimpleSSO extends JPlugin {
 	/**
 	 * Constructor
 	 *
@@ -33,22 +33,21 @@ class plgSSOJAuthGoogle extends JPlugin {
 	 * @param object $subject The object to observe
 	 * @since 1.5
 	 */
-	function plgSSOJAuthGoogle(& $subject) {
+	function plgSSOSimpleSSO(& $subject) {
 		parent :: __construct($subject);
 	}
 
 	function detectRemoteUser() {
-		$key = JRequest::getVar('jauthgooglekey','');
-		$plugin = & JPluginHelper :: getPlugin('sso', 'jauthgoogle');
+		$key = JRequest::getVar('authkey','');
+		$plugin = & JPluginHelper :: getPlugin('sso', 'simplesso');
 		$params = new JParameter($plugin->params);
- 	 	$supplier = $params->getValue('supplier','http://localhost:8080'); //dev server 
- 	 	$supplier = $params->getValue('supplier','http://jauthtools.appspot.com'); //prod server
+ 	 	$supplier = $params->getValue('supplier',''); 
 		$suffix = $params->getValue('suffix','');
 
 		// grab the file
-		if(function_exists('curl_init'))
+		if(function_exists('curl_init') && $supplier)
 		{
-			$url = $supplier.'/?retrkey='.$key;
+			$url = $supplier.'/?token='.$key;
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);				
 			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);

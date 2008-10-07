@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin"  group="sso">
+	<name>SSO - SimpleSSO</name>
+	<author>Sam Moffatt</author>
+	<creationDate>July 2008</creationDate>
+	<copyright>(C) 2008 Sam Moffatt Consulting. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>sammoffatt.com.au</authorUrl>
+	<version id="1">1.5</version>
+	<update>http://www.jsitepoint.com/update/plugins/plgssosimplesso</update>
+	<description>Uses a SimpleSSO provider to login</description>
+	<files>
+		<filename plugin="simplesso">simplesso.php</filename>
+	</files>
+	<params>
+		<param name="supplier" type="text" size="20" default="" label="Supplier" description="This is the server to authenticate from." />
+		<param name="suffix" type="text" size="20" default="" label="Username Suffix" description="This is the suffix given to the username to be replaced." />
+	</params>
+</install>
