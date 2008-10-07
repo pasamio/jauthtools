@@ -69,12 +69,12 @@ class MainPage(webapp.RequestHandler):
 				self.response.out.write('<html><body><p>Welcome</p>')
 				logoutUrl = users.create_logout_url('/')
 				self.response.out.write('<p><a href="' + logoutUrl + '">Logout from Google</a></p>')
-				nextHop= remoteuser.landingpage + '?jauthgooglekey='+ckKey
+				nextHop= remoteuser.landingpage + '?authkey='+ckKey
 				self.response.out.write('<p><a href="' + nextHop +'">Continue Authentication</a></p>')
 				self.response.out.write('</body></html>')
 				self.redirect(nextHop)
 		else:
-			ckKey = self.request.get('retrkey')
+			ckKey = self.request.get('token')
 			if ckKey != '':
 				self.response.headers['Content-Type'] = 'text/xml' # override this
 				self.response.out.write('<?xml version="1.0" encoding="utf-8"?>\n') # xml header
@@ -82,11 +82,12 @@ class MainPage(webapp.RequestHandler):
 					remoteuser = RemoteUser.get(ckKey)
 					if remoteuser != None:
 						self.response.out.write('<response type="user">\n');
-						self.response.out.write('<user nickname="' + remoteuser.localuser.nickname() + 
+						self.response.out.write('<user username="' + remoteuser.localuser.email() + 
+							'" name="' + remoteuser.localuser.nickname() + 
 							'" domain="' + remoteuser.localuser.auth_domain() + 
 							'" email="' + remoteuser.localuser.email() + '" />\n');
 						self.response.out.write('</response>')
-						#remoteuser.delete() # remove the instance once its been collected
+						remoteuser.delete() # remove the instance once its been collected
 					else:
 						self.response.out.write('<response type="error">Invalid Key</response>')
 				except Exception, e:
