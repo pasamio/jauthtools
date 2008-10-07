@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
 	<authorUrl>sammoffatt.com.au/jauthtools/</authorUrl>
-	<version id="4">1.5.3</version>
+	<version id="5">1.5.4</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgsystemsso</update>
 	<description>This plugin provides the base of the JAuthTools SSO infrastructure.</description>
 	<files>
@@ -19,7 +19,11 @@
 			<option value="1">Yes</option>
 		</param>
 		<param name="ip_blacklist" default="" type="textarea" cols="30" rows="10" label="IP Blacklist" description="IP addresses to ignore for Single Sign OnIP addresses to ignore for Single Sign On (newline seperated)"/>
-		<param name="backend" type="radio" default="0" label="Enable Backend SSO" description="PARAMAUTOCREATEUSERS">
+		<param name="backend" type="radio" default="0" label="Enable Backend SSO" description="Enables SSO for the administrator section">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="override" type="radio" default="0" label="Override logged in user" description="If a user is already logged in, SSO will not attempt to log them in">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
