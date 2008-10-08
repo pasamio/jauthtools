@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<install type="module" version="1.5.0">
+	<name>Single Sign-On Helper</name>
+	<creationDate>2008-10-08</creationDate>
+	<author>Sam Moffatt</author>
+	<copyright>GNU GPL</copyright>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>http://sammoffatt.com.au</authorUrl>
+	<version>1.5.4</version>
+	<description>Single Sign-On Helper to initiate an SSO attempt</description>
+
+	<files>
+		<filename module="mod_ssohelper">mod_ssohelper.php</filename>
+	</files>
+	<params>
+		<param name="autocreate" type="radio" default="0" label="Auto Create Users" description="PARAMAUTOCREATEUSERS">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</param>
+			<param name="ip_blacklist" default="" type="textarea" cols="30" rows="10" label="IP Blacklist" description="IP addresses to ignore for Single Sign OnIP addresses to ignore for Single Sign On (newline seperated)"/>
+			<param name="override" type="radio" default="0" label="Override logged in user" description="If a user is already logged in, SSO will not attempt to log them in">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+		</param>
+		<param name="nexthop" type="menuitem" default="" disable="separator" label="Login Redirection URL" description="URL to redirect to upon login. Keep in mind that if the request wasn't a GET request then this will be ignored!" />
+	</params>
+</install>
