@@ -23,7 +23,7 @@
 // $Id: Compiler.php,v 1.1 2004/05/07 12:33:35 busterb Exp $
 //
 
-require_once 'PEAR.php';
+//require_once 'PEAR.php';
 
 /**
  * A SQL parse tree compiler.
@@ -59,7 +59,7 @@ class SQL_Compiler {
                 $value = '('.$this->compileSearchClause($arg['value']).')';
                 break;
             default:
-                return PEAR::raiseError('Unknown type: '.$arg['type']);
+                return JError::raiseError('Unknown type: '.$arg['type']);
         }
         return $value;
     }
@@ -79,7 +79,7 @@ class SQL_Compiler {
                     $value[] = '\''.$arg['value'][$i].'\'';
                     break;
                 default:
-                    return PEAR::raiseError('Unknown type: '.$arg['type']);
+                    return JError::raiseError('Unknown type: '.$arg['type']);
             }
         }
         $value ='('.implode(', ', $value).')';
@@ -93,13 +93,13 @@ class SQL_Compiler {
         $value = '';
         if (isset ($where_clause['arg_1']['value'])) {
             $value = $this->getWhereValue ($where_clause['arg_1']);
-            if (PEAR::isError($value)) {
+            if (JError::isError($value)) {
                 return $value;
             }
             $sql = $value;
         } else {
             $value = $this->compileSearchClause($where_clause['arg_1']);
-            if (PEAR::isError($value)) {
+            if (JError::isError($value)) {
                 return $value;
             }
             $sql = $value;
@@ -107,7 +107,7 @@ class SQL_Compiler {
         if (isset ($where_clause['op'])) {
             if ($where_clause['op'] == 'in') {
                 $value = $this->getParams($where_clause['arg_2']);
-                if (PEAR::isError($value)) {
+                if (JError::isError($value)) {
                     return $value;
                 }
                 $sql .= ' '.$where_clause['op'].' '.$value;
@@ -122,13 +122,13 @@ class SQL_Compiler {
                 $sql .= ' '.$where_clause['op'].' ';
                 if (isset ($where_clause['arg_2']['value'])) {
                     $value = $this->getWhereValue ($where_clause['arg_2']);
-                    if (PEAR::isError($value)) {
+                    if (JError::isError($value)) {
                         return $value;
                     }
                     $sql .= $value;
                 } else {
                     $value = $this->compileSearchClause($where_clause['arg_2']);
-                    if (PEAR::isError($value)) {
+                    if (JError::isError($value)) {
                         return $value;
                     }
                     $sql .= $value;
@@ -183,7 +183,7 @@ class SQL_Compiler {
             }
             if ($this->tree['table_join_clause'][$i] != '') {
                 $search_string = $this->compileSearchClause ($this->tree['table_join_clause'][$i]);
-                if (PEAR::isError($search_string)) {
+                if (JError::isError($search_string)) {
                     return $search_string;
                 }
                 $sql .= ' on '.$search_string;
@@ -196,7 +196,7 @@ class SQL_Compiler {
         // save the where clause
         if (isset($this->tree['where_clause'])) {
             $search_string = $this->compileSearchClause ($this->tree['where_clause']);
-            if (PEAR::isError($search_string)) {
+            if (JError::isError($search_string)) {
                 return $search_string;
             }
             $sql .= ' where '.$search_string;
@@ -238,7 +238,7 @@ class SQL_Compiler {
         // save the where clause
         if (isset($this->tree['where_clause'])) {
             $search_string = $this->compileSearchClause ($this->tree['where_clause']);
-            if (PEAR::isError($search_string)) {
+            if (JError::isError($search_string)) {
                 return $search_string;
             }
             $sql .= ' where '.$search_string;
@@ -255,7 +255,7 @@ class SQL_Compiler {
         // save the where clause
         if (isset($this->tree['where_clause'])) {
             $search_string = $this->compileSearchClause ($this->tree['where_clause']);
-            if (PEAR::isError($search_string)) {
+            if (JError::isError($search_string)) {
                 return $search_string;
             }
             $sql .= ' where '.$search_string;
@@ -271,7 +271,7 @@ class SQL_Compiler {
                 implode(', ', $this->tree['column_names']).') values (';
         for ($i = 0; $i < sizeof ($this->tree['values']); $i++) {
             $value = $this->getWhereValue ($this->tree['values'][$i]);
-            if (PEAR::isError($value)) {
+            if (JError::isError($value)) {
                 return $value;
             }
             $value_array[] = $value;
@@ -284,7 +284,8 @@ class SQL_Compiler {
 //    {{{ function compile($array = null)
     function compile($array = null)
     {
-        $this->tree = $array;
+        $this->tree = $array ? $array : $this->tree;
+        if($this->tree) return JError::raiseError('No parse tree');
         
         switch ($this->tree['command']) {
             case 'select':
@@ -303,11 +304,9 @@ class SQL_Compiler {
             case 'drop':
             case 'modify':
             default:
-                return PEAR::raiseError('Unknown action: '.$this->tree['command']);
+                return JError::raiseError('Unknown action: '.$this->tree['command']);
         }    // switch ($this->_tree["command"])
 
     }
 //    }}}
 }
-?>
-

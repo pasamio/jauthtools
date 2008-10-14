@@ -24,7 +24,8 @@
 // $Id: Lexer.php,v 1.20 2004/05/07 12:33:35 busterb Exp $
 //
 
-include 'SQL/ctype.php';
+//include 'SQL/ctype.php';
+jimport('sqlparser.ctype');
 
 // {{{ token definitions
 // variables: 'ident', 'sys_var'
@@ -564,4 +565,3 @@ function nextToken()
 }
 // }}}
 }
-?>

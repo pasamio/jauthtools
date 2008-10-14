@@ -26,8 +26,9 @@
 // $Id: Parser.php,v 1.23 2004/05/11 05:09:02 busterb Exp $
 //
 
-require_once 'PEAR.php';
-require_once 'SQL/Lexer.php';
+//require_once 'PEAR.php';
+//require_once 'SQL/Lexer.php';
+jimport('sqlparser.Lexer');
 
 /**
  * A sql parser
@@ -65,7 +66,7 @@ class SQL_Parser
 // {{{ function setDialect($dialect)
     function setDialect($dialect) {
         if (in_array($dialect, $this->dialects)) {
-            include 'SQL/Dialect_'.$dialect.'.php';
+            include dirname(__FILE__).DS.'Dialect_'.$dialect.'.php';
             $this->types = array_flip($dialect['types']);
             $this->functions = array_flip($dialect['functions']);
             $this->operators = array_flip($dialect['operators']);
@@ -124,7 +125,7 @@ class SQL_Parser
                                $this->lexer->lineBegin - $length))."^";
         $message .= ' found: "'.$this->lexer->tokText.'"';
 
-        return PEAR::raiseError($message);
+		return JError::raiseError($message);
     }
     // }}}
 
@@ -202,7 +203,7 @@ class SQL_Parser
                                                 'value'=>$this->lexer->tokText);
                     } elseif ($this->isFunc()) {
                         $results = $this->parseFunctionOpts();
-                        if (PEAR::isError($results)) {
+                        if (JError::isError($results)) {
                             return $results;
                         }
                         $results['type'] = 'default_function';
@@ -235,7 +236,7 @@ class SQL_Parser
                         return $this->raiseError('Expected (');
                     }
                     $results = $this->parseSearchClause();
-                    if (PEAR::isError($results)) {
+                    if (JError::isError($results)) {
                         return $results;
                     }
                     $results['type'] = 'check';
@@ -396,7 +397,7 @@ class SQL_Parser
                         // parse the set
                         $result = $this->getParams($clause['arg_2']['value'],
                                                 $clause['arg_2']['type']);
-                        if (PEAR::isError($result)) {
+                        if (JError::isError($result)) {
                             return $result;
                         }
                     }
@@ -430,7 +431,7 @@ class SQL_Parser
         if (($this->token == 'and') || ($this->token == 'or')) {
             $op = $this->token;
             $subClause = $this->parseSearchClause($subSearch);
-            if (PEAR::isError($subClause)) {
+            if (JError::isError($subClause)) {
                 return $subClause;
             } else {
                 $clause = array('arg_1' => $clause,
@@ -493,7 +494,7 @@ class SQL_Parser
             // parse type parameters
             if ($this->token == '(') {
                 $results = $this->getParams($values, $types);
-                if (PEAR::isError($results)) {
+                if (JError::isError($results)) {
                     return $results;
                 }
                 switch ($fields[$name]['type']) {
@@ -535,7 +536,7 @@ class SQL_Parser
             }
 
             $options = $this->parseFieldOptions();
-            if (PEAR::isError($options)) {
+            if (JError::isError($options)) {
                 return $options;
             }
 
@@ -636,7 +637,7 @@ class SQL_Parser
                 if ($this->token == 'ident') {
                     $tree['table_names'][] = $this->lexer->tokText;
                     $fields = $this->parseFieldList();
-                    if (PEAR::isError($fields)) {
+                    if (JError::isError($fields)) {
                         return $fields;
                     }
                     $tree['column_defs'] = $fields;
@@ -675,7 +676,7 @@ class SQL_Parser
             }
             if ($this->token == '(') {
                 $results = $this->getParams($values, $types);
-                if (PEAR::isError($results)) {
+                if (JError::isError($results)) {
                     return $results;
                 } else {
                     if (sizeof($values)) {
@@ -687,7 +688,7 @@ class SQL_Parser
             if ($this->token == 'values') {
                 $this->getTok();
                 $results = $this->getParams($values, $types);
-                if (PEAR::isError($results)) {
+                if (JError::isError($results)) {
                     return $results;
                 } else {
                     if (isset($tree['column_defs']) && 
@@ -746,7 +747,7 @@ class SQL_Parser
             $this->getTok();
             if ($this->token == 'where') {
                 $clause = $this->parseSearchClause();
-                if (PEAR::isError($clause)) {
+                if (JError::isError($clause)) {
                     return $clause;
                 }
                 $tree['where_clause'] = $clause;
@@ -776,7 +777,7 @@ class SQL_Parser
             return $this->raiseError('Expected "where"');
         }
         $clause = $this->parseSearchClause();
-        if (PEAR::isError($clause)) {
+        if (JError::isError($clause)) {
             return $clause;
         }
         $tree['where_clause'] = $clause;
@@ -879,7 +880,7 @@ class SQL_Parser
                 } elseif ($this->isFunc()) {
                     if (!isset($tree['set_quantifier'])) {
                         $result = $this->parseFunctionOpts();
-                        if (PEAR::isError($result)) {
+                        if (JError::isError($result)) {
                             return $result;
                         }
                         $tree['set_function'][] = $result;
@@ -931,7 +932,7 @@ class SQL_Parser
             }
             if ($this->token == 'on') {
                 $clause = $this->parseSearchClause();
-                if (PEAR::isError($clause)) {
+                if (JError::isError($clause)) {
                     return $clause;
                 }
                 $tree['table_join_clause'][] = $clause;
@@ -1009,7 +1010,7 @@ class SQL_Parser
             switch ($this->token) {
                 case 'where':
                     $clause = $this->parseSearchClause();
-                    if (PEAR::isError($clause)) {
+                    if (JError::isError($clause)) {
                         return $clause;
                     }
                     $tree['where_clause'] = $clause;
@@ -1118,4 +1119,3 @@ class SQL_Parser
     }
     // }}}
 }
-?>
