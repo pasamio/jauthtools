@@ -40,4 +40,4 @@ $dialect = array(
 
 'synonyms'=>array('decimal'=>'numeric','dec'=>'numeric','numeric'=>'numeric','float'=>'float','real'=>'real','double'=>'real','int'=>'int','integer'=>'int','interval'=>'interval','smallint'=>'smallint','timestamp'=>'timestamp','bool'=>'bool','boolean'=>'bool','set'=>'set','enum'=>'enum','text'=>'text','char'=>'char','character'=>'char','varchar'=>'varchar','ascending'=>'asc','asc'=>'asc','descending'=>'desc','desc'=>'desc','date'=>'date','time'=>'time')
 );
-?>
+

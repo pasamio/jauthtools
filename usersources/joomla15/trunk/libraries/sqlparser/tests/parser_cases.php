@@ -28,7 +28,7 @@ class SqlParserTest extends PHPUnit_TestCase {
             $result = $this->parser->parse($test['sql']);
             $expected = $test['expect'];
             $message = "\nSQL: {$test['sql']}\n";
-            if (PEAR::isError($result)) {
+            if (JError::isError($result)) {
                 $result = $result->getMessage();
                 $message .= "\nError:\n".$result;
             } else {
