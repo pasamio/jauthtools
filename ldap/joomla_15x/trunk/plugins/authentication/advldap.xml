@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin"  group="authentication">
+	<name>Authentication - Advanced LDAP</name>
+	<author>Joomla! Project</author>
+	<creationDate>November 2005</creationDate>
+	<copyright>Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.5</version>
+	<description>Handles user authentication against an LDAP server. 
+		This extension relies upon settings in the regular LDAP plugin to work properly but has some of its own settings.
+		It relies on the User Source system to determine users credentials where possible and perform user synchronisation events.
+	</description>
+	<files>
+		<filename plugin="advldap">advldap.php</filename>
+	</files>
+	<params>
+		<param name="enable_usersource_sync" type="radio" default="0" label="Enable User Source Sync" description="Upon login automatically synchronise users accounts from the User Source system. Note: This won't work with new user accounts! User source settings are taken from the System - JAuthTools Synchronization Plugin">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+		<param name="require_joomla_user" type="radio" default="0" label="Require Joomla! User" description="Require the username to exist in the Joomla! user database or fail authentication">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+	</params>
+</install>
