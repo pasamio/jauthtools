@@ -49,9 +49,17 @@ class plgUserSourceLDAP extends JPlugin {
 	function getUser($username,&$user) {
 		$plugin = & JPluginHelper :: getPlugin('usersource', 'ldap');
 		$params = new JParameter($plugin->params);
-		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
-		$ldapparams = new JParameter($ldapplugin->params);
-		$params->merge($ldapparams);
+		if(JPluginHelper::isEnabled('authentication','ldap')) {
+			$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
+			$ldapparams = new JParameter($ldapplugin->params);
+			$params->merge($ldapparams);
+		} else if(file_exists(JPATH_LIBRARIES.DS.'jauthtools'.DS.'helper.php')) {
+			jimport('jauthtools.helper');
+			$params->merge(JAuthToolsHelper::getPluginParams('authentication','ldap'));
+		} else {
+			JError::raiseWarning('0', 'plgUserSourceLDAP::getUser: Failed to get LDAP settings');
+			return false;
+		}
 		$this->params = $params; // reset our internal params to include the merged values
 		$ldap = new JLDAP($params);
 		if (!$ldap->connect()) {
@@ -73,20 +81,29 @@ class plgUserSourceLDAP extends JPlugin {
 	function &doUserSync($username) {
 		$plugin = & JPluginHelper :: getPlugin('usersource', 'ldap');
 		$params = new JParameter($plugin->params);
-		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
-		$ldapparams = new JParameter($ldapplugin->params);
-		$params->merge($ldapparams);
+		if(JPluginHelper::isEnabled('authentication','ldap')) {
+			$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
+			$ldapparams = new JParameter($ldapplugin->params);
+			$params->merge($ldapparams);
+		} else if(file_exists(JPATH_LIBRARIES.DS.'jauthtools'.DS.'helper.php')) {
+			// use the jauthtools helper if it exists
+			jimport('jauthtools.helper');
+			$params->merge(JAuthToolsHelper::getPluginParams('authentication','ldap'));
+		} else {
+			JError::raiseWarning('0', 'plgUserSourceLDAP::doUserSync: Failed to get LDAP settings');
+			return false;
+		}
 		$this->params = $params; // reset our internal params to include the merged values
 		$ldap = new JLDAP($params);
 		
 		$return = false;
 		if (!$ldap->connect()) {
-			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::getUser: Failed to connect to LDAP Server ' . $params->getValue('host'));
+			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::doUserSync: Failed to connect to LDAP Server ' . $params->getValue('host'));
 			return false;
 		}
 
 		if (!$ldap->bind()) {
-			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::getUser: Failed to bind to LDAP Server');
+			JError :: raiseWarning('SOME_ERROR_CODE', 'plgUserSourceLDAP::doUserSync: Failed to bind to LDAP Server');
 			return false;
 		}
 		
