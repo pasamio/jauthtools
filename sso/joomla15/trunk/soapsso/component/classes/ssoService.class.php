@@ -110,7 +110,7 @@ class ssoService {
     }
 }
 
-/** SSO Service Utility Functions
+/** SSO Service Utility Functions */
 class ssoServiceUtils {
 
 	function addProvider($remoteProviderId) {
@@ -306,4 +306,4 @@ class ssoServiceUtils {
         }
     }
 }
-?>
+
