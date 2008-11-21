@@ -37,8 +37,8 @@ class plgUserSourceLDAP extends JPlugin {
 	 * @param object $subject The object to observe
 	 * @since 1.5
 	 */
-	function plgUserSourceLDAP(& $subject ) {
-		parent :: __construct($subject);
+	function plgUserSourceLDAP(& $subject, $params ) {
+		parent :: __construct($subject, $params);
 	}
 
 	/**
