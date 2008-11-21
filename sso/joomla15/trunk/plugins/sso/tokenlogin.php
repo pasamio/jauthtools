@@ -1,8 +1,8 @@
 <?php
 /**
- * SSO JAuthTools SimpleSSO Plugin 
+ * SSO JAuthTools Token Login Plugin 
  * 
- * This file handles Simple SSO 
+ * This file handles token logins 
  * 
  * PHP4/5
  *  
@@ -22,7 +22,7 @@ jimport('joomla.plugin.plugin');
  * SSO SimpleSSO
  * Attempts to match a user based on a key which is valid with SimpleSSO
  */
-class plgSSOSimpleSSO extends JPlugin {
+class plgSSOTokenLogin extends JPlugin {
 	/**
 	 * Constructor
 	 *
@@ -33,8 +33,8 @@ class plgSSOSimpleSSO extends JPlugin {
 	 * @param object $subject The object to observe
 	 * @since 1.5
 	 */
-	function plgSSOSimpleSSO(& $subject, $params) {
-		parent :: __construct($subject, $params);
+	function plgSSOTokenLogin(& $subject) {
+		parent :: __construct($subject);
 	}
 
 	function detectRemoteUser() {
@@ -75,9 +75,5 @@ class plgSSOSimpleSSO extends JPlugin {
 			}
 		}
 		return false;
-	}
-	
-	function getSPLink($instance) {
-		
 	}
 }
