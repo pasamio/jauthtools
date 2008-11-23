@@ -183,9 +183,10 @@ class plgUserSourceLDAP extends JPlugin {
 				
 				// find any recursive group memberships based on existing memberships
 				if($this->params->getValue('recursivegroupmembership',0)) {
+					
 					if(count($userdetails[0][$groupMembership])) {
-						$groupMemberships = Array();
 						$cnt = 0;
+						$groupMemberships = Array();
 						$userGroups = $this->_getUserGroups($ldap,$userdetails[0]);
 						foreach ($groupMap as $groupMapEntry) {
 							$group = $groupMapEntry['groupname'];
@@ -193,17 +194,18 @@ class plgUserSourceLDAP extends JPlugin {
 								$groupMemberships[$cnt++] = $group;
 							}
 						}
-					}
-
-					if($cnt > 0) {
-						if(!isset($userdetails[0][$groupMembership])) {
-							// its not set, just overwrite
-							$userdetails[0][$groupMembership] = $groupMemberships;
-						} else {
-							// its set, try array merge
-							$userdetails[0][$groupMembership] = array_merge($userdetails[0][$groupMembership], $groupMemberships);
+						
+						if($cnt > 0) {
+							if(!isset($userdetails[0][$groupMembership])) {
+								// its not set, just overwrite
+								$userdetails[0][$groupMembership] = $groupMemberships;
+							} else {
+								// its set, try array merge
+								$userdetails[0][$groupMembership] = array_merge($userdetails[0][$groupMembership], $groupMemberships);
+							}
 						}
-					}					
+						
+					}				
 				}
 				
 				$this->_reMapUser($user, $userdetails[0], $groupMap, $groupMembership);
