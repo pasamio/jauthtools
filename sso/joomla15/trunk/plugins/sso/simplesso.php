@@ -44,8 +44,8 @@ class plgSSOSimpleSSO extends JPlugin {
  	 	$supplier = $params->getValue('supplier',''); 
 		$suffix = $params->getValue('suffix','');
 
-		// grab the file
-		if(function_exists('curl_init') && $supplier)
+		// grab the file; check the supplier and key are set to something
+		if(function_exists('curl_init') && $supplier && $key)
 		{
 			$url = $supplier.'/?token='.$key;
 			$curl = curl_init($url);

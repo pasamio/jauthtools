@@ -47,7 +47,10 @@ class JAuthUserSource extends JObservable {
 	
 	function doUserCreation($username) {
 		// Do not create user if they exist already
-		if(intval(JUserHelper::getUserId($username))) { return true; }
+		if(intval(JUserHelper::getUserId($username))) { 
+			return true; 
+		}
+
 		// Load up User Source plugins
 		$plugins = JPluginHelper :: getPlugin('usersource');
 		foreach ($plugins as $plugin) {
@@ -59,10 +62,9 @@ class JAuthUserSource extends JObservable {
 				continue;
 			}
 
+		// Try to find user
+		if($user = $this->discoverUser($username)) {
 			$my =& JFactory::getUser(); // get who we are now
-			// Try to find user
-			$user = new JUser();
-			if($plugin->getUser($username,$user)) {
 				$oldgid = $my->get('gid');
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$result = $user->save(); 	// save us, now the db is up
@@ -70,7 +72,6 @@ class JAuthUserSource extends JObservable {
 				return $result;
 				break;
 			}
-		}
 		return false;		
 	}
 	
@@ -106,5 +107,46 @@ class JAuthUserSource extends JObservable {
 			}
 		}
 		return false;
+	}
+	
+	function discoverUser($username) {
+		// Load up User Source plugins
+		$plugins = JPluginHelper :: getPlugin('usersource');
+		foreach ($plugins as $plugin) {
+			$className = 'plg' . $plugin->type . $plugin->name;
+			if (class_exists($className)) {
+				$plugin = new $className ($this);
+			} else {
+				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::discoverUser: Could not load ' . $className);
+				continue;
+}
+			// Try to find user
+			$user = new JUser();
+			if($plugin->getUser($username,$user)) {
+				return $user; //return the first user we find
+				break;
+			}
+		}
+	}
+	
+	function discoverUsers($username) {
+		// Load up User Source plugins
+		$users = Array();
+		$plugins = JPluginHelper :: getPlugin('usersource');
+		foreach ($plugins as $plugin) {
+			$className = 'plg' . $plugin->type . $plugin->name;
+			if (class_exists($className)) {
+				$plugin = new $className ($this);
+			} else {
+				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::discoverUsers: Could not load ' . $className);
+				continue;
+			}
+			// Try to find user
+			$user = new JUser();
+			if($plugin->getUser($username,$user)) {
+				$users[$plugin->name] = clone($user); // clone the user before putting them into the array
+			}
+		}
+		return $users;			
 	}
 }
