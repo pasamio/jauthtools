@@ -172,10 +172,11 @@ class plgAuthenticationAdvLdap extends JPlugin
 			// Check if we want to run user sync
 			if($this->params->get('enable_usersource_sync',0) && $current_uid) {
 				jimport('jauthtools.usersource');
-				$plugin = & JPluginHelper :: getPlugin('system', 'sync');
-				$params = new JParameter($plugin->params);
-				$sync = new JAuthUserSource(Array('demoteuser'=>$params->get('demoteuser',1)));
-				$sync->doUserSynchronization($credentials['username']);			
+				$params =& JAuthToolsHelper::getPluginParams('system','sync');
+				if($params) {
+					$sync = new JAuthUserSource(Array('demoteuser'=>$params->get('demoteuser',1)));
+					$sync->doUserSynchronization($credentials['username']);
+				}			
 			}
 		}
 
