@@ -56,7 +56,7 @@ class JAuthUserSource extends JObservable {
 		foreach ($plugins as $plugin) {
 			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
-				$plugin = new $className ($this, $plugin);
+				$plugin = new $className ($this, (array)$plugin);
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::doUserCreation: Could not load ' . $className);
 				continue;
@@ -81,7 +81,7 @@ class JAuthUserSource extends JObservable {
 		foreach ($plugins as $plugin) {
 			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
-				$plugin = new $className ($this, $this->_options);
+				$plugin = new $className ($this, (array)$plugin);
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::doUserSynchronization: Could not load ' . $className);
 				continue;
