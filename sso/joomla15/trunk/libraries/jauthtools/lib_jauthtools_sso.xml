@@ -16,5 +16,6 @@
 	<version id="5">1.5.4</version>
 	<files>
 		<file>sso.php</file>
+		<file>token.php</file>
 	</files>
 </install>
