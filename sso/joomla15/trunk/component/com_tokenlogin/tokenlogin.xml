@@ -13,6 +13,20 @@
     <file>index.html</file>
     <file>tokenlogin.php</file>
   </files>
+	<!-- SQL Files -->
+	<!-- Note: The Joomla! 1.0 query method is not supported in 1.6 -->
+	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.sql</file>
+			<file driver="mysql">sql/install.sql</file>
+		</sql>
+	</install>
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.sql</file>
+			<file driver="mysql">sql/uninstall.sql</file>
+		</sql>
+	</uninstall>  
   <administration>
     <files folder="admin">
       <file>controller.php</file>
@@ -35,7 +49,5 @@
     </files>
     <menu admin_menu_link="option=com_tokenlogin" admin_menu_alt="Token Login" admin_menu_img="js/ThemeOffice/component.png">Token Login</menu>
   </administration>
-  <installfile/>
-  <uninstallfile/>
   <params/>
 </install>
