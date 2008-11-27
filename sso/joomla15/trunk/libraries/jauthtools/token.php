@@ -23,34 +23,10 @@ class JAuthToolsToken extends JTable {
 	var $logintoken = '';
 	var $logins = '';
 	var $expiry = '';
-	var $_new = false;
+	var $landingpage = '';
 	
 	function __construct(&$db) {
 		parent::__construct( '#__jauthtools_tokens', 'logintoken', $db );
-		// when we're creating a new token, ensure we have a table to put it in
-		$this->init();
-	}
-
-	function init() {
-		static $hit = false;
-		if($hit) return;
-		$dbo =& JFactory::getDBO();
-		$query = <<<EOQ
-CREATE TABLE IF NOT EXISTS `#__jauthtools_tokens` (
-  `logintoken` varchar(150)  NOT NULL,
-  `username` varchar(150)  NOT NULL,
-  `logins` int UNSIGNED NOT NULL,
-  `expiry` VARCHAR(14)  NOT NULL,
-  PRIMARY KEY (`logintoken`),
-  INDEX `usernames`(`username`),
-  INDEX `expiry`(`expiry`)
-)
-ENGINE = MyISAM
-COMMENT = 'JAuthTools Token Store';
-EOQ;
-		$dbo->setQuery($query);
-		$dbo->query();		
-		$hit = true;	
 	}
 	
 	/**
@@ -60,17 +36,35 @@ EOQ;
 	 * @var int number of logins to provide before token is removed (default 5)
 	 * @var string token identifier
 	 */
-	function issueToken($username, $expiry=120, $logins=5) {
+	function issueToken($username, $expiry=120, $logins=5, $landingpage='') {
 		$dbo =& JFactory::getDBO();
 		$token = new JAuthToolsToken($dbo, true);
 		$token->username = $username;
 		$token->expiry = time() + ($expiry * 3600);
 		$token->logins = $logins;
-		$token->logintoken = $token->createLoginToken();
+		$token->landingpage = $landingpage;
 		if(!$token->store()) {
 			return false;
 		} else {
 			return md5(substr($token->logintoken, 0, 32)).md5(substr($token->logintoken, 32,32));
+		}
+	}
+	
+	function generateLoginURL() {
+		if($this->logintoken) {
+			return str_replace('administrator/','', JURI::base()).'index.php?option=com_tokenlogin&logintoken='. md5(substr($this->logintoken, 0, 32)).md5(substr($this->logintoken, 32,32));
+		} else {
+			return '';
+		}
+	}
+	
+	function mapObject($object) {
+		$vars = get_object_vars($object);
+		$class_vars = get_class_vars(get_class($this));
+		foreach($vars as $var=>$value) {
+			if(array_key_exists($var, $class_vars)) {
+				$this->$var = $value;
+			}
 		}
 	}
 	
@@ -85,12 +79,13 @@ EOQ;
 	 */
 	function store( $updateNulls=false )
 	{
-		if( $this->_new )
+		if( $this->logintoken )
 		{
 			$ret = $this->_db->updateObject( $this->_tbl, $this, $this->_tbl_key, $updateNulls );
 		}
 		else
 		{
+			$this->logintoken = $this->createLoginToken();
 			$ret = $this->_db->insertObject( $this->_tbl, $this, $this->_tbl_key );
 		}
 		if( !$ret )
@@ -105,7 +100,6 @@ EOQ;
 	}
 	
 	function load($oid = null) {
-		$this->_new = false;
 		parent::load($oid);
 	}
 
@@ -122,8 +116,6 @@ EOQ;
 	}
 
 	function validateToken($key) {
-		// when we're looking for a token ensure we have a table
-		JAuthToolsToken::init();
 		$dbo =& JFactory::getDBO();
 		// delete any older tokens
 		$dbo->setQuery('DELETE FROM #__jauthtools_tokens WHERE expiry < "' . time() .'"');
@@ -139,7 +131,7 @@ EOQ;
 				$dbo->setQuery('UPDATE #__jauthtools_tokens SET logins = logins - 1 WHERE logintoken = '. $dbo->Quote($row->logintoken)	);
 			}
 			$dbo->Query();
-			return $row->username;
+			return $row;
 		}
 		return false;
 	}		

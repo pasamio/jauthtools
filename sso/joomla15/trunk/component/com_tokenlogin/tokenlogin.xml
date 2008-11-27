@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install type="component" version="1.5.0">
+  <name>Token Login</name>
+  <author>Sam Moffatt</author>
+  <creationDate>November 2008</creationDate>
+  <copyright>(C) 2008 Sam Moffatt</copyright>
+  <license>GNU GPLv2</license>
+  <authorEmail>pasamio@gmail.com</authorEmail>
+  <authorUrl>http://sammoffatt.com.au</authorUrl>
+  <version>1.5.4</version>
+  <description>Token Login enables users to log into their sites using tokens issued by the systems. Tokens remain valid for a number of login or attempts or until they expire, which ever comes first. Token Login comes with a library that can be used by thrid party developers to issue tokens and then have this system log the user in automatically and redirect them to the correct location.</description>
+  <files folder="site">
+    <file>index.html</file>
+    <file>tokenlogin.php</file>
+  </files>
+  <administration>
+    <files folder="admin">
+      <file>controller.php</file>
+      <file>index.html</file>
+      <file>models/index.html</file>
+      <file>models/tokenlogin.php</file>
+      <file>sql/install.sql</file>
+      <file>sql/uninstall.sql</file>
+      <file>tokenlogin.php</file>
+      <file>views/index.html</file>
+      <file>views/token/index.html</file>
+      <file>views/token/tmpl/default.php</file>
+      <file>views/token/tmpl/index.html</file>
+      <file>views/token/view.html.php</file>
+      <file>views/tokenlogin/index.html</file>
+      <file>views/tokenlogin/tmpl/default.php</file>
+      <file>views/tokenlogin/tmpl/default_item.php</file>
+      <file>views/tokenlogin/tmpl/index.html</file>
+      <file>views/tokenlogin/view.html.php</file>
+    </files>
+    <menu admin_menu_link="option=com_tokenlogin" admin_menu_alt="Token Login" admin_menu_img="js/ThemeOffice/component.png">Token Login</menu>
+  </administration>
+  <installfile/>
+  <uninstallfile/>
+  <params/>
+</install>

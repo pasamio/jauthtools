@@ -41,7 +41,12 @@ class plgSSOTokenLogin extends JPlugin {
 	function detectRemoteUser() {
 		$key = JRequest::getVar('logintoken','');
 		if($key) {
-			return JAuthToolsToken::validateToken($key);
+			$result = JAuthToolsToken::validateToken($key);
+			if($result) {
+				return $result->username;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
