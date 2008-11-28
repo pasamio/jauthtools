@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE install SYSTEM "/home/moffats/public_html/eclipse-remote/jinstallmanager/resources/library-install.dtd" >
 <install type="library" version="1.5">
 	<name>JAuthTools Helper Library</name>
 	<libraryname>jauthtools</libraryname> 
