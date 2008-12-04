@@ -25,7 +25,7 @@ defined('_JEXEC') or die('No direct access allowed ;)');
 require_once( JPATH_COMPONENT.DS.'controller.php' );
 
 //require_once (JApplicationHelper::getPath('admin_html'));
-require_once (JApplicationHelper::getPath('class'));
+//require_once (JApplicationHelper::getPath('class'));
 
 // Require specific controller if requested
 if($controller = JRequest::getWord('controller')) {

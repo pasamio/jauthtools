@@ -121,4 +121,56 @@ class JAuthSSOAuthentication extends JObservable {
 			return false;
 		}
 	}
+	
+	// TODO: This should probably go into a helper
+	function getSSOXMLData($filename) {
+		$xml =& JFactory::getXMLParser('Simple');
+		if(!$xml->loadFile($filename)) {
+			unset($xml);
+			return false;
+		}
+		$sso =& $xml->document->getElementByPath('sso');
+		$data = Array();
+		
+		$element =& $sso->type[0];
+		$data['type'] = $element ? $element->data() : 'A'; // type A plugins are the default
+		
+		$element =& $sso->key[0];
+		$data['key'] = $element ? $element->data() : ''; // default to blank key
+		
+		
+		$element =& $sso->valid_states[0];
+		if($element) {
+			$data['state_map'] = isset($element->state) ? JAuthSSOAuthentication::_processStateMap($element) : Array(); // default to blank array
+			$data['default_state'] = $element->attributes('default');
+		} else {
+			$data['state_map'] = Array();
+			$data['default_state'] = 0;
+		}
+		
+		$element =& $sso->operations[0];
+		$data['operations'] = $element && isset($element->operation) ? JAuthSSOAuthentication::_processOperations($element) : Array(); // default to blank array
+		return $data;
+	}
+	
+	function _processOperations($element) {
+		$list = Array();
+		foreach($element->operation as $operation) {
+			$list[$operation->attributes('name')] = $operation->attributes('label');
+		}
+		return $list;
+	}
+	
+	function _processStateMap($element) {
+		$map = Array();
+		foreach($element->state as $state) {
+			$index = $state->attributes('value');
+			$map[$index] = Array();
+			if(!isset($state->operation)) continue;
+			foreach($state->operation as $operation) {
+				$map[$index][] = $operation->attributes('name');
+			}
+		}
+		return $map;
+	}
 }

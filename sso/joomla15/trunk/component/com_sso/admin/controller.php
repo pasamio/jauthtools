@@ -39,7 +39,13 @@ class SSOController extends JController
      */
     function display()
     {
-        parent::display();
+    	$model =& $this->getModel();
+    	$model->setMode('B');
+    	$model->getList();
+    	$model->setMode('A');
+    	$model->getList();
+    	$model->refreshPlugins();
+        //parent::display();
     }
     
     function listrows() {
