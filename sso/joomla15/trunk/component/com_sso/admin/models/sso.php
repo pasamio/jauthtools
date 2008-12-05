@@ -27,7 +27,8 @@ jimport( 'joomla.filesystem.folder');
 jimport( 'jauthtools.sso' );
 
 class SSOModelSSO extends JModel {
-	var $_mode = 'A'; 
+	var $_mode = 'A';
+	var $_data; 
 	
 	function getList() {
 		$dbo =& JFactory::getDBO();
@@ -39,7 +40,7 @@ class SSOModelSSO extends JModel {
 				$query .= ' FROM #__sso_plugins AS sp LEFT JOIN #__plugins AS p on sp.plugin_id = p.id';
 				break;
 			case 'B':
-				$query .= ' FROM #__sso_plugins AS sp LEFT JOIN #__sso_providers AS p ON p.plugin_id = sp.plugin_id';
+				$query .= ' FROM #__sso_providers AS p LEFT JOIN #__sso_plugins AS sp ON p.plugin_id = sp.plugin_id';
 				break;
 		}
 		$query .= ' WHERE sp.type = "'. $this->_mode .'"';
@@ -48,14 +49,15 @@ class SSOModelSSO extends JModel {
 		$dbo->setQuery($query);
 		
 		$res = $dbo->loadObjectList();
-		echo $dbo->getquery();echo '<br />';
-		print_r($res);
-		echo '<hr />';
 		return $res;
 	}
 	
 	function setMode($mode) {
 		$this->_mode = $mode;
+	}
+	
+	function getMode() {
+		return $this->_mode;
 	}
 	
 	function refreshPlugins() {
@@ -75,5 +77,27 @@ class SSOModelSSO extends JModel {
 			$table->refresh();
 			$table->store();
 		}
+	}
+	
+	function getData() {
+		return $this->_data;
+	}
+	
+	function loadData($index) {
+		$dbo =& JFactory::getDBO();
+		$query  = 'SELECT p.name AS name, p.published AS published, sp.filename AS type, p.ordering AS ordering, p.id AS id, p.params AS params ';
+		switch($this->_mode) {
+			case 'A':
+			case 'C':
+				$query .= ' FROM #__sso_plugins AS sp LEFT JOIN #__plugins AS p on sp.plugin_id = p.id';
+				break;
+			case 'B':
+				$query .= ' FROM #__sso_providers AS p LEFT JOIN #__sso_plugins AS sp ON p.plugin_id = sp.plugin_id';
+				break;
+		}
+		$query .= ' WHERE sp.type = "'. $this->_mode .'" AND p.id = '. $index;
+		$dbo->setQuery($query);
+		$this->_data = $dbo->loadObject();
+		return $this->_data;
 	}
 }
