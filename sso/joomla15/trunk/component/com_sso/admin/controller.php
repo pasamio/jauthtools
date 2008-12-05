@@ -48,95 +48,45 @@ class SSOController extends JController
         //parent::display();
     }
     
-    function listrows() {
-    	$model	= &$this->getModel( 'tableeditor' );
-		$view	= &$this->getView( 'list');
-		$view->setModel( $model, true );
-		$view->display();
+    function typea() {
+    	JToolbarHelper::title('SSO - Type A plugins');
+    	JToolbarHelper::editList('edit','Edit');
+    	$this->listView('A');
     }
     
-    function details() {
-    	$model	= &$this->getModel( 'tableeditor' );
-		$view	= &$this->getView( 'details');
-		$view->setModel( $model, true );
-		$view->display();
-    }
-    
-    function delete() {
-    	$model 	= &$this->getModel( 'tableeditor' );
-    	$instance = $model->getTableInfo();
-    	if($model->delete()) {
-    		$this->setMessage('Deleted Entry!');
-    	} else {
-    		$this->setMessage('Failed to delete entry!');
-    	}
-    	$this->setRedirect('index.php?option=com_tableeditor&table='.$instance->table);
+    function typeb() {
+    	JToolbarHelper::title('SSO - Type B plugins');
+    	$this->listView('B');
     }
 
-    function uninstall() {
-    	$model = $this->getModel('tableeditor');
-    	$table = JRequest::getWord('table','');
-    	if(strlen($table)) {
-    		if($model->uninstall($table)) {
-    			$this->setMessage(JText::_('Uninstall Success'));
-    		} else {
-				$this->setMessage(JText::_('Uninstall Failure'));
-    		}
-    	}
-    	$this->setRedirect('index.php?option=com_tableeditor');
+    function typec() {
+    	JToolbarHelper::title('SSO - Type C plugins');
+    	
+    	$this->listView('C');
     }
     
-    function add() {
-    	$model 	= &$this->getModel('tableeditor');
-    	$view 	= &$this->getView('details');
-    	$view->setModel( $model, true );
+    function listView($mode='A') {
+    	$model =& $this->getModel();
+    	$model->setMode($mode);
+    	$view =& $this->getView('list','html');
+    	$view->setModel( $model, true);
     	$view->display();
     }
     
-    function remove() {
-    	$model	= &$this->getModel('tableeditor');
-    	$instance = $model->getTableInfo();
-    	if($model->delete()) $this->setMessage('Item removed');
-    		else $this->setMessage('Item failed to be removed');
-    	 $this->setRedirect('index.php?option=com_tableeditor&task=listrows&table='. $instance->table);
+    function edit() {
+    	$model =& $this->getModel();
+    	$mode = JRequest::getVar('mode','A');
+    	$id = JRequest::getVar('id','');
+    	$model->setMode($mode);
+    	$model->loadData($id);
+    	$view =& $this->getView('edit', 'html');
+    	$view->setModel( $model, true);
+    	$view->display();
     }
-
-	function save() {
-		$model = $this->getModel('tableeditor');
-		
-		$instance = $model->getTableInfo();
-		$form = new JParameter('', JPATH_COMPONENT.DS.'tables'.DS. $instance->table . '.xml');
-		$form->bind($_POST);
-		$data = $form->toArray();
-		$db =& JFactory::getDBO();
-		$oldkey = JRequest::getVar('__oldkey',$data["params"][$instance->key]);
-		$db->setQuery('SELECT count(*) FROM #__'. $instance->table .' WHERE '. $instance->key .' = "'. $oldkey .'"');
-		$result = $db->loadResult();
-		if($data['params'][$instance->key] != '0' && $result) {
-			$set = Array();
-			foreach($data['params'] as $key=>$value) {
-				$set[] = $key .' = "'. $value .'"';
-			}
-			$db->setQuery('UPDATE #__'. $instance->table .' SET ' . implode(', ', $set) .
-				' WHERE '. $instance->key .' = "'. $oldkey .'"');
-		} else {
-			$col = Array();
-			$val = Array();
-			foreach($data['params'] as $key=>$value) {
-				$col[] 		= $key;
-				$val[]		= $value; 
-			}
-			$db->setQuery('INSERT INTO #__'. $instance->table .' ( ' . implode(',', $col) . ')' .
-				' VALUES("'. implode('","', $val) .'")');
-		}
-		//die($db->getQuery());
-		if($db->Query()) {
-			$this->setMessage(JText::_('Success!'));
-		} else {
-			$this->setMessage(JText::_('Update failed'), 'error');
-		}
-		$this->setRedirect('index.php?option=com_tableeditor&task=listrows&table='. $instance->table);
-	}
+    
+    function save() {
+    	?>save<?php
+    }
 }
 
 ?>

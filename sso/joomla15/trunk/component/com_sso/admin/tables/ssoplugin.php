@@ -37,15 +37,8 @@ class JTableSSOPlugin extends JTable {
 	}
 	
 	function refresh() {
-		$base_name = JPATH_PLUGINS.DS.'sso'.DS.$this->filename;
-		if(!file_exists($base_name) && file_exists($base_name.'.xml')) {
-			// we're using 1.5 style
-			$base_name .= '.xml'; 
-		} else if(file_exists($base_name) && file_exists($base_name . DS.$this->filename.'.xml')) {
-			// 1.6 style
-			$base_name .= DS.$this->filename.'.xml';
-		} else return false; // skip this iteration
-			
+		$base_name = JApplicationHelper::getPath('plg_xml', 'sso'.DS.$this->filename);
+		if(!$base_name) return false;
 		$data = JAuthSSOAuthentication::getSSOXMLData($base_name);
 		$this->type = $data['type'];
 		$this->key = $data['key'];
