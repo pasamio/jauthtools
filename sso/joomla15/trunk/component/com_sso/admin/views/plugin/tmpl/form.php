@@ -1,11 +1,21 @@
-<?php 
+<?php defined('_JEXEC') or die('Restricted access'); ?>
 
-	defined('_JEXEC') or die('Restricted access'); 
+<?php JHTML::_('behavior.tooltip'); ?>
 
-	JHTML::_('behavior.tooltip'); 
+<?php
+	//JToolBarHelper::title( JText::_( 'Plugin' ) .': <small><small>[' .JText::_('Edit'). ']</small></small>', 'plugin.png' );
+	//JToolBarHelper::save();
+	//JToolBarHelper::apply();
+	//JToolBarHelper::cancel( 'cancel', 'Close' );
+	//JToolBarHelper::help( 'screen.plugins.edit' );
+?>
+
+<?php
 	// clean item data
 	JFilterOutput::objectHTMLSafe( $this->plugin, ENT_QUOTES, '' );
+?>
 
+<?php
 	$this->plugin->nameA = '';
 	if ( $this->plugin->id ) {
 		$row->nameA = '<small><small>[ '. $this->plugin->name .' ]</small></small>';
@@ -54,12 +64,12 @@
 		</tr>
 		<tr>
 			<td valign="top" class="key">
-				<label for="mode">
-					<?php echo JText::_( 'Mode' ); ?>:
+				<label for="folder">
+					<?php echo JText::_( 'Type' ); ?>:
 				</label>
 			</td>
 			<td>
-				<?php echo $this->mode; ?>
+				<?php echo $this->plugin->folder; ?>
 			</td>
 		</tr>
 		<tr>
@@ -69,7 +79,17 @@
 				</label>
 			</td>
 			<td>
-				<input disabled="true" class="text_area" type="text" name="element" id="element" size="35" value="<?php echo $this->plugin->element; ?>" />.php
+				<input class="text_area" type="text" name="element" id="element" size="35" value="<?php echo $this->plugin->element; ?>" />.php
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="key">
+				<label for="access">
+					<?php echo JText::_( 'Access Level' ); ?>:
+				</label>
+			</td>
+			<td>
+				<?php echo $this->lists['access']; ?>
 			</td>
 		</tr>
 		<tr>
@@ -133,10 +153,11 @@
 <div class="clr"></div>
 
 	<input type="hidden" name="option" value="com_sso" />
-	<input type="hidden" name="mode" value="<?php echo $this->mode ?>" />
+	<input type="hidden" name="folder" value="<?php echo $this->plugin->folder; ?>" />
 	<input type="hidden" name="id" value="<?php echo $this->plugin->id; ?>" />
 	<input type="hidden" name="cid[]" value="<?php echo $this->plugin->id; ?>" />
 	<input type="hidden" name="client" value="<?php echo $this->plugin->client_id; ?>" />
 	<input type="hidden" name="task" value="" />
+	<input type="hidden" name="mode" value="<?php echo $this->mode ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

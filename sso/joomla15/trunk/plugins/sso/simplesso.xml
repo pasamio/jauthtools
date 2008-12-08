@@ -17,4 +17,47 @@
 		<param name="supplier" type="text" size="20" default="" label="Supplier" description="This is the server to authenticate from." />
 		<param name="suffix" type="text" size="20" default="" label="Username Suffix" description="This is the suffix given to the username to be replaced." />
 	</params>
+	<sso> <!--  special sso items -->
+		<type>B</type>
+		<key>siteUrl</key>
+		<operations>
+			<operation name="register" label="Apply for registration" />
+			<operation name="unregister" label="Unregister" />
+			<operation name="deny" label="Deny" />
+			<operation name="accept" label="Accept remote logins only" />
+			<operation name="allow" label="Allow local transfers only" />
+			<operation name="accept" label="Allow local transfers and remote logins" />
+		</operations>
+		<valid_states default="0">
+			<state value="0">
+				<operation name="register" />
+			</state>
+			
+			<state value="1">
+				<operation name="unregister" />
+			</state>
+			
+			<state value="2">
+				<operation name="deny" />
+			</state>
+			
+			<state value="3">
+				<operation name="deny" />
+				<operation name="accept" />
+				<operation name="transfer" />
+			</state>
+			
+			<state value="4">
+				<operation name="deny" />
+				<operation name="allow" />
+				<operation name="transfer" />
+			</state>
+			
+			<state value="5">
+				<operation name="deny" />
+				<operation name="allow" />
+				<operation name="remote" />
+			</state>
+		</valid_states>
+	</sso>
 </install>

@@ -17,4 +17,7 @@
 		<param name="supplier" type="text" size="20" default="" label="Supplier" description="This is the server to authenticate from." />
 		<param name="suffix" type="text" size="20" default="" label="Username Suffix" description="This is the suffix given to the username to be replaced." />
 	</params>
+		<sso> <!--  special sso items -->
+		<type>C</type>
+	</sso>
 </install>

@@ -35,6 +35,17 @@ class SSOViewList extends JView {
 	function loadItem($index) {
 		$item =& $this->items[$index];
 		$item->index = $index;
+		switch($item->type) {
+			case 'A':
+				$item->type = 'Type A - Normal SSO Plugin';
+				break;
+			case 'B':
+				$item->type = 'Type B - Service Provider SSO Plugin';
+				break;
+			case 'C':
+				$item->type = 'Type C - Redirected Login SSO Plugin';
+				break;
+		}
 		$item->cb = '<input type="checkbox" id="cb'. $index.'" onclick="isChecked(this.checked);" value="'. $item->id .'" name="cid[]"/>';
 		$this->assignRef('item',$item);
 	}
