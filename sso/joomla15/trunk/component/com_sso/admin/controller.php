@@ -40,24 +40,15 @@ class SSOController extends JController
     function display()
     {
     	JToolbarHelper::title('SSO Manager');
-    	$model =& $this->getModel();
+	    $this->configuration(); // default to configuration manager
+    }
+    
+    function entries() {
     	$mode = $this->getMode();
-    	if(in_array($mode, Array('A','B','C'))) {
-    		switch($this->getTask()) {
-    			case 'new':
-    				// do funky stuff here
-    				$view =& $this->getView('picker','html');
-    				$view->setModel($model, true);
-    				$view->display();
-    				break;
-    			default:
-    				// flick off to the listView
-    				$this->listView($mode);
-    				break;
-    		}
-    	} else {
-	    	$this->configuration();
-    	}
+    	$model =& $this->getModelFromMode($mode);
+    	$view = $this->getView('list','html');
+    	$view->setModel($model, true);
+    	$view->display();
     }
     
     function refresh() {
@@ -65,18 +56,6 @@ class SSOController extends JController
     	$mode = $this->getMode();
     	$count = $model->refreshPlugins();
     	$this->setRedirect('index.php?option=com_sso&task=configuration',JText::sprintf('Refreshed %d plugins successfully and failed to update %d plugins', $count['success'], $count['failure']));
-    }
-    
-    function typea() {
-    	$this->listView('A');
-    }
-    
-    function typeb() {
-    	$this->listView('B');
-    }
-
-    function typec() {
-    	$this->listView('C');
     }
     
     function listView($mode='A') {
@@ -101,28 +80,47 @@ class SSOController extends JController
     	JToolBarHelper::title( JText::_( 'SSO' ) .': <small><small>[' .JText::_('Edit'). ']</small></small>', 'plugin.png' );
 		JToolBarHelper::save();
 		JToolBarHelper::cancel( 'cancel', 'Close' );
-    	
     	JRequest::setVar('hidemainmenu',1);
-    	$model =& $this->getModel();
     	$mode = $this->getMode();
-    	$id = JRequest::getVar('id',0);
-    	$model->setMode($mode);
-    	$model->loadData($id);
-    	$view =& $this->getView('edit', 'html');
+    	$model =& $this->getModelFromMode($mode);
+    	$view =& $this->getView('plugin', 'html');
     	$view->setModel( $model, true);
+    	$view->setLayout('form');
     	$view->display();
     }
     
     function save() {
-    	$mode = JRequest::getVar('mode','A');
-    	$model =& $this->getModel();
-    	$model->setMode($mode);
-    	if($model->store()) {
-    		$this->setRedirect('index.php?option=com_sso&mode='. $mode, 'Saved');
-    	} else {
-    		die('failure');
-    		$this->setRedirect('index.php?option=com_sso&mode='. $mode, 'Store failed');
+    	// Check for request forgeries
+		JRequest::checkToken() or jexit( 'Invalid Token' );
+    	$mode = JRequest::getVar('mode','');
+    	$model =& $this->getModelFromMode($mode);
+    	if(!$model) {
+    		$this->setRedirect('index.php?option=com_sso', 'Save failed: Could not find  valid model','error');
+    		return false;
     	}
+    	
+    	
+    	if($model->store()) {
+    		$this->setRedirect('index.php?option=com_sso&task=entries&mode='. $mode, 'Saved');
+    	} else {
+    		$this->setRedirect('index.php?option=com_sso&task=entries&mode='. $mode, 'Store failed');
+    	}
+    }
+    
+    function &getModelFromMode($mode) {
+        switch($mode) {
+    		case 'sso':
+    		case 'identityprovider':
+    			$model =& $this->getModel('plugin');
+    			break;
+    		case 'serviceprovider':
+    			$model =& $this->getModel('provider');
+    			break;
+    		default:
+    			$model = false;
+    			break;    			
+    	}
+    	return $model;
     }
     
     function getMode() {
