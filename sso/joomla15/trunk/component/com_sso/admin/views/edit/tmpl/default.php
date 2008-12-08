@@ -1,10 +1,142 @@
-<form name="adminForm" method="post" action="index.php">
-	<table>
-		<tr><th>Name: </th><td><?php echo $this->data->name ?></td></tr>
-		<tr><th>Params:</th><td><?php echo $this->params ?></td></tr>
-	</table>
-	
+<?php 
+
+	defined('_JEXEC') or die('Restricted access'); 
+
+	JHTML::_('behavior.tooltip'); 
+	// clean item data
+	JFilterOutput::objectHTMLSafe( $this->plugin, ENT_QUOTES, '' );
+
+	$this->plugin->nameA = '';
+	if ( $this->plugin->id ) {
+		$row->nameA = '<small><small>[ '. $this->plugin->name .' ]</small></small>';
+	}
+?>
+<script language="javascript" type="text/javascript">
+	function submitbutton(pressbutton) {
+		if (pressbutton == "cancel") {
+			submitform(pressbutton);
+			return;
+		}
+		// validation
+		var form = document.adminForm;
+		if (form.name.value == "") {
+			alert( "<?php echo JText::_( 'Plugin must have a name', true ); ?>" );
+		} else if (form.element.value == "") {
+			alert( "<?php echo JText::_( 'Plugin must have a filename', true ); ?>" );
+		} else {
+			submitform(pressbutton);
+		}
+	}
+</script>
+
+<form action="index.php" method="post" name="adminForm">
+<div class="col width-60">
+	<fieldset class="adminform">
+	<legend><?php echo JText::_( 'Details' ); ?></legend>
+	<table class="admintable">
+		<tr>
+			<td width="100" class="key">
+				<label for="name">
+					<?php echo JText::_( 'Name' ); ?>:
+				</label>
+			</td>
+			<td>
+				<input class="text_area" type="text" name="name" id="name" size="35" value="<?php echo $this->plugin->name; ?>" />
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="key">
+				<?php echo JText::_( 'Published' ); ?>:
+			</td>
+			<td>
+				<?php echo $this->lists['published']; ?>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="key">
+				<label for="mode">
+					<?php echo JText::_( 'Mode' ); ?>:
+				</label>
+			</td>
+			<td>
+				<?php echo $this->mode; ?>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="key">
+				<label for="element">
+					<?php echo JText::_( 'Plugin file' ); ?>:
+				</label>
+			</td>
+			<td>
+				<input disabled="true" class="text_area" type="text" name="element" id="element" size="35" value="<?php echo $this->plugin->element; ?>" />.php
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="key">
+				<?php echo JText::_( 'Order' ); ?>:
+			</td>
+			<td>
+				<?php echo $this->lists['ordering']; ?>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="key">
+				<?php echo JText::_( 'Description' ); ?>:
+			</td>
+			<td>
+				<?php echo JText::_( $this->plugin->description ); ?>
+			</td>
+		</tr>
+		</table>
+	</fieldset>
+</div>
+<div class="col width-40">
+	<fieldset class="adminform">
+	<legend><?php echo JText::_( 'Parameters' ); ?></legend>
+	<?php
+		jimport('joomla.html.pane');
+        // TODO: allowAllClose should default true in J!1.6, so remove the array when it does.
+		$pane = &JPane::getInstance('sliders', array('allowAllClose' => true));
+		echo $pane->startPane('plugin-pane');
+		echo $pane->startPanel(JText :: _('Plugin Parameters'), 'param-page');
+		if($output = $this->params->render('params')) :
+			echo $output;
+		else :
+			echo "<div style=\"text-align: center; padding: 5px; \">".JText::_('There are no parameters for this item')."</div>";
+		endif;
+		echo $pane->endPanel();
+
+		if ($this->params->getNumParams('advanced')) {
+			echo $pane->startPanel(JText :: _('Advanced Parameters'), "advanced-page");
+			if($output = $this->params->render('params', 'advanced')) :
+				echo $output;
+			else :
+				echo "<div  style=\"text-align: center; padding: 5px; \">".JText::_('There are no advanced parameters for this item')."</div>";
+			endif;
+			echo $pane->endPanel();
+		}
+
+		if ($this->params->getNumParams('legacy')) {
+			echo $pane->startPanel(JText :: _('Legacy Parameters'), "legacy-page");
+			if($output = $this->params->render('params', 'legacy')) :
+				echo $output;
+			else :
+				echo "<div  style=\"text-align: center; padding: 5px; \">".JText::_('There are no legacy parameters for this item')."</div>";
+			endif;
+			echo $pane->endPanel();
+		}
+		echo $pane->endPane();
+	?>
+	</fieldset>
+</div>
+<div class="clr"></div>
+
 	<input type="hidden" name="option" value="com_sso" />
-	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="mode" value="<?php echo $this->mode ?>" />
+	<input type="hidden" name="id" value="<?php echo $this->plugin->id; ?>" />
+	<input type="hidden" name="cid[]" value="<?php echo $this->plugin->id; ?>" />
+	<input type="hidden" name="client" value="<?php echo $this->plugin->client_id; ?>" />
+	<input type="hidden" name="task" value="" />
+	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

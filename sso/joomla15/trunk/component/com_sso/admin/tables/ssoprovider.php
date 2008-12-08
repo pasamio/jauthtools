@@ -19,22 +19,27 @@ jimport('joomla.database.table');
  * @package SSO 
  */
 class JTableSSOProvider extends JTable {
-	var $providerId = null;
-	var $siteUrl = null;
-	var $siteName = null;
+	var $id = null;
+	var $plugin_id = null;
+	var $key = null;
+	var $name = null;
 	var $description = null;
-	var $comments = null;
+	var $_comments = null;
 	var $abbreviation = null;
-	var $ipAddress = null;
-	var $country = null;
-	var $countryCode = null;
-	var $language = null;
+	var $_ipAddress = null;
+	var $_country = null;
+	var $_countryCode = null;
+	var $_language = null;
 	var $status = null;
+	var $remotestatus = null;
 	var $published = null;
 	var $trusted = null;
+	var $params = '';
+	var $ordering = 0;
+	
 
-    function ssoProvider(&$database) {
-        $this->mosDBTable('#__sso_providers', 'providerId', $database);
+    function __construct(&$database) {
+        parent::__construct('#__sso_providers', 'providerId', $database);
     }
 
 	function load($siteUrl) {
