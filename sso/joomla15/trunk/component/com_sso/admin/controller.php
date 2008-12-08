@@ -39,33 +39,57 @@ class SSOController extends JController
      */
     function display()
     {
+    	JToolbarHelper::title('SSO Manager');
     	$model =& $this->getModel();
-    	$model->setMode('B');
-    	$model->getList();
-    	$model->setMode('A');
-    	$model->getList();
-    	$model->refreshPlugins();
-        //parent::display();
+    	$mode = $this->getMode();
+    	if(in_array($mode, Array('A','B','C'))) {
+    		switch($this->getTask()) {
+    			case 'new':
+    				// do funky stuff here
+    				$view =& $this->getView('picker','html');
+    				$view->setModel($model, true);
+    				$view->display();
+    				break;
+    			default:
+    				// flick off to the listView
+    				$this->listView($mode);
+    				break;
+    		}
+    	} else {
+	    	$this->configuration();
+    	}
+    }
+    
+    function refresh() {
+    	$model =& $this->getModel();
+    	$mode = $this->getMode();
+    	$count = $model->refreshPlugins();
+    	$this->setRedirect('index.php?option=com_sso&task=configuration',JText::sprintf('Refreshed %d plugins successfully and failed to update %d plugins', $count['success'], $count['failure']));
     }
     
     function typea() {
-    	JToolbarHelper::title('SSO - Type A plugins');
-    	JToolbarHelper::editList('edit','Edit');
     	$this->listView('A');
     }
     
     function typeb() {
-    	JToolbarHelper::title('SSO - Type B plugins');
     	$this->listView('B');
     }
 
     function typec() {
-    	JToolbarHelper::title('SSO - Type C plugins');
-    	
     	$this->listView('C');
     }
     
     function listView($mode='A') {
+    	JRequest::setVar('task', 'type'.$mode);
+    	JToolbarHelper::title(JText::sprintf('SSO - Type %s plugins', ucfirst($mode)));
+    	if($mode == 'B') {
+    		JToolbarHelper::addNew('new');
+    		JToolbarHelper::editList('edit','Edit');
+    		JToolbarHelper::deleteList('delete');
+    	} else {
+    		JToolbarHelper::editList('edit','Edit');
+    	}
+    	
     	$model =& $this->getModel();
     	$model->setMode($mode);
     	$view =& $this->getView('list','html');
@@ -74,9 +98,14 @@ class SSOController extends JController
     }
     
     function edit() {
+    	JToolBarHelper::title( JText::_( 'SSO' ) .': <small><small>[' .JText::_('Edit'). ']</small></small>', 'plugin.png' );
+		JToolBarHelper::save();
+		JToolBarHelper::cancel( 'cancel', 'Close' );
+    	
+    	JRequest::setVar('hidemainmenu',1);
     	$model =& $this->getModel();
-    	$mode = JRequest::getVar('mode','A');
-    	$id = JRequest::getVar('id','');
+    	$mode = $this->getMode();
+    	$id = JRequest::getVar('id',0);
     	$model->setMode($mode);
     	$model->loadData($id);
     	$view =& $this->getView('edit', 'html');
@@ -85,8 +114,29 @@ class SSOController extends JController
     }
     
     function save() {
-    	?>save<?php
+    	$mode = JRequest::getVar('mode','A');
+    	$model =& $this->getModel();
+    	$model->setMode($mode);
+    	if($model->store()) {
+    		$this->setRedirect('index.php?option=com_sso&mode='. $mode, 'Saved');
+    	} else {
+    		die('failure');
+    		$this->setRedirect('index.php?option=com_sso&mode='. $mode, 'Store failed');
+    	}
+    }
+    
+    function getMode() {
+    	static $mode = null;
+    	if($mode === null) {
+    		$mode = JRequest::getVar('mode','');
+    	}
+    	return $mode;
+    }
+    
+    function configuration() {
+    	JHtml::stylesheet('toolbar.css', 'administrator/components/com_sso/media/css/');
+    	JToolbarHelper::title(JText::_('SSO Manager'). ' - '.  JText::_('Configuration'));
+    	JToolBarHelper::custom( 'refresh', 'refresh', 'refresh','Refresh Plugin List',false,false);
+    	parent::display();
     }
 }
-
-?>

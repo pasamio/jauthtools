@@ -21,7 +21,7 @@ CREATE TABLE  `#__sso_providers` (
   `remotestatus` tinyint(4) default NULL,
   `origin` tinyint(4) default NULL,
   `abbreviation` varchar(10) default NULL,
-  `param` text,
+  `params` text,
   `ordering` int(11) default NULL,
   PRIMARY KEY  (`id`),
   KEY `newindex` (`published`)
