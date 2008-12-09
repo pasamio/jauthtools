@@ -120,6 +120,9 @@ class SSOController extends JController
         switch($mode) {
     		case 'sso':
     		case 'identityprovider':
+			case 'user':
+    		case 'usersource':
+    		case 'authentication':    			
     			$model =& $this->getModel('plugin');
     			break;
     		case 'serviceprovider':
@@ -136,6 +139,9 @@ class SSOController extends JController
     	switch($mode) {
     		case 'sso':
     		case 'identityprovider':
+			case 'user':
+    		case 'usersource':
+    		case 'authentication':    			
     			$view =& $this->getView('plugin', 'html');
     			break;
     		case 'serviceprovider':
@@ -156,10 +162,19 @@ class SSOController extends JController
     			return 'Service Providers';
     			break;
     		case 'sso':
-    			return 'Plugins';
+    			return 'SSO Plugins';
     			break;
     		case 'configuration':
     			return 'Configuration';
+    		case 'authentication':
+    			return 'Authentication Plugins';
+    			break;
+    		case 'user':
+    			return 'User Plugins';
+    			break;
+    		case 'usersource':
+    			return 'User Sources Plugins';
+    			break;
     		default:
     			return 'Unknown';
     			break;
@@ -175,6 +190,9 @@ class SSOController extends JController
     			break;
     		case 'sso':
     		case 'identityprovider':
+    		case 'user':
+    		case 'usersource':
+    		case 'authentication':
     			JToolbarHelper::editList('edit','Edit');
     			break;
     	}
