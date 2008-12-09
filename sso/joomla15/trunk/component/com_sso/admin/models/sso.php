@@ -142,7 +142,7 @@ class SSOModelSSO extends JModel {
 				// type BG is the type B global params
 				// TODO: type B plugin non-instance params are global, so need to set this appropriately
 				$row =& JTable::getInstance('plugin');
-				$id = JRequest::getVar('id',0);
+				$id = JRequest::getVar('cid',0);
 				$row->load($id);
 				
 				// Check for request forgeries

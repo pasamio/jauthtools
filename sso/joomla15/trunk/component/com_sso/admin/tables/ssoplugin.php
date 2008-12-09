@@ -36,6 +36,8 @@ class JTableSSOPlugin extends JTable {
 		parent::__construct('#__sso_plugins', 'plugin_id', $db);
 	}
 	
+	
+	
 	function refresh() {
 		$base_name = JApplicationHelper::getPath('plg_xml', 'sso'.DS.$this->filename);
 		if(!$base_name) return false;

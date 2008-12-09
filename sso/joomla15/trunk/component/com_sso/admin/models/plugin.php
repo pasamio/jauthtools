@@ -69,4 +69,8 @@ class SSOModelPlugin extends JModel {
 		$row->reorder( 'folder = '.$db->Quote($row->folder).' AND ordering > -10000 AND ordering < 10000' );
 		return true;
     }
+    
+    function delete() {
+    	JError::raiseError(500, 'Plugins cannot be deleted through this interface');
+    }
 }

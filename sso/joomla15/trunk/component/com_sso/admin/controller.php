@@ -39,13 +39,22 @@ class SSOController extends JController
      */
     function display()
     {
-    	JToolbarHelper::title('SSO Manager');
-	    $this->configuration(); // default to configuration manager
+    	switch($this->getTask()) {
+    		case 'cancel':
+    			$this->entries();
+    			break;
+    		default:
+    			JToolbarHelper::title('SSO Manager');
+	    		$this->configuration(); // default to configuration manager
+    			break;
+    	}
     }
     
     function entries() {
     	$mode = $this->getMode();
+    	$this->setToolbarFromMode($mode);
     	$model =& $this->getModelFromMode($mode);
+    	JToolbarHelper::title(JText::_('SSO Manager') . ' - '. JText::_($this->getNameFromMode($mode)));
     	$view = $this->getView('list','html');
     	$view->setModel($model, true);
     	$view->display();
@@ -83,7 +92,7 @@ class SSOController extends JController
     	JRequest::setVar('hidemainmenu',1);
     	$mode = $this->getMode();
     	$model =& $this->getModelFromMode($mode);
-    	$view =& $this->getView('plugin', 'html');
+    	$view =& $this->getViewFromMode($mode);
     	$view->setModel( $model, true);
     	$view->setLayout('form');
     	$view->display();
@@ -121,6 +130,70 @@ class SSOController extends JController
     			break;    			
     	}
     	return $model;
+    }
+    
+    function &getViewFromMode($mode) {
+    	switch($mode) {
+    		case 'sso':
+    		case 'identityprovider':
+    			$view =& $this->getView('plugin', 'html');
+    			break;
+    		case 'serviceprovider':
+    			$view =& $this->getView('provider','html');
+    			break;
+    		default:
+    			$view = false;
+    	}
+    	return $view;
+    }
+    
+    function getNameFromMode($mode) {
+    	switch($mode) {
+    		case 'identityprovider':
+    			return 'Identity Providers';
+    			break;
+    		case 'serviceprovider':
+    			return 'Service Providers';
+    			break;
+    		case 'sso':
+    			return 'Plugins';
+    			break;
+    		case 'configuration':
+    			return 'Configuration';
+    		default:
+    			return 'Unknown';
+    			break;
+    	}	
+    }
+    
+    function setToolbarFromMode($mode) {
+    	switch($mode) {
+    		case 'serviceprovider':
+    			JToolbarHelper::addNew('new');
+    			JToolbarHelper::editList('edit','Edit');
+    			JToolbarHelper::deleteList('delete');
+    			break;
+    		case 'sso':
+    		case 'identityprovider':
+    			JToolbarHelper::editList('edit','Edit');
+    			break;
+    	}
+    }
+    
+    function remove() {
+    	$mode = JRequest::getVar('mode','');
+    	$model =& $this->getModelFromMode($mode);
+    	if(!$model) {
+    		$this->setRedirect('index.php?option=com_sso', 'Failed to find model', 'error');
+    	} else {
+    		$cid 	= JRequest::getVar( 'cid', array(0), '', 'array' );
+    		if($model->delete($cid)) {
+    			$this->setRedirect('index.php?option=com_sso&task=entries&mode='. $mode, 'Delete successful!');
+    		} else {
+    			$this->setRedirect('index.php?option=com_sso&task=entries&mode='. $mode, 'Delete failed', 'error');
+    		}
+    	}
+    	return true;
     }
     
     function getMode() {

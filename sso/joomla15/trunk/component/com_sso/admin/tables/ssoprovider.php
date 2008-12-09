@@ -36,20 +36,33 @@ class JTableSSOProvider extends JTable {
 	var $trusted = null;
 	var $params = '';
 	var $ordering = 0;
-	
+	var $_plugin = null;
 
     function __construct(&$database) {
-        parent::__construct('#__sso_providers', 'providerId', $database);
+        parent::__construct('#__sso_providers', 'id', $database);
     }
 
-	function load($siteUrl) {
+    function &getPlugin() {
+    	if($this->plugin_id && !$this->_plugin) {
+    		$this->_plugin =& JTable::getInstance('plugin');
+    		$this->_plugin->load($this->plugin_id);
+    	} else {
+    		print_r($this);
+    		die('no plugin ID and a valid plugin!');
+    	}
+    	return $this->_plugin;
+    }
+    
+	/*function load($siteUrl) {
+		// load events wipeout the plugin cache
+		$this->_plugin = null;
 		if( ! $siteUrl || ! parent::load( $siteUrl )) {
 			return false;
 		}
 		else {
 			return true;
 		}
-	}
+	}*/
 
 	function init_record() {
 		$this->published = '1';
@@ -270,6 +283,27 @@ class JTableSSOProvider extends JTable {
     function isLocal() {
     	return true; // check if the provider is local
     }
+    
+	/**
+	* Overloaded bind function
+	*
+	* @access public
+	* @param array $hash named array
+	* @return null|string	null is operation was satisfactory, otherwise returns an error
+	* @see JTable:bind
+	* @since 1.5
+	*/
+	function bind($array, $ignore = '')
+	{
+		if (isset( $array['params'] ) && is_array($array['params']))
+		{
+			$registry = new JRegistry();
+			$registry->loadArray($array['params']);
+			$array['params'] = $registry->toString();
+		}
+
+		return parent::bind($array, $ignore);
+	}
 }
 
 ?>

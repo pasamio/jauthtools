@@ -1,46 +1,42 @@
 <?php
 /**
-* @version		$Id: view.html.php 10381 2008-06-01 03:35:53Z pasamio $
-* @package		Joomla
-* @subpackage	Config
-* @copyright	Copyright (C) 2005 - 2008 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
-*/
-
-// no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
-
-jimport( 'joomla.application.component.view');
-
-/**
- * HTML View class for the Plugins component
- *
- * @static
- * @package		Joomla
- * @subpackage	Plugins
- * @since 1.0
+ * Document Description
+ * 
+ * Document Long Description 
+ * 
+ * PHP4/5
+ *  
+ * Created on Dec 9, 2008
+ * 
+ * @package package_name
+ * @author Your Name <author@toowoombarc.qld.gov.au>
+ * @author Toowoomba Regional Council Information Management Branch
+ * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
+ * @copyright 2008 Toowoomba Regional Council/Developer Name 
+ * @version SVN: $Id:$
+ * @see http://joomlacode.org/gf/project/   JoomlaCode Project:    
  */
-class SSOViewPlugin extends JView
-{
-	function display( $tpl = null )
-	{
+ 
+defined('_JEXEC') or die('Maaf!');
+
+jimport('joomla.application.component.view');
+
+class SSOViewProvider extends JView {
+	
+	function display($tpl = null) {
 		global $option;
 
 		$db		=& JFactory::getDBO();
 		$user 	=& JFactory::getUser();
 
+		$mode = JRequest::getVar('mode','');
 		$client = JRequest::getWord( 'client', 'site' );
 		$cid 	= JRequest::getVar( 'cid', array(0), '', 'array' );
 		JArrayHelper::toInteger($cid, array(0));
 
 		$lists 	= array();
-		$row 	=& JTable::getInstance('plugin');
-
+		$row 	=& JTable::getInstance('ssoprovider');
+		
 		// load the row from the db table
 		$row->load( $cid[0] );
 
@@ -52,21 +48,27 @@ class SSOViewPlugin extends JView
 			$this->setRedirect( 'index.php?option='. $option .'&client='. $client, $msg, 'error' );
 			return false;
 		}
-
-		if ($client == 'admin') {
-			$where = "client_id='1'";
-		} else {
-			$where = "client_id='0'";
+		
+		
+		if(!$cid[0]) {
+			$plugin_id = JRequest::getInt('plugin_id',0);
+			if($plugin_id) {
+				$row->plugin_id = $plugin_id;
+			} else {
+				// REALLY REALLY REALLY shouldn't do this here
+				$app =& JFactory::getApplication();
+				$app->redirect('index.php?option=com_sso&task=entries&mode='. $mode,'Invalid plugin ID specified','error');
+				return false;
+			}
 		}
+		
+		$plugin =& $row->getPlugin();
+		$lang =& JFactory::getLanguage();
+		$lang->load( 'plg_sso_' . trim( $plugin->element ), JPATH_ADMINISTRATOR );
 
-		// get list of groups
-		if ($row->access == 99 || $row->client_id == 1) {
-			$lists['access'] = 'Administrator<input type="hidden" name="access" value="99" />';
-		} else {
-			// build the html select list for the group access
-			$lists['access'] = JHTML::_('list.accesslevel',  $row );
-		}
+		$data = JApplicationHelper::parseXMLInstallFile(JApplicationHelper::getPath( 'plg_xml', 'sso'.DS.$plugin->element ));
 
+		$plugin->description = $data['description'];		
 		if ($cid[0])
 		{
 			$row->checkout( $user->get('id') );
@@ -75,10 +77,8 @@ class SSOViewPlugin extends JView
 			{
 				// build the html select list for ordering
 				$query = 'SELECT ordering AS value, name AS text'
-					. ' FROM #__plugins'
-					. ' WHERE folder = '.$db->Quote($row->folder)
-					. ' AND published > 0'
-					. ' AND '. $where
+					. ' FROM #__sso_providers'
+					. ' WHERE published > 0'
 					. ' AND ordering > -10000'
 					. ' AND ordering < 10000'
 					. ' ORDER BY ordering'
@@ -89,13 +89,6 @@ class SSOViewPlugin extends JView
 				$lists['ordering'] = '<input type="hidden" name="ordering" value="'. $row->ordering .'" />'. JText::_( 'This plugin cannot be reordered' );
 			}
 
-			$lang =& JFactory::getLanguage();
-			$lang->load( 'plg_' . trim( $row->folder ) . '_' . trim( $row->element ), JPATH_ADMINISTRATOR );
-
-			$data = JApplicationHelper::parseXMLInstallFile(JPATH_SITE . DS . 'plugins'. DS .$row->folder . DS . $row->element .'.xml');
-
-			$row->description = $data['description'];
-
 		} else {
 			$row->folder 		= '';
 			$row->ordering 		= 999;
@@ -103,18 +96,19 @@ class SSOViewPlugin extends JView
 			$row->description 	= '';
 			// Fudge this, its technically wrong but it'll evaluate to zero and then normality will take over
 			$lists['ordering'] = '<input type="hidden" name="ordering" value="'. $row->ordering .'" />'. JText::_( 'This plugin cannot be reordered' );
+			
 		}
 
 		$lists['published'] = JHTML::_('select.booleanlist',  'published', 'class="inputbox"', $row->published );
 
 		// get params definitions
-		$params = new JParameter( $row->params, JApplicationHelper::getPath( 'plg_xml', $row->folder.DS.$row->element ), 'plugin' );
-		$mode = JRequest::getVar('mode','');
+		$params = new JParameter( $row->params, JApplicationHelper::getPath( 'plg_xml', 'sso'.DS.$plugin->element ), 'plugin' );
 		$this->assignRef('lists',		$lists);
-		$this->assignRef('plugin',		$row);
+		$this->assignRef('provider', $row);
+		$this->assignRef('plugin',		$plugin);
 		$this->assignRef('params',		$params);
 		$this->assignRef('mode', $mode);
-
+		
 		parent::display($tpl);
 	}
 }
