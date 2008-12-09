@@ -43,7 +43,27 @@ class SSOModelProvider extends JModel {
     	return $mode;
     }	
     
-    function store() {
-    	die('storing provider not supported');
+	function store() {
+		$row =& JTable::getInstance('ssoprovider');
+		if (!$row->bind(JRequest::get('post'))) {
+			JError::raiseError(500, $row->getError() );
+		}
+		if (!$row->check()) {
+			JError::raiseError(500, $row->getError() );
+		}
+		if (!$row->store()) {
+			JError::raiseError(500, $row->getError() );
+		}
+		return true;
     }
+    
+    function delete($cid) {
+    	if(!is_array($cid)) {
+    		$cid = Array($cid);
+    	}
+    	$dbo =& JFactory::getDBO();
+    	$query = 'DELETE FROM #__sso_providers WHERE id IN ('. implode(',', $cid) .')';
+    	$dbo->setQuery($query);
+    	return $dbo->Query();
+     }
 }
