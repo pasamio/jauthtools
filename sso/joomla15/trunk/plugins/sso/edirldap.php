@@ -53,8 +53,19 @@ class plgSSOEDirLDAP extends JPlugin {
 			return false;
 		}
 		
-		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
-		$ldapparams = new JParameter($ldapplugin->params);
+		// really ugly, but what it does it looks for the file and then includes it
+		// it turns out that joomla doesn't check the file exists first before trying
+		// to include it
+		if(file_exists(JPATH_LIBRARIES.DS.'jauthtools'.DS.'helper.php') && jimport('jauthtools.helper')) {
+			$ldapparams =& JAuthToolsHelper::getPluginParams('authentication','ldap');
+		} else {
+			$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
+			if($ldapplugin) {
+				$ldapparams = new JParameter($ldapplugin->params);
+			} else {
+				$ldapparams = new JParameter('');
+			}
+		}
 		$params->merge($ldapparams);
 		$ldapuid = $params->get('ldap_uid','uid');
 		$ldap = new JLDAP($params);
