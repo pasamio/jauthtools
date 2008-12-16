@@ -101,7 +101,7 @@ class SSOController extends JController
     function save() {
     	// Check for request forgeries
 		JRequest::checkToken() or jexit( 'Invalid Token' );
-    	$mode = JRequest::getVar('mode','');
+    	$mode = $this->getMode();
     	$model =& $this->getModelFromMode($mode);
     	if(!$model) {
     		$this->setRedirect('index.php?option=com_sso', 'Save failed: Could not find  valid model','error');
@@ -218,6 +218,9 @@ class SSOController extends JController
     	static $mode = null;
     	if($mode === null) {
     		$mode = JRequest::getVar('mode','');
+    		if($mode == 'sources' || $mode == 'source') { // replace this as j! gets confused
+    			$mode = 'usersource';
+    		}
     	}
     	return $mode;
     }
