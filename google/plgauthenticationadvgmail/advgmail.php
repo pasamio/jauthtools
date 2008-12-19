@@ -24,7 +24,7 @@ jimport( 'joomla.plugin.plugin' );
  * @subpackage	JFramework
  * @since 1.5
  */
-class plgAuthenticationGMail extends JPlugin
+class plgAuthenticationAdvGMail extends JPlugin
 {
 	/**
 	 * This method should handle any authentication and report back to the subject
@@ -46,7 +46,7 @@ class plgAuthenticationGMail extends JPlugin
 			// check if we have a username and password
 			if(strlen($credentials['username']) && strlen($credentials['password']))
 			{ 
-				$blacklist = explode(';',$this->params->get('user_blacklist',''));
+				$blacklist = explode(',',$this->params->get('user_blacklist',''));
 				// check if the username isn't blacklisted
 				if(!in_array($credentials['username'], $blacklist)) { 
 					$suffix = $this->params->get('suffix', '');
