@@ -61,6 +61,7 @@ class JAuthUserSource extends JObservable {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::doUserCreation: Could not load ' . $className);
 				continue;
 			}
+		}
 
 		// Try to find user
 		if($user = $this->discoverUser($username)) {
@@ -119,7 +120,7 @@ class JAuthUserSource extends JObservable {
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::discoverUser: Could not load ' . $className);
 				continue;
-}
+			}
 			// Try to find user
 			$user = new JUser();
 			if($plugin->getUser($username,$user)) {
