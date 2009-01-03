@@ -97,7 +97,7 @@ class plgUserLDAP extends JPlugin {
 				$parts = explode(' ',$user['name']);
 				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
 				if(!strlen($ldapuser['sn'])) {
-					unset($ldapuser['sn']);
+					$ldapuser['sn'] = $user['name'];
 				} else {
 					if(count($parts)) {
 						$ldapuser['givenName'] = array_shift($parts); // Try for the given name
@@ -110,9 +110,27 @@ class plgUserLDAP extends JPlugin {
 				$ldapuser[$ldapuid] = $user['username'];
 				$ldapuser['gidNumber'] = $params->get('gidNumber', 20);
 				$ldapuser['uidNumber'] = $params->get('uidOffset', 10000) + $user['id']; 
+				$ldapuser['homeDirectory'] = str_replace('[username]', $user['username'], $params->get('homeDirectory',''));
 				// new user needs to have the objectClass set
 				// JoomlaUser and Internet Organisation: Person (structural)
-				$ldapuser['objectclass'] = Array('top','inetOrgPerson', 'posixAccount','shadowAccount','apple-user','extensibleObject');
+				$ldapuser['objectclass'] = Array('top','inetOrgPerson','posixAccount','shadowAccount','apple-user','extensibleObject');
+				break;
+			case 'openldap':
+				$ldapuser['cn'] = $user['username'];
+				$ldapuser['displayname'] = $user['name'];
+				$parts = explode(' ',$user['name']);
+				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
+				$ldapuser['givenname'] = array_shift($parts); //$parts[0];
+				if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);
+				if(count($parts)) {
+				$ldapuser['initials'] = implode(' ', $parts); // abuse this; outlook does the same
+				}
+				$ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
+				$ldapuser['mail'] = $user['email'];
+				$ldapuser[$ldapuid] = $user['username'];
+				// new user needs to have the objectClass set
+				// Internet Organisation: Person (structural)
+				$ldapuser['objectclass'] = Array('top','inetOrgPerson');
 				break;
 			case 'joomla':
 			default:
@@ -140,7 +158,8 @@ class plgUserLDAP extends JPlugin {
 		$dn = $ldap_rdnprefix.'='. $user['username'].','.$defaultdn;
 		if ($isnew)
 		{
-			$this->_createUser($ldap, $dn, $ldapuser);
+			if(!$this->_createUser($ldap, $dn, $ldapuser)) 
+				JError::raiseWarning(45, JText::sprintf('Failed to create user: %s', $ldap->getErrorMsg()));
 		}
 		else
 		{
@@ -154,7 +173,8 @@ class plgUserLDAP extends JPlugin {
 					JError::raiseWarning(44, JText::_('LDAP Modify failed'));
 				}
 			} else {
-				$this->_createUser($ldap, $dn, $ldapuser);
+				if(!$this->_createUser($ldap, $dn, $ldapuser))
+					JError::raiseWarning(45, JText::sprintf('Failed to create user: %s', $ldap->getErrorMsg()));
 			}
 		}
 		// testing code; delete the user after they've been created
@@ -228,7 +248,7 @@ class plgUserLDAP extends JPlugin {
 	 * @access private
 	 */
 	function _createUser(&$ldap, $dn, $ldapuser) {		
-		return $ldap->create($dn,$ldapuser);// or die('Failed to add '. $dn .': ' . $ldap->getErrorMsg());	
+		return $ldap->create($dn,$ldapuser); // or die('Failed to add '. $dn .': ' . $ldap->getErrorMsg());	
 	}
 
 }
