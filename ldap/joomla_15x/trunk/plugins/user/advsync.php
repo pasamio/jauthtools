@@ -1,88 +1,45 @@
 <?php
-/**
- * LDAP Synchronziation Bot
- * 
- * This bot will reset any group membership to match that in the LDAP directory 
- * 
- * PHP4
- * MySQL 4
- *  
- * Created on Oct 3, 2006
- * 
- * @package LDAP Tools
- * @subpackage Sync
- * @author Sam Moffatt <sam.moffatt@sammoffatt.com.au>
- * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Sam Moffatt 
- * @version SVN: $Id:$
- * @link http://sammoffatt.com.au/jauthtools JAuthTools Homepage
- */
 
 /** ensure this file is being included by a parent file */
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+// Special mutable version of JTable that isn't as evil as the JObject derived on
 jimport('jauthtools.mutabletable');
 
-if (!function_exists('addLogEntry')) {
-	/**
-	 * Add a log entry to the supported logging system
-	 * @package JLogger
-	 * @ignore
-	 */
-	function addLogEntry($application, $type, $priority, $message) {
-		if (defined('_JLOGGER_API')) {
-			global $database;
-			$logentry = new JLogEntry($database);
-			$logentry->application = $application;
-			$logentry->type = $type;
-			$logentry->priority = $priority;
-			$logentry->message = $message;
-			$logentry->store() or die('Log entry save failed');
-		}
-	}
+if(function_exists('addLogEntry')) {
+	function addLogEntry($dummy1, $dummy2, $dummy3, $dummy4) { }
 }
 
-if (!function_exists('ldap_connect')) {
-	addLogEntry('LDAP Adv Sync Mambot', 'configuration', 'crit', 'PHP LDAP Library not detected');
-} else
-	if (!class_exists('ldapConnector')) {
-		addLogEntry('LDAP Adv Sync Mambot', 'configuration', 'crit', 'Joomla! LDAP Library not detected');
-	} else {
-		$_MAMBOTS->registerFunction('onAfterStart', 'botDoLdapAdvSync');
+class plgUserAdvSync extends JPlugin {
+	
+	function plgUserAdvSync($subject, $params) {
+		
 	}
-
-/**
- * Initiates a LDAP Sync
- *
- * Initiates a LDAP Synchronization. A user is checked and the system redirects if required
- */
-function botDoLdapAdvSync() {
-	global $my, $database, $mainframe, $acl;
-	$option = mosGetParam($_REQUEST, 'option','');
-	$task = mosGetParam($_REQUEST, 'task', '');
-	$submit = mosGetParam($_REQUEST,'submit', '');
+	
+	function onLoginUser($user, $options) {
+		//global $my, $database, $mainframe, $acl;
+		
+		$database =& JFactory::getDBO();
+		$mainframe =& JFactory::getApplication();
 	
 	// Configuration: Load mambot parameters
-	$query = "SELECT params FROM #__mambots WHERE element = 'ldap.advsync' AND folder = 'system'";
-	$database->setQuery($query);
-	$params = $database->loadResult();
-	$mambotParams = & new mosParameters($params);
 	$ldap = null; // bad c habbit
-	if ($mambotParams->get('useglobal',1)) { // If we use global set this
+	/*
+	if ($this->params->get('useglobal',1)) { // If we use global set this
 		$ldap = new ldapConnector();
-		$mambotParams = $ldap->getParams();
+		$this->params = $ldap->getParams();
 		$ldap->source = 'joomla.ldap';
 	} else {
-		$ldap = new ldapConnector($mambotParams);
+		$ldap = new ldapConnector($this->params);
 		$ldap->source = 'ldap.advsync';
-	}
+	}*/
 	
 	// Valid our basic params
-	$table = $mambotParams->get('externaltable');
-	$uidfield = $mambotParams->get('uidfield');
-	$pkeyfield = $mambotParams->get('pkeyfield');
-	$syncmap = $mambotParams->get('syncmap');
+	$table = $this->params->get('externaltable');
+	$uidfield = $this->params->get('uidfield');
+	$pkeyfield = $this->params->get('pkeyfield');
+	$syncmap = $this->params->get('syncmap');
 	
 	if(!$table || !$uidfield || !$syncmap) {
 		addLogEntry('LDAP Adv Sync Mambot', 'configuration', 'error', 'Missing configuration settings');
@@ -94,17 +51,11 @@ function botDoLdapAdvSync() {
 	$usrname = stripslashes(strval(mosGetParam($_REQUEST, 'usrname', '')));
 	$username = $username ? $username : $usrname;
 	
-	$loginonly = $mambotParams->get('syncloginonly',0);
+	$loginonly = $this->params->get('syncloginonly',0);
 	
-	if($loginonly) {
-		if 	($option != 'login' && // check for login
- 			($option != 'com_comprofiler' && $task != 'login') &&
-			($submit != 'Login')) { // added community builder support
-				return 0; // no login detected so bail
-		}
-	}
-	
-	$cuid = 0;
+	$tmpUser =& JUser::getInstance();
+	$cuid = $tmpUser->get('id');
+	/*
 	if ($mainframe->_session->userid) { // check the session
 		$cuid = $mainframe->_session->userid; 		// the user is logged in so use that
 		$username = $mainframe->_session->username; // pull their username out
@@ -118,6 +69,7 @@ function botDoLdapAdvSync() {
 		addLogEntry('LDAP Adv Sync Mambot', 'detection', 'error', 'Failed to find user to synchronise');
 		return 0;
 	}
+	*/
 	
 	
 	
@@ -142,7 +94,7 @@ function botDoLdapAdvSync() {
 	// Step 3: Connect to LDAP to find info
 	if ($ldap->connect()) {
 		if ($ldap->bind()) { // Anonymous bind
-			$userdetails = $ldap->simple_search(str_replace("[search]", $username, $mambotParams->get('search_string')));
+			$userdetails = $ldap->simple_search(str_replace("[search]", $username, $this->params->get('search_string')));
 			if(!count($userdetails)) {
 				addLogEntry('LDAP Adv Sync Mambot', 'synchronisation', 'error', 'Could not find user "'. $username.'" in LDAP directory');
 				return 0;
@@ -151,9 +103,10 @@ function botDoLdapAdvSync() {
 			//print_r($userdetails);
 			// Set up some variables we'll need shortly
 			// Main user
-			$uid = $mainframe->_session->userid;
+			//$uid = $mainframe->_session->userid;
+			$uid = $tmpUser->get('id');
 			$rows = explode('<br />',$syncmap);
-			$dbtable = new mosDBTable($table, $pkeyfield, $database);
+			$dbtable = new MutableJTable($table, $pkeyfield, $database);
 			$dbtable->$uidfield = $cuid;
 			if($pkeyfield && $pkeyfield != $uidfield) {
 				$database->setQuery('SELECT '. $pkeyfield .' FROM '. $table .' WHERE '. $uidfield .' = '. $cuid);
@@ -213,4 +166,3 @@ function botDoLdapAdvSync() {
 		}
 	}
 }
-?>

@@ -87,22 +87,53 @@ class plgUserLDAP extends JPlugin {
 			JError::raiseWarning(40, JText::_('Failed to bind to LDAP Server'). ': '. $ldap->getErrorMsg());
 			return false;
 		}
+		
+		$template = $params->get('template', 'joomla');
 		// set up the user
 		$ldapuser = Array();
-		$ldapuser['cn'] = $user['username'];
-		$ldapuser['displayname'] = $user['name'];
-		$parts = explode(' ',$user['name']);
-		$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
-		$ldapuser['givenname'] = array_shift($parts); //$parts[0];
-		if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);
-		if(count($parts)) {
-			$ldapuser['initials'] = implode(' ', $parts); // abuse this; outlook does the same
+		switch($template) {
+			case 'opendirectory':
+				$ldapuser['cn'] = $user['name'];
+				$parts = explode(' ',$user['name']);
+				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
+				if(!strlen($ldapuser['sn'])) {
+					unset($ldapuser['sn']);
+				} else {
+					if(count($parts)) {
+						$ldapuser['givenName'] = array_shift($parts); // Try for the given name
+						if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);	
+					}	
+				}
+				
+				$ldapuser['userpassword'] = $user['password_clear']; // apple passwords appear to be clear text, go figure
+				$ldapuser['mail'] = $user['email'];
+				$ldapuser[$ldapuid] = $user['username'];
+				$ldapuser['gidNumber'] = $params->get('gidNumber', 20);
+				$ldapuser['uidNumber'] = $params->get('uidOffset', 10000) + $user['id']; 
+				// new user needs to have the objectClass set
+				// JoomlaUser and Internet Organisation: Person (structural)
+				$ldapuser['objectclass'] = Array('top','inetOrgPerson', 'posixAccount','shadowAccount','apple-user','extensibleObject');
+				break;
+			case 'joomla':
+			default:
+				$ldapuser['cn'] = $user['username'];
+				$ldapuser['displayname'] = $user['name'];
+				$parts = explode(' ',$user['name']);
+				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
+				$ldapuser['givenname'] = array_shift($parts); //$parts[0];
+				if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);
+				if(count($parts)) {
+					$ldapuser['initials'] = implode(' ', $parts); // abuse this; outlook does the same
+				}
+				$ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
+				$ldapuser['mail'] = $user['email'];		
+				$ldapuser[$ldapuid] = $user['username'];
+				$ldapuser['joomlagroup'] = $user['usertype'];
+				// new user needs to have the objectClass set
+				// JoomlaUser and Internet Organisation: Person (structural)
+				$ldapuser['objectclass'] = Array('top','inetOrgPerson','JoomlaUser'); 	
+				break;
 		}
-		$ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
-		$ldapuser['mail'] = $user['email'];		
-		$ldapuser[$ldapuid] = $user['username'];
-		$ldapuser['joomlagroup'] = $user['usertype'];
-
 		// create the user in the default location
 		// this can be moved later
 		
@@ -196,10 +227,7 @@ class plgUserLDAP extends JPlugin {
 	 * @return bool result of create
 	 * @access private
 	 */
-	function _createUser(&$ldap, $dn, $ldapuser) {
-		// new user needs to have the objectClass set
-		// JoomlaUser and Internet Organisation: Person (structural)
-		$ldapuser['objectclass'] = Array('top','inetOrgPerson','JoomlaUser'); 			
+	function _createUser(&$ldap, $dn, $ldapuser) {		
 		return $ldap->create($dn,$ldapuser);// or die('Failed to add '. $dn .': ' . $ldap->getErrorMsg());	
 	}
 
