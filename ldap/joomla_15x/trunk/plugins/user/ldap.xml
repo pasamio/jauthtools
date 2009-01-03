@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>http://sammoffatt.com.au/</authorUrl>
-	<version>1.5</version>
+	<version>1.5.1</version>
 	<description>LDAP User Plugin</description>
 	<files>
 		<filename plugin="ldap">ldap.php</filename>
@@ -15,5 +15,11 @@
 	<params>
 		<param name="defaultdn" type="text" default="" label="Default DN" description="Default DN of the container for users to be created" />
 		<param name="ldap_rdnprefix" type="text" default="" label="Default RDN Prefix" description="Default RDN prefix to use (e.g. cn); if not specified the LDAP User ID will be used (see LDAP Authentication Plugin)" />
+		<param name="template" type="list" default="" label="Template" description="Template to use for creating accounts">
+			<option value="joomla">Joomla! OpenLDAP</option>
+			<option value="opendirectory">Mac OS X OpenDirectory</option>
+		</param>
+		<param name="gidNumber" type="text" default="" label="GID Number" description="Default GID number to use" />
+		<param name="uidOffset" type="text" default="10000" label="UID Offset" description="UID offset to use when creating new users" />
 	</params>
 </install>
