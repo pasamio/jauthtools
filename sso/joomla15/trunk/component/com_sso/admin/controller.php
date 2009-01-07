@@ -110,10 +110,16 @@ class SSOController extends JController
     	
     	
     	if($model->store()) {
-    		$this->setRedirect('index.php?option=com_sso&task=entries&mode='. $mode, 'Saved');
+    		$msg = 'Saved';
     	} else {
-    		$this->setRedirect('index.php?option=com_sso&task=entries&mode='. $mode, 'Store failed');
+    		$msg = 'Store failed';
     	}
+    	if($mode == 'config') {
+    		$link = 'index.php?option=com_sso';
+    	} else {
+    		$link = 'index.php?option=com_sso&task=entries&mode='. $mode;
+    	}
+    	$this->setRedirect($link, $msg);
     }
     
     function &getModelFromMode($mode) {
@@ -122,7 +128,8 @@ class SSOController extends JController
     		case 'identityprovider':
 			case 'user':
     		case 'usersource':
-    		case 'authentication':    			
+    		case 'authentication':   
+    		case 'config': // config is a special instance of the System - SSO plugin 			
     			$model =& $this->getModel('plugin');
     			break;
     		case 'serviceprovider':
@@ -229,6 +236,21 @@ class SSOController extends JController
     	JHtml::stylesheet('toolbar.css', 'administrator/components/com_sso/media/css/');
     	JToolbarHelper::title(JText::_('SSO Manager'). ' - '.  JText::_('Configuration'));
     	JToolBarHelper::custom( 'refresh', 'refresh', 'refresh','Refresh Plugin List',false,false);
-    	parent::display();
+		JToolBarHelper::save();
+		JToolBarHelper::cancel( 'cancel', 'Close' );
+		$dbo =& JFactory::getDBO();
+		$dbo->setQuery('SELECT id FROM #__plugins WHERE folder = "system" AND element = "sso"');
+		$result = $dbo->loadResult();
+		if($result) {
+	    	JRequest::setVar('cid',$result);
+	    	JRequest::setVar('mode','config');
+	    	$model =& $this->getModel('plugin');
+	    	$view =& $this->getView('plugin','html');
+	    	$view->setModel( $model, true);
+	    	$view->setLayout('form');
+	    	$view->display();
+		} else {
+			parent::display();
+		}
     }
 }
