@@ -85,6 +85,9 @@ class JAuthSSOAuthentication extends JObservable {
 			//Make sure users are not autoregistered
 			$options['autoregister'] = false;
 			
+			// fake the type for plugins that rely on this
+			$result['type'] = 'sso';
+			 
 			// Import the user plugin group
 			JPluginHelper::importPlugin('user');
 			
@@ -100,6 +103,7 @@ class JAuthSSOAuthentication extends JObservable {
 			}
 			// OK, the credentials are authenticated.  Lets fire the onLogin event
 			$results = $dispatcher->trigger('onLoginUser', array($result, $options));
+			
 			if (!in_array(false, $results, true)) {
 				// Set the remember me cookie if enabled
 				if (isset($options['remember']) && $options['remember'])
