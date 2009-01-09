@@ -69,7 +69,10 @@ class MainPage(webapp.RequestHandler):
 				self.response.out.write('<html><body><p>Welcome</p>')
 				logoutUrl = users.create_logout_url('/')
 				self.response.out.write('<p><a href="' + logoutUrl + '">Logout from Google</a></p>')
-				nextHop= remoteuser.landingpage + '?authkey='+ckKey
+				if remoteuser.landingpage.find('?') == -1:
+					nextHop = remoteuser.landingpage + '?authkey='+ckKey
+				else:
+					nextHop = remoteuser.landingpage + '&authkey='+ckKey
 				self.response.out.write('<p><a href="' + nextHop +'">Continue Authentication</a></p>')
 				self.response.out.write('</body></html>')
 				self.redirect(nextHop)
