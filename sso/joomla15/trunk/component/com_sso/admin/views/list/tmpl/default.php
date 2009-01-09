@@ -26,4 +26,5 @@
 	<input type="hidden" name="mode" value="<?php echo $this->mode ?>" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="" />
+	<?php echo JHtml::_('form.token'); ?>
 </form>
