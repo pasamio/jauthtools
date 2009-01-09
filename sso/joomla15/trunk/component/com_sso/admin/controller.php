@@ -32,6 +32,12 @@ jimport('joomla.application.component.controller');
  */
 class SSOController extends JController
 {
+	function __construct() {
+		parent::__construct();
+		$this->registerTask('new', 'newprovider');
+		$this->registerTask( 'unpublish', 'publish');
+	}
+	
     /**
      * Method to display the view
      *
@@ -252,5 +258,57 @@ class SSOController extends JController
 		} else {
 			parent::display();
 		}
+    }
+    
+	function publish( )
+	{
+		// Check for request forgeries
+		JRequest::checkToken() or jexit( 'Invalid Token' );
+		$mode = $this->getMode();
+		$model =& $this->getModelFromMode($mode);
+		
+		
+		
+		$cid     = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		JArrayHelper::toInteger($cid, array(0));
+		$publish = ( $this->getTask() == 'publish' ? 1 : 0 );
+		
+
+		if (count( $cid ) < 1) {
+			$action = $publish ? JText::_( 'publish' ) : JText::_( 'unpublish' );
+			JError::raiseError(500, JText::_( 'Select a plugin to '.$action ) );
+		}
+		
+		$db		=& JFactory::getDBO();
+		$user	=& JFactory::getUser();
+		
+		$cids = implode( ',', $cid );
+
+		$table = ''; $key = '';
+		switch($mode) {
+			case 'serviceprovider':
+				$table = '#__sso_providers';
+				break;
+			default:
+				$table = '#__plugins';
+				break;
+		}
+		$query = 'UPDATE '. $table .' SET published = '.(int) $publish
+			. ' WHERE id IN ( '.$cids.' )'
+			;
+		$db->setQuery( $query );
+		if (!$db->query()) {
+			JError::raiseError(500, $db->getErrorMsg() );
+		}
+
+		$this->setRedirect( 'index.php?option=com_sso&task=entries&mode='. $mode );
+	}
+    
+    function newprovider() {
+    	$view =& $this->getView('selecttype', 'html');
+    	JRequest::setVar('mode', 'sso');
+    	$model =& $this->getModel('plugin');
+    	$view->setModel($model, true);
+    	$view->display();
     }
 }

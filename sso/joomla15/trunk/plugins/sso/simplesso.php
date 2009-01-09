@@ -78,6 +78,15 @@ class plgSSOSimpleSSO extends JPlugin {
 	}
 	
 	function getSPLink($instance) {
-		
+		$params = new JParameter($instance->params);
+		$params->merge($this->params);
+		$supplier = $params->get('supplier');
+		$base = urlencode(JURI::base().'index.php?option=com_sso');
+		if(strpos($supplier, '?')) {
+			$supplier .= '&landingpage='. $base;
+		} else {
+			$supplier .= '?landingpage='. $base;
+		}
+		return $supplier;
 	}
 }

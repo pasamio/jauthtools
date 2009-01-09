@@ -1,1 +1,71 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<install type="component" version="1.5.0">
+  <name>SSO Manager</name>
+  <author>Sam Moffatt</author>
+  <creationDate>November 2008</creationDate>
+  <copyright>Sam Moffatt/Toowoomba Regional Council</copyright>
+  <license>GNU/GPL</license>
+  <authorEmail>pasamio@gmail.com</authorEmail>
+  <authorUrl>http://sammoffatt.com.au</authorUrl>
+  <version>1.5.4</version>
+  <description>SSO Manager is a beta component designed to provide functionality to manage SSO related plugins.</description>
+  <files folder="site">
+    <file>controller.php</file>
+    <file>index.html</file>
+    <file>models/sso.php</file>
+    <file>sso.php</file>
+    <file>views/list/tmpl/default.php</file>
+    <file>views/list/view.html.php</file>
+  </files>
+  <administration>
+    <files folder="admin">
+      <file>controller.php</file>
+      <file>index.html</file>
+      <file>media/css/toolbar.css</file>
+      <file>media/images/icon-32-refresh.png</file>
+      <file>models/index.html</file>
+      <file>models/plugin.php</file>
+      <file>models/provider.php</file>
+      <file>models/sso.php</file>
+      <file>sql/index.html</file>
+      <file>sql/install.sql</file>
+      <file>sql/uninstall.sql</file>
+      <file>sso.php</file>
+      <file>sso.xml</file>
+      <file>tables/index.html</file>
+      <file>tables/ssoplugin.php</file>
+      <file>tables/ssoprovider.php</file>
+      <file>views/index.html</file>
+      <file>views/list/index.html</file>
+      <file>views/list/tmpl/default.php</file>
+      <file>views/list/tmpl/default_item.php</file>
+      <file>views/list/tmpl/index.html</file>
+      <file>views/list/view.html.php</file>
+      <file>views/picker/index.html</file>
+      <file>views/picker/tmpl/default.php</file>
+      <file>views/picker/tmpl/default_item.php</file>
+      <file>views/picker/tmpl/index.html</file>
+      <file>views/picker/view.html.php</file>
+      <file>views/plugin/index.html</file>
+      <file>views/plugin/tmpl/form.php</file>
+      <file>views/plugin/tmpl/index.html</file>
+      <file>views/plugin/view.html.php</file>
+      <file>views/provider/index.html</file>
+      <file>views/provider/tmpl/form.php</file>
+      <file>views/provider/tmpl/index.html</file>
+      <file>views/provider/view.html.php</file>
+      <file>views/selecttype/index.html</file>
+      <file>views/selecttype/tmpl/default.php</file>
+      <file>views/selecttype/tmpl/index.html</file>
+      <file>views/selecttype/view.html.php</file>
+      <file>views/sso/index.html</file>
+      <file>views/sso/tmpl/default.php</file>
+      <file>views/sso/tmpl/index.html</file>
+      <file>views/sso/view.html.php</file>
+    </files>
+    <menu admin_menu_link="option=com_sso" admin_menu_alt="SSO Manager" admin_menu_img="js/ThemeOffice/component.png">SSO Manager</menu>
+  </administration>
+  <installfile/>
+  <uninstallfile/>
+  <params/>
+</install>

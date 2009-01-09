@@ -41,10 +41,11 @@ class SSOController extends JController
 	 */
 	function display()
 	{
-		echo '<p>SSO Manager</p>';
 		$plugin = JRequest::getVar('plugin', '');
-		$host = new JAuthSSOAuthentication();
+		$model =& $this->getModel();
 		if($plugin) {
+			echo '<p>SSO Manager</p>';
+			$host = new JAuthSSOAuthentication();
 			$plugin = JPluginHelper :: getPlugin('sso', $plugin);
 			if(empty($plugin)) {
 				JError::raiseError(500, 'Invalid plugin');
@@ -60,22 +61,13 @@ class SSOController extends JController
 			}
 
 			// Output the form
-			echo $plugin->getForm();
+			if(method_exists($plugin, 'getForm')) echo $plugin->getForm();
+			if(method_exists($plugin, 'getSPLink')) echo $plugin->getSPLink();
 		} else {
-			$plugins = JPluginHelper::getPlugin('sso');
-			foreach($plugins as $plugin) {
-				$className = 'plg' . $plugin->type . $plugin->name;
-
-				if (class_exists($className)) {
-					$plugin = new $className ($host, (array)$plugin);
-				} else {
-					JError::raiseWarning(50, 'Could not load ' . $className);
-					continue; // skip this plugins!
-				}
-				
-				// Output the form if the function is available
-				if(method_exists($plugin, 'getForm')) echo '<p>'.$plugin->getForm().'</p>';
-			}
+			$model->prepareList();
+			$view =& $this->getView('list','html');
+			$view->setModel($model, true);
+			$view->display();
 		}
 	}
 
@@ -83,7 +75,6 @@ class SSOController extends JController
 		$plugin = JPluginHelper::getPlugin('system','sso');
 		
 		if($plugin) {
-			die('plugin enabled');
 			$this->setRedirect('index.php');
 			return true;
 		}
@@ -132,17 +123,11 @@ class SSOController extends JController
 			$uri =& JFactory::getURI();
 			//$nextHop = $params->get('nexthop',false);
 			$nextHop = false;
-			if(JRequest::getMethod() == 'GET') { // get methods we can proxy easily without losing info
-				if($nextHop) { // redirect to the next hop location
-					$app->redirect(getLinkFromItemID($nextHop));
-				} else { // redirect back to the same page
-					$app->redirect($uri->toString());
-				}
-			} else { // might be a POST or other request so don't redirect
-				// if the document type is html then output else be silent
-				if($document->getType() == 'html') { 
-					echo '<p>'. JText::_('SSO Login will activate next request') .'</p>';
-				}				
+			
+			if($nextHop) { // redirect to the next hop location
+				$app->redirect(getLinkFromItemID($nextHop));
+			} else { // redirect back to the same page
+				$app->redirect($uri->toString());
 			}
 		} else {
 			if($document->getType() == 'html') '<p>'.JText::_('No user detected') .'</p>';
