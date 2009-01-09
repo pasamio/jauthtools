@@ -62,12 +62,6 @@ class plgUserLDAP extends JPlugin {
 		// convert the user parameters passed to the event
 		// to a format the external application
 
-		$args = array();
-		$args['username']	= $user['username'];
-		$args['email'] 		= $user['email'];
-		$args['fullname']	= $user['name'];
-		$args['password']	= $user['password'];
-
 		// get the plugin params
 		$plugin = & JPluginHelper :: getPlugin('user', 'ldap');
 		$params = new JParameter($plugin->params);
@@ -105,7 +99,7 @@ class plgUserLDAP extends JPlugin {
 					}	
 				}
 				
-				$ldapuser['userpassword'] = $user['password_clear']; // apple passwords appear to be clear text, go figure
+				if(!empty($user['password_clear'])) $ldapuser['userpassword'] = $user['password_clear']; // apple passwords appear to be clear text, go figure
 				$ldapuser['mail'] = $user['email'];
 				$ldapuser[$ldapuid] = $user['username'];
 				$ldapuser['gidNumber'] = $params->get('gidNumber', 20);
@@ -123,9 +117,9 @@ class plgUserLDAP extends JPlugin {
 				$ldapuser['givenname'] = array_shift($parts); //$parts[0];
 				if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);
 				if(count($parts)) {
-				$ldapuser['initials'] = implode(' ', $parts); // abuse this; outlook does the same
+				        $ldapuser['initials'] = implode(' ', $parts); // abuse this; outlook does the same
 				}
-				$ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
+				if(!empty($user['password_clear'])) $ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
 				$ldapuser['mail'] = $user['email'];
 				$ldapuser[$ldapuid] = $user['username'];
 				// new user needs to have the objectClass set
@@ -143,7 +137,7 @@ class plgUserLDAP extends JPlugin {
 				if(count($parts)) {
 					$ldapuser['initials'] = implode(' ', $parts); // abuse this; outlook does the same
 				}
-				$ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
+				if(!empty($user['password_clear'])) $ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
 				$ldapuser['mail'] = $user['email'];		
 				$ldapuser[$ldapuid] = $user['username'];
 				$ldapuser['joomlagroup'] = $user['usertype'];
