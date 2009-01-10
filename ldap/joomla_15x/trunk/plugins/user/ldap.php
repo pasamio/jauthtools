@@ -164,7 +164,7 @@ class plgUserLDAP extends JPlugin {
 				if(!isset($ldapuser['initials'])) $ldapuser['initials'] = array();
 				if(!isset($ldapuser['givenname'])) $ldapuser['givenname'] = array();
 				if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
-					JError::raiseWarning(44, JText::_('LDAP Modify failed'));
+					JError::raiseWarning(44, JText::sprintf('LDAP Modify failed: %s', $ldap->getErrorMsg()));
 				}
 			} else {
 				if(!$this->_createUser($ldap, $dn, $ldapuser))
@@ -241,7 +241,11 @@ class plgUserLDAP extends JPlugin {
 	 * @return bool result of create
 	 * @access private
 	 */
-	function _createUser(&$ldap, $dn, $ldapuser) {		
+	function _createUser(&$ldap, $dn, $ldapuser) {	
+		if(!array_key_exists('userpassword', $ldapuser)) {
+			jimport('joomla.user.helper'); // just in case
+			$ldapuser['userpassword'] = $ldap->generatePassword(JUserHelper::genRandomPassword(32)); // set a dummy password	
+		}
 		return $ldap->create($dn,$ldapuser); // or die('Failed to add '. $dn .': ' . $ldap->getErrorMsg());	
 	}
 
