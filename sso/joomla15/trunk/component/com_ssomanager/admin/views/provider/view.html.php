@@ -21,7 +21,7 @@ defined('_JEXEC') or die('Maaf!');
 
 jimport('joomla.application.component.view');
 
-class SSOViewProvider extends JView {
+class ssomanagerviewProvider extends JView {
 	
 	function display($tpl = null) {
 		global $option;

@@ -22,7 +22,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 jimport('joomla.application.component.view');
  
-class SSOViewSSO extends JView {
+class ssomanagerviewSSO extends JView {
 	
 /*
 	function display($tpl=null) {
