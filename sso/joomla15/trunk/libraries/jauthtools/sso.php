@@ -213,4 +213,14 @@ class JAuthSSOAuthentication extends JObservable {
 		$plugins = $db->loadObjectList();
 		return $plugins;
 	}
+	
+	function getBaseUrl($prefer_component=true) {
+		if($prefer_component && JComponentHelper::getComponent('com_sso', true)) {
+			// if we have a component, use it
+			return urlencode(JURI::base().'index.php?option=com_sso&task=delegate');	
+		} else {
+			// hope that the plugin is active or a module
+			return urlencode(JURI::base());
+		}
+	}
 }

@@ -31,12 +31,24 @@ if ($plugin) {
 	}
 
 	// Output the form
-	echo $plugin->getForm();
+	if(method_exists($plugin,'getForm')) {
+		echo $plugin->getForm();
+	} else if (method_exists($plugin, 'getSPLink')) {
+		JAuthSSOAuthentication::getProvider($name);
+		echo '<ul>';
+		foreach($providers as $provider) {
+			echo '<li><a href="'.$plugin->getSPLink($provider) .'">'. $provider->name .'</a>';
+		} 
+		echo '</ul>';
+	}
 } else {
 	$plugins = JPluginHelper :: getPlugin('sso');
+	$forms = Array();
+	$links = Array();
+	
 	foreach ($plugins as $plugin) {
 		$className = 'plg' . $plugin->type . $plugin->name;
-
+		$name = $plugin->name;
 		if (class_exists($className)) {
 			$plugin = new $className ($host, (array) $plugin);
 		} else {
@@ -46,9 +58,32 @@ if ($plugin) {
 
 		// Output the form if the function is available
 		if (method_exists($plugin, 'getForm')) {
-			echo '<p>' . $plugin->getForm() . '</p>';
+			$forms[] = $plugin->getForm();
 		}
+		if (method_exists($plugin, 'getSPLink')) {
+			$providers = JAuthSSOAuthentication::getProvider($name);
+			foreach($providers as $provider) {
+				$links[] = '<a href="'.$plugin->getSPLink($provider) .'">'. $provider->name .'</a>';
+			}
+		}		
+	}
+	if($params->get('show_links',0)) {
+		if($params->get('show_titles',0)) echo '<h1>'. JText::_('Links') .'</h1><br />';
+		// this is a _very_ bad way of doing this; TODO: don't do this
+		echo '<ul style="padding-left:20px;">';
+		foreach($links as $link) {
+			echo '<li>'. $link;
+		}
+		echo '</ul>';
+	}
 	
-			
+	if($params->get('show_forms',0)) {
+		if($params->get('show_titles',0)) echo '<h1>'. JText::_('Forms') .'</h1><br />';
+		// this is a _very_ bad way of doing this; TODO: don't do this
+		echo '<ul style="padding-left:20px;">';
+		foreach($forms as $form) {
+			echo '<li>'. $form;
+		}
+		echo '</ul>';	
 	}
 }

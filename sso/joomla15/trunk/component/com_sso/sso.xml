@@ -31,7 +31,6 @@
       <file>sql/install.sql</file>
       <file>sql/uninstall.sql</file>
       <file>sso.php</file>
-      <file>sso.xml</file>
       <file>tables/index.html</file>
       <file>tables/ssoplugin.php</file>
       <file>tables/ssoprovider.php</file>
