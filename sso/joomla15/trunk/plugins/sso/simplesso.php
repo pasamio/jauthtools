@@ -17,6 +17,7 @@
  */
 
 jimport('joomla.plugin.plugin');
+jimport('jauthtools.sso'); // should be included already
 
 /**
  * SSO SimpleSSO
@@ -78,10 +79,12 @@ class plgSSOSimpleSSO extends JPlugin {
 	}
 	
 	function getSPLink($instance) {
-		$params = new JParameter($instance->params);
-		$params->merge($this->params);
+		$instance_params = new JParameter($instance->params);
+		$params = clone($this->params); // take a copy of this to prevent the instance overloading the default
+		$params->merge($instance_params); // merge over the new params
 		$supplier = $params->get('supplier');
-		$base = urlencode(JURI::base().'index.php?option=com_sso');
+		
+		$base = JAuthSSOAuthentication::getBaseURL($params->get('prefer_component',true));
 		if(strpos($supplier, '?')) {
 			$supplier .= '&landingpage='. $base;
 		} else {

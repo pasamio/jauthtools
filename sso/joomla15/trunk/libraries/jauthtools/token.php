@@ -85,7 +85,11 @@ class JAuthToolsToken extends JTable {
 		}
 		else
 		{
+			$minime = new JAuthToolsToken($this->_db);
 			$this->logintoken = $this->createLoginToken();
+			while(!$minime->load($this->logintoken)) {
+				$this->logintoken = $this->createLoginToken();	
+			}
 			$ret = $this->_db->insertObject( $this->_tbl, $this, $this->_tbl_key );
 		}
 		if( !$ret )
