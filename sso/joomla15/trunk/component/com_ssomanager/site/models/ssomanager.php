@@ -23,7 +23,7 @@ defined('_JEXEC') or die('this is model code!');
 jimport('joomla.application.component.model');
 jimport('jauthtools.sso');
 
-class ssomanagermodelSSO extends JModel {
+class ssomanagermodelSSOmanager extends JModel {
 	var $forms = Array();
 	var $links = Array();
 	var $host = null;
