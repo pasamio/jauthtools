@@ -39,9 +39,17 @@ class plgSSOSimpleSSO extends JPlugin {
 	}
 
 	function detectRemoteUser() {
+		$providers = JAuthSSOAuthentication::getProvider('simplesso');
+		foreach($providers as $provider) {
+			$this->_detectUser($provider);
+		}
+		
+		return false;
+	}
+	
+	function _detectUser($instance) {
 		$key = JRequest::getVar('authkey','');
-		$plugin = & JPluginHelper :: getPlugin('sso', 'simplesso');
-		$params = new JParameter($plugin->params);
+		$params = new JParameter($instance->params);
  	 	$supplier = $params->getValue('supplier',''); 
 		$suffix = $params->getValue('suffix','');
 
@@ -75,7 +83,6 @@ class plgSSOSimpleSSO extends JPlugin {
 				}
 			}
 		}
-		return false;
 	}
 	
 	function getSPLink($instance) {
