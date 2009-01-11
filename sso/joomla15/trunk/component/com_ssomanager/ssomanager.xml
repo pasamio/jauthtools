@@ -12,14 +12,6 @@
 		SSO Manager is a beta component designed to provide
 		functionality to manage SSO related plugins.
 	</description>
-	<files folder="site">
-		<file>controller.php</file>
-		<file>index.html</file>
-		<file>models/ssomanager.php</file>
-		<file>ssomanager.php</file>
-		<file>views/list/tmpl/default.php</file>
-		<file>views/list/view.html.php</file>
-	</files>
 	<install><!-- Runs on install -->
 		<sql>
 			<file driver="mysql" charset="utf8">sql/install.sql</file>
@@ -31,7 +23,15 @@
 			<file driver="mysql" charset="utf8">sql/uninstall.sql</file>
 			<file driver="mysql">sql/uninstall.sql</file>
 		</sql>
-	</uninstall>
+	</uninstall>	
+	<files folder="site">
+		<file>controller.php</file>
+		<file>index.html</file>
+		<file>models/ssomanager.php</file>
+		<file>ssomanager.php</file>
+		<file>views/list/tmpl/default.php</file>
+		<file>views/list/view.html.php</file>
+	</files>
 	<administration>
 		<files folder="admin">
 			<file>controller.php</file>
