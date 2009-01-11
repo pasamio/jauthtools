@@ -87,6 +87,8 @@
 				link="option=com_ssomanager&amp;task=entries&amp;mode=serviceprovider">
 				Service Providers
 			</menu>
+			<menu link="option=com_ssomanager&amp;task=entries&amp;mode=usersource">
+				User Source Plugins</menu>
 			<menu
 				link="option=com_ssomanager&amp;task=entries&amp;mode=sso">
 				SSO Plugins
