@@ -64,8 +64,8 @@
     </files>
     <menu admin_menu_link="option=com_ssomanager" admin_menu_alt="SSO Manager" admin_menu_img="js/ThemeOffice/component.png">SSO Manager</menu>
     <submenu>
-    	<menu link="option=com_ssomanager&task=entries&mode=serviceprovider">Service Providers</menu>
-    	<menu link="option=com_ssomanager&task=entries&mode=sso">SSO Plugins</menu>
+    	<menu link="option=com_ssomanager&amp;task=entries&amp;mode=serviceprovider">Service Providers</menu>
+    	<menu link="option=com_ssomanager&amp;task=entries&amp;mode=sso">SSO Plugins</menu>
     	<menu task="configuration">Configuration</menu>
     </submenu>
   </administration>
