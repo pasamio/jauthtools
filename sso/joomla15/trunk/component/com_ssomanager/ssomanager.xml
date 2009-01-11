@@ -57,10 +57,10 @@
       <file>views/selecttype/tmpl/default.php</file>
       <file>views/selecttype/tmpl/index.html</file>
       <file>views/selecttype/view.html.php</file>
-      <file>views/sso/index.html</file>
-      <file>views/sso/tmpl/default.php</file>
-      <file>views/sso/tmpl/index.html</file>
-      <file>views/sso/view.html.php</file>
+      <file>views/ssomanager/index.html</file>
+      <file>views/ssomanager/tmpl/default.php</file>
+      <file>views/ssomanager/tmpl/index.html</file>
+      <file>views/ssomanager/view.html.php</file>
     </files>
     <menu admin_menu_link="option=com_ssomanager" admin_menu_alt="SSO Manager" admin_menu_img="js/ThemeOffice/component.png">SSO Manager</menu>
     <submenu>
