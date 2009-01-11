@@ -20,7 +20,7 @@
 jimport('joomla.application.component.models');
 
  
-class SSOModelPlugin extends JModel {
+class ssomanagermodelPlugin extends JModel {
 	var $_data = null;
 	
 	function getList() {

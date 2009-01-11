@@ -22,7 +22,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 jimport('joomla.application.component.view');
  
-class SSOViewPicker extends JView {
+class ssomanagerviewPicker extends JView {
 	
 	function display($tpl=null) {
 		$model =& $this->getModel();

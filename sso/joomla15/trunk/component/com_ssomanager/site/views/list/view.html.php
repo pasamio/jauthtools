@@ -21,7 +21,7 @@ defined('_JEXEC') or die('list view!');
 
 jimport('joomla.application.component.view');
 
-class SSOViewList extends JView {
+class ssomanagerviewList extends JView {
 	function display($tpl=null) {
 		$model =& $this->getModel();
 		$forms = $model->getForms();

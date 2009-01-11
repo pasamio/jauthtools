@@ -20,7 +20,7 @@ jimport('joomla.application.component.view');
  * @subpackage	Modules
  * @since 1.6
  */
-class SSOViewSelecttype extends JView
+class ssomanagerviewSelecttype extends JView
 {
 	function display($tpl = null)
 	{

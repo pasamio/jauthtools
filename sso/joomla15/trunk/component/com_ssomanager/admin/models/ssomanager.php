@@ -26,7 +26,7 @@ jimport( 'joomla.filesystem.file');
 jimport( 'joomla.filesystem.folder');
 jimport( 'jauthtools.sso' );
 
-class SSOModelSSO extends JModel {
+class ssomanagermodelSSO extends JModel {
 	var $_mode = 'A';
 	var $_data; 
 	
