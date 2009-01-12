@@ -41,7 +41,7 @@ class plgSSOSimpleSSO extends JPlugin {
 	function detectRemoteUser() {
 		$providers = JAuthSSOAuthentication::getProvider('simplesso');
 		foreach($providers as $provider) {
-			$this->_detectUser($provider);
+			return $this->_detectUser($provider);
 		}
 		
 		return false;
