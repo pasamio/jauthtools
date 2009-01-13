@@ -96,8 +96,8 @@ class JAuthUserSource extends JObservable {
 				$my =& JFactory::getUser(); // get who we are now
 				// by default we demote users
 				if(isset($options['demoteuser']) && !$options['demoteuser']) {
-					// reset the gid
-					if($my->get('gid') < $user->get('gid')) $user->set('gid',$my->get('gid')); 
+					// reset the gid if new gid less than old gid or new gid is 29 (public frontend)
+					if($user->get('gid') == 29 && $my->get('gid') < $user->get('gid')) $user->set('gid',$my->get('gid')); 
 				}
 				$oldgid = $my->get('gid');	// grab the current gid
 				$my->set('gid', 25); 		// and fake things to by pass security
