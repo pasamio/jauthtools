@@ -88,6 +88,11 @@ class plgAuthenticationAdvLdap extends JPlugin
 		$ldap_fullname	= $this->params->get('ldap_fullname');
 		$ldap_uid		= $this->params->get('ldap_uid');
 		$auth_method	= $this->params->get('auth_method');
+		$use_contexts   = $this->params->get('use_contexts',0);
+		$context = '';
+		if($use_contexts) {
+			$context = JAuthToolsHelper::getContext(JRequest::getInt('context',-1));
+		}
 
 		jimport('joomla.client.ldap');
 		$ldap = new JLDAP($this->params);
@@ -132,10 +137,15 @@ class plgAuthenticationAdvLdap extends JPlugin
 
 			case 'bind':
 			{
+				// Handle contexts where applicable
+				$username = $credentials['username'];
+				if($use_contexts) {
+					$username = str_replace('[context]', $context, $credentials['username']);
+				}
 				// We just accept the result here
-				$success = $ldap->bind($credentials['username'],$credentials['password']);
+				$success = $ldap->bind($username,$credentials['password']);
 				if($success) {
-					$userdetails = $ldap->simple_search(str_replace("[search]", $credentials['username'], $this->params->get('search_string')));
+					$userdetails = $ldap->simple_search(str_replace('[search]', $credentials['username'], $this->params->get('search_string')));
 				} else {
 					$response->status = JAUTHENTICATE_STATUS_FAILURE;
 					$response->error_message = 'Failed binding to LDAP server';
