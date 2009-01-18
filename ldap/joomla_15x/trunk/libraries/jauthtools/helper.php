@@ -38,4 +38,27 @@ class JAuthToolsHelper {
 		}
 		return $retval;
 	}
+	
+	function getContexts() {
+		static $results = null;
+			if($results == null) {
+			jimport('joomla.application.module.helper');
+			$module = JModuleHelper::getModule('contextlogin');
+			$params = new JParameter($module->params);
+			$contexts = $params->get('contexts');
+			$result = Array();
+			if(!empty($contexts)) {
+				$result = explode("\n", $contexts);
+			}			
+		}
+		return $result;
+	}
+	
+	function getContext($contextid) {
+		$contexts = JAuthToolsHelper::getContexts();
+		if(array_key_exists($contextid, $contexts)) {
+			return $contexts[$contextid];
+		}
+		return '';
+	}
 }

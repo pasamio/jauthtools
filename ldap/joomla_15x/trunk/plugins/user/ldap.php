@@ -57,7 +57,6 @@ class plgUserLDAP extends JPlugin {
 	 */
 	function onAfterStoreUser($user, $isnew, $success, $msg)
 	{
-		global $mainframe;
 		if(!$success) return false; // bail out if not successfully deleted
 		// convert the user parameters passed to the event
 		// to a format the external application
@@ -110,8 +109,8 @@ class plgUserLDAP extends JPlugin {
 				$ldapuser['objectclass'] = Array('top','inetOrgPerson','posixAccount','shadowAccount','apple-user','extensibleObject');
 				break;
 			case 'openldap':
-				$ldapuser['cn'] = $user['username'];
-				$ldapuser['displayname'] = $user['name'];
+				$ldapuser[$params->get('ldap_uid','uid')] = $user['username'];
+				$ldapuser[$params->get('ldap_fullname','fullName')] = $user['name'];
 				$parts = explode(' ',$user['name']);
 				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
 				$ldapuser['givenname'] = array_shift($parts); //$parts[0];
@@ -150,27 +149,24 @@ class plgUserLDAP extends JPlugin {
 		// this can be moved later
 		
 		$dn = $ldap_rdnprefix.'='. $user['username'].','.$defaultdn;
-		if ($isnew)
-		{
-			if(!$this->_createUser($ldap, $dn, $ldapuser)) 
+		// update the user in the location
+		// need to find the user before we can update them
+		$result = $ldap->simple_search($ldapuid.'='.$user['username']);
+		if(count($result) == 1) {
+			if(!isset($ldapuser['initials'])) $ldapuser['initials'] = array();
+			if(!isset($ldapuser['givenname'])) $ldapuser['givenname'] = array();
+			if($isnew) {
+				unset($ldapuser['userpassword']);
+				JError::raiseWarning(46, JText::_('New Joomla! user already exists in LDAP. LDAP password not changed.'));
+			}
+			if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
+				JError::raiseWarning(44, JText::sprintf('LDAP Modify failed: %s', $ldap->getErrorMsg()));
+			}
+		} else {
+			if(!$this->_createUser($ldap, $dn, $ldapuser))
 				JError::raiseWarning(45, JText::sprintf('Failed to create user: %s', $ldap->getErrorMsg()));
 		}
-		else
-		{
-			// update the user in the location
-			// need to find the user before we can update them
-			$result = $ldap->simple_search($ldapuid.'='.$user['username']);
-			if(count($result) == 1) {
-				if(!isset($ldapuser['initials'])) $ldapuser['initials'] = array();
-				if(!isset($ldapuser['givenname'])) $ldapuser['givenname'] = array();
-				if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
-					JError::raiseWarning(44, JText::sprintf('LDAP Modify failed: %s', $ldap->getErrorMsg()));
-				}
-			} else {
-				if(!$this->_createUser($ldap, $dn, $ldapuser))
-					JError::raiseWarning(45, JText::sprintf('Failed to create user: %s', $ldap->getErrorMsg()));
-			}
-		}
+		
 		// testing code; delete the user after they've been created
 		//$temp = JUser::getInstance($user['id']);
 		//$temp->delete();
@@ -190,9 +186,7 @@ class plgUserLDAP extends JPlugin {
 	 */
 	function onAfterDeleteUser($user, $success, $msg)
 	{
-		global $mainframe;
 		if(!$success) return false; // bail out if not successfully deleted
-		// mainframe again!
 		// so the user has been deleted
 
 	 	// only the $user['id'] exists and carries valid information
@@ -244,9 +238,12 @@ class plgUserLDAP extends JPlugin {
 	function _createUser(&$ldap, $dn, $ldapuser) {	
 		if(!array_key_exists('userpassword', $ldapuser)) {
 			jimport('joomla.user.helper'); // just in case
-			$ldapuser['userpassword'] = $ldap->generatePassword(JUserHelper::genRandomPassword(32)); // set a dummy password	
+			$password = JUserHelper::genRandomPassword(32);
+			$ldapuser['userpassword'] = $ldap->generatePassword($password); // set a dummy password
+			//JError::raiseWarning(1,JText::sprintf('LDAP Password for user set to %s', $password));	
 		}
 		return $ldap->create($dn,$ldapuser); // or die('Failed to add '. $dn .': ' . $ldap->getErrorMsg());	
 	}
+	
 
 }
