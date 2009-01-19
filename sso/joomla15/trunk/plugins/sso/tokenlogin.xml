@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <install version="1.5" type="plugin"  group="sso">
-	<name>SSO - SimpleSSO</name>
+	<name>SSO - Token Login</name>
 	<author>Sam Moffatt</author>
 	<creationDate>July 2008</creationDate>
 	<copyright>(C) 2008 Sam Moffatt Consulting. All rights reserved.</copyright>
@@ -8,15 +8,12 @@
 	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>sammoffatt.com.au</authorUrl>
 	<version id="2">1.5.4</version>
-	<update>http://www.jsitepoint.com/update/plugins/plgssosimplesso</update>
-	<description>Uses a SimpleSSO provider to login</description>
+	<update>http://www.jsitepoint.com/update/plugins/plgssotokenlogin</update>
+	<description>Uses stored tokens to login users</description>
 	<files>
-		<filename plugin="simplesso">simplesso.php</filename>
+		<filename plugin="tokenlogin">tokenlogin.php</filename>
 	</files>
-	<params>
-		<param name="supplier" type="text" size="20" default="" label="Supplier" description="This is the server to authenticate from." />
-		<param name="suffix" type="text" size="20" default="" label="Username Suffix" description="This is the suffix given to the username to be replaced." />
-	</params>
+	<params />
 		<sso> <!--  special sso items -->
 		<type>C</type>
 	</sso>
