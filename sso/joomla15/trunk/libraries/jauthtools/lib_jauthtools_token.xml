@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <install type="library" version="1.5">
-	<name>JAuthTools SSO Library</name>
+	<name>JAuthTools Token Library</name>
 	<libraryname>jauthtools</libraryname>
 	<url>http://sammoffatt.com.au/jauthtools</url>
 	<description>This library provides support for the token issuing framework of JAuthTools. </description>
