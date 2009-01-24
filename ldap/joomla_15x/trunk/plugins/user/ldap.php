@@ -63,7 +63,8 @@ class plgUserLDAP extends JPlugin {
 
 		// get the plugin params
 		$plugin = & JPluginHelper :: getPlugin('user', 'ldap');
-		$params = new JParameter($plugin->params);
+		$params = new JParameter($plugin->params);		
+		
 		// grab the global ldap plugin params
 		$ldapplugin =& JPluginHelper::getPlugin('authentication','ldap');
 		$ldapparams = new JParameter($ldapplugin->params);
@@ -86,7 +87,7 @@ class plgUserLDAP extends JPlugin {
 		$ldapuser = Array();
 		switch($template) {
 			case 'opendirectory':
-				$ldapuser['cn'] = $user['name'];
+				$ldapuser['cn'] = $user['username'];
 				$parts = explode(' ',$user['name']);
 				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
 				if(!strlen($ldapuser['sn'])) {
@@ -109,10 +110,12 @@ class plgUserLDAP extends JPlugin {
 				$ldapuser['objectclass'] = Array('top','inetOrgPerson','posixAccount','shadowAccount','apple-user','extensibleObject');
 				break;
 			case 'openldap':
+				$ldapuser['cn'] = $user['username'];
 				$ldapuser[$params->get('ldap_uid','uid')] = $user['username'];
 				$ldapuser[$params->get('ldap_fullname','fullName')] = $user['name'];
 				$parts = explode(' ',$user['name']);
 				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
+				if(!strlen($ldapuser['sn'])) $ldapuser['sn'] = $user['name'];
 				$ldapuser['givenname'] = array_shift($parts); //$parts[0];
 				if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);
 				if(count($parts)) {
@@ -131,6 +134,7 @@ class plgUserLDAP extends JPlugin {
 				$ldapuser['displayname'] = $user['name'];
 				$parts = explode(' ',$user['name']);
 				$ldapuser['sn'] = array_pop($parts); // Get the last part, ensures we at least have a value for surname (req)
+				if(!strlen($ldapuser['sn'])) $ldapuser['sn'] = $user['name'];
 				$ldapuser['givenname'] = array_shift($parts); //$parts[0];
 				if(!strlen($ldapuser['givenname'])) unset($ldapuser['givenname']);
 				if(count($parts)) {
@@ -139,7 +143,10 @@ class plgUserLDAP extends JPlugin {
 				if(!empty($user['password_clear'])) $ldapuser['userpassword'] = Array($ldap->generatePassword($user['password_clear']));
 				$ldapuser['mail'] = $user['email'];		
 				$ldapuser[$ldapuid] = $user['username'];
+				// Store Joomla! specific stuff like the group they're in, if they're blocked or their params
 				$ldapuser['joomlagroup'] = $user['usertype'];
+				$ldapuser['joomlablockuser'] = $user['block']; 
+				$ldapuser['joomlauserparams'] = $user['params'];
 				// new user needs to have the objectClass set
 				// JoomlaUser and Internet Organisation: Person (structural)
 				$ldapuser['objectclass'] = Array('top','inetOrgPerson','JoomlaUser'); 	
@@ -157,8 +164,13 @@ class plgUserLDAP extends JPlugin {
 			if(!isset($ldapuser['givenname'])) $ldapuser['givenname'] = array();
 			if($isnew) {
 				unset($ldapuser['userpassword']);
-				JError::raiseWarning(46, JText::_('New Joomla! user already exists in LDAP. LDAP password not changed.'));
+				$app =& JFactory::getApplication();
+				if($app->isAdmin()) {
+					// don't display this to users in the front end
+					JError::raiseWarning(46, JText::_('New Joomla! user already exists in LDAP. LDAP password not changed.'));
+				}
 			}
+			unset($ldapuser[$ldap_rdnprefix]); // ensure we don't wipe out their rdn if we don't have to
 			if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
 				JError::raiseWarning(44, JText::sprintf('LDAP Modify failed: %s', $ldap->getErrorMsg()));
 			}
@@ -214,16 +226,18 @@ class plgUserLDAP extends JPlugin {
 		// search for the user
 		$result = $ldap->simple_search($ldapuid.'='.$user['username']);
 		$c = count($result);
+		$app =& JFactory::getApplication();
 		if($c == 1) {
 			$ldap->delete($result[0]['dn']);// or die('failed to delete user');
-			JError::raiseWarning(41, JText::_('LDAP User deleted'));
+			if($app->isAdmin()) JError::raiseWarning(41, JText::_('LDAP User deleted'));
 		} else if($c > 1) {
 			// there was more than one DN returned, special situation!
-			JError::raiseWarning(42,JText::_('Too many users found in LDAP'));			
+			if($app->isAdmin()) JError::raiseWarning(42,JText::_('Too many users found in LDAP'));			
 		} else {
 			// didn't find a result
-			JError::raiseWarning(43,JText::_('No matching LDAP user found'));
+			if($app->isAdmin()) JError::raiseWarning(43,JText::_('No matching LDAP user found'));
 		}
+		return true;
 	}
 	
 	/**
