@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
 
+jimport('jauthtools.sso');
+
 $plugin = $params->get('plugin', '');
 $host = new JAuthSSOAuthentication();
 
