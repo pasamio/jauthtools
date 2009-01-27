@@ -66,13 +66,16 @@ class JAuthUserSource extends JObservable {
 		// Try to find user
 		if($user = $this->discoverUser($username)) {
 			$my =& JFactory::getUser(); // get who we are now
-				$oldgid = $my->get('gid');
-				$my->set('gid', 25); 		// and fake things to by pass security
-				$result = $user->save(); 	// save us, now the db is up
-				$my->get('gid', $oldgid);	// set back to old value 
-				return $result;
-				break;
+			$oldgid = $my->get('gid');
+			$my->set('gid', 25); 		// and fake things to by pass security
+			$result = $user->save(); 	// save us, now the db is up
+			if(!$result) {
+				JError::raiseNotice(1, 'User creation failed: '. $user->getError());
 			}
+			$my->get('gid', $oldgid);	// set back to old value 
+			return $result;
+			break;
+		}
 		return false;		
 	}
 	
@@ -126,6 +129,8 @@ class JAuthUserSource extends JObservable {
 			if($plugin->getUser($username,$user)) {
 				return $user; //return the first user we find
 				break;
+			} else {
+				JError::raiseNotice(1, 'Plugin '. $className .' failed to find user');
 			}
 		}
 	}
