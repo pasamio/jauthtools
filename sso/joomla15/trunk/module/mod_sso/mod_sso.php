@@ -1,13 +1,10 @@
 <?php
-
 /**
  * @version 	$Id: mod_sso.php,v V1.1 4766 bytes, 2007-06-07 12:51:40 cero Exp $
  * @package 	SSO
- * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si>
- * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
- * @copyright 	(C) 2007 SSO Team, UL FGG
+ * @author	Sam Moffatt <sam.moffatt@gmail.com>
+ * @copyright 	(C) 2009 Sam Moffatt
  * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * SSO was initiated during the EU CONNIE project
  */
 
 defined('_JEXEC') or die('Direct Access to this location is not allowed.');
