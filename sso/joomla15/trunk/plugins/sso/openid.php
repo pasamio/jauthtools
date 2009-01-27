@@ -21,10 +21,10 @@ class plgSSOOpenid extends JPlugin {
 	}
 
 	function detectRemoteUser() {
-		$mainframe = &JFactory::getApplication();
+		$mainframe = & JFactory :: getApplication();
 
 		$this->_detectRandom();
-		require_once JPATH_SITE.DS.'plugins'.DS.'sso'.DS.'openid'.DS.'consumer.php';
+		jimport('jauthtools.openid.consumer');
 		jimport('joomla.filesystem.folder');
 
 		// Create and/or start using the data store
@@ -32,16 +32,14 @@ class plgSSOOpenid extends JPlugin {
 		if (!JFolder :: exists($store_path) && !JFolder :: create($store_path)) {
 			return false;
 		}
-		$mainframe->enqueueMessage('one');
 		// Create store object
 		$store = new Auth_OpenID_FileStore($store_path);
-		$session = &JFactory::getSession();
+		$session = & JFactory :: getSession();
 		// Create a consumer object
 		$consumer = new Auth_OpenID_Consumer($store);
-		$remote_user = JRequest::getVar('remote_username','');
+		$remote_user = JRequest :: getVar('remote_username', '');
 
 		if (!isset ($_SESSION['_openid_consumer_last_token'])) {
-			$mainframe->enqueueMessage('two');
 			// Begin the OpenID authentication process.
 			if (!$auth_request = $consumer->begin($remote_user)) {
 				return false;
@@ -51,16 +49,15 @@ class plgSSOOpenid extends JPlugin {
 			if ($pape_request) {
 				$auth_request->addExtension($pape_request);
 			}
-			$result = JComponentHelper::getComponent('com_sso', true);
+			$result = JComponentHelper :: getComponent('com_ssohelper', true);
 
-			if($result->enabled) {
-				$link = JURI::base().'/index.php?option=com_ssomanager&task=delegate&plugin=openid';
+			if ($result->enabled) {
+				$link = JURI :: base() . '/index.php?option=com_ssomanager&task=delegate&plugin=openid';
 			} else {
-				$link = JURI::base();
+				$link = JURI :: base();
 			}
-			$session->set('return_url', $link );
-			$trust_url = JURI::base();
-			$mainframe->enqueueMessage('three');
+			$session->set('return_url', $link);
+			$trust_url = JURI :: base();
 			if ($auth_request->shouldSendRedirect()) {
 				$redirect_url = $auth_request->redirectURL($trust_url, $link);
 
@@ -89,36 +86,37 @@ class plgSSOOpenid extends JPlugin {
 				}
 			}
 		}
-		$mainframe->enqueueMessage('four');
 		$response = $consumer->complete($session->get('return_url'));
 		switch ($response->status) {
 			case Auth_OpenID_SUCCESS :
-			        $sreg_resp = Auth_OpenID_SRegResponse::fromSuccessResponse($response);
+				$sreg_resp = Auth_OpenID_SRegResponse :: fromSuccessResponse($response);
 
-       				$sreg = $sreg_resp->contents();
+				$sreg = $sreg_resp->contents();
 
 				$userdetails = new stdClass();
 				$userdetails->username = $response->getDisplayIdentifier();
 
-				if (!isset($sreg['email'])) {
-					$userdetails->email = str_replace( array('http://', 'https://'), '', $userdetails->username );
-					$userdetails->email = str_replace( '/', '-', $userdetails->email );
+				if (!isset ($sreg['email'])) {
+					$userdetails->email = str_replace(array (
+						'http://',
+						'https://'
+					), '', $userdetails->username);
+					$userdetails->email = str_replace('/', '-', $userdetails->email);
 					$userdetails->email .= '@openid.';
 				} else {
 					$userdetails->email = $sreg['email'];
 				}
-				$userdetails->name = isset ($sreg['fullname']) ? $sreg['fullname'] : $response->username;
+				$userdetails->name = isset ($sreg['fullname']) ? $sreg['fullname'] : $userdetails->username;
 				$userdetails->language = isset ($sreg['language']) ? $sreg['language'] : '';
 				$userdetails->timezone = isset ($sreg['timezone']) ? $sreg['timezone'] : '';
 
-				$session =& JFactory::getSession();
-				$sessiondetails =& $session->get('UserSourceDetails',Array());
+				$session = & JFactory :: getSession();
+				$sessiondetails = & $session->get('UserSourceDetails', Array ());
 				$sessiondetails[] = $userdetails;
 				$session->set('UserSourceDetails', $sessiondetails);
-				$mainframe->enqueueMessage('five'.$response->getDisplayIdentifier());
-				return $response->getDisplayIdentifier();
+				return $userdetails->username;
 				break;
-			default:
+			default :
 				return false;
 				break;
 		}
@@ -126,46 +124,44 @@ class plgSSOOpenid extends JPlugin {
 	}
 
 	function getForm() {
-		return '<form method="post" action="'. JURI::base() .'">'
-			. 'Requested Username: '
-			. '<input type="text" name="remote_username" value="" />'
-			. '<input type="submit" value="Login" /></form>';
+		return '<form method="post" action="' . JURI :: base() . '">' . 'Requested Username: ' . '<input type="text" name="remote_username" value="" />' . '<input type="submit" value="Login" /></form>';
 	}
 
 	function _getPolicies() {
-		$policy_uris = array();
-		if ($this->params->get( 'phishing-resistant', 0)) {
+		$policy_uris = array ();
+		if ($this->params->get('phishing-resistant', 0)) {
 			$policy_uris[] = 'http://schemas.openid.net/pape/policies/2007/06/phishing-resistant';
 		}
 
-		if ($this->params->get( 'multi-factor', 0)) {
+		if ($this->params->get('multi-factor', 0)) {
 			$policy_uris[] = 'http://schemas.openid.net/pape/policies/2007/06/multi-factor';
 		}
 
-		if ($this->params->get( 'multi-factor-physical', 0)) {
+		if ($this->params->get('multi-factor-physical', 0)) {
 			$policy_uris[] = 'http://schemas.openid.net/pape/policies/2007/06/multi-factor-physical';
 		}
 		return $policy_uris;
 	}
 
 	function _detectRandom() {
-		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-			define('Auth_OpenID_RAND_SOURCE', null);
-		} else {
-			$f = @fopen('/dev/urandom', 'r');
-			if ($f !== false) {
-				define('Auth_OpenID_RAND_SOURCE', '/dev/urandom');
-				fclose($f);
+		if (!defined('Auth_OpenID_RAND_SOURCE')) {
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+				define('Auth_OpenID_RAND_SOURCE', null);
 			} else {
-				$f = @fopen('/dev/random', 'r');
+				$f = @ fopen('/dev/urandom', 'r');
 				if ($f !== false) {
 					define('Auth_OpenID_RAND_SOURCE', '/dev/urandom');
 					fclose($f);
 				} else {
-					define('Auth_OpenID_RAND_SOURCE', null);
+					$f = @ fopen('/dev/random', 'r');
+					if ($f !== false) {
+						define('Auth_OpenID_RAND_SOURCE', '/dev/urandom');
+						fclose($f);
+					} else {
+						define('Auth_OpenID_RAND_SOURCE', null);
+					}
 				}
 			}
 		}
 	}
 }
-
