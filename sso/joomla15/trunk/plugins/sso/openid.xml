@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="sso">
+	<name>SSO - Openid</name>
+	<author>Ian MacLennan</author>
+	<creationDate>26 January 2009</creationDate>
+	<copyright>Copyright (C) 2009 Ian MacLennan. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorEmail></authorEmail>
+	<authorUrl></authorUrl>
+	<version>1.0</version>
+	<description>A handy plugin to add abbreviation tags on your site.</description>
+	<files>
+		<filename plugin="openid">openid.php</filename>
+		<folder>openid</folder>
+	</files>
+	<params />
+</install>
