@@ -8,10 +8,13 @@
 	<authorEmail></authorEmail>
 	<authorUrl></authorUrl>
 	<version>1.0</version>
-	<description>A handy plugin to add abbreviation tags on your site.</description>
+	<description>An OpenID authentication plugin for the SSO system.</description>
 	<files>
 		<filename plugin="openid">openid.php</filename>
 		<folder>openid</folder>
 	</files>
 	<params />
+	<sso> <!--  special sso items -->
+		<type>C</type>
+	</sso>
 </install>
