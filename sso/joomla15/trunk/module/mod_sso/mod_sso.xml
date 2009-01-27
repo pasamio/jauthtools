@@ -19,11 +19,11 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-		<param name="show_links" type="text" default="0" label="Show Links" description="Handles the display of type B plugins" >
+		<param name="show_links" type="radio" default="0" label="Show Links" description="Handles the display of type B plugins" >
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-		<param name="show_titles" type="text" default="0" label="Display section titles" description="Display the individual section titles of forms and links" >
+		<param name="show_titles" type="radio" default="0" label="Display section titles" description="Display the individual section titles of forms and links" >
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
