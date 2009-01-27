@@ -53,7 +53,7 @@ class JAuthSSOAuthentication extends JObservable {
 
 			// Try to authenticate remote user
 			$username = $plugin->detectRemoteUser();
-
+			
 			// If authentication is successful break out of the loop
 			if ($username != '') {
 				if($autocreate) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<install type="library" version="1.5">
+	<name>JAuthTools SSO Library</name>
+	<libraryname>jauthtools</libraryname>
+	<url>http://sammoffatt.com.au/jauthtools</url>
+	<description>This library provides OpenID libraries</description>
+	<author>Sam Moffatt</author>
+	<authorEmail>pasamio@pasamio.id.au</authorEmail>
+	<authorUrl>http://pasamio.id.au</authorUrl>
+	<copyright>2007 (c) Sam Moffatt</copyright>
+	<license>GNU/GPL</license>	
+	<packager>Sam Moffatt</packager>
+	<packagerurl>http://sammoffatt.com.au/</packagerurl>
+	<update>http://www.jsitepoint.com/update/libraries/lib_jauthtools_openid</update>
+	<version id="5">1.5.4</version>
+	<files>
+		<folder>openid</folder>
+	</files>
+</install>
