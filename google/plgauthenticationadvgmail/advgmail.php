@@ -51,16 +51,14 @@ class plgAuthenticationAdvGMail extends JPlugin {
 						$context = JRequest::getInt('context',-1);
 						if($context > -1) {
 							jimport('jauthtools.helper');
-							$contexts = JAuthToolsHelper::getContexts();
-							if(array_key_exists($context, $contexts)) {
-								$offset = strpos($credentials['username'], '@');
-								if ($offset && $applysuffix == 2) {
-									// if we already have an @, get rid of it
-									$credentials['username'] = substr($credentials['username'], 0, $offset);
-								}
-								// add the selected context
-								$credentials['username'] .= '@'. $contexts[$context];
+							$context = JAuthToolsHelper::getContext($context, null, JRequest::getInt('contextlogin_moduleid', 0));
+							$offset = strpos($credentials['username'], '@');
+							if ($offset && $applysuffix == 2) {
+								// if we already have an @, get rid of it
+								$credentials['username'] = substr($credentials['username'], 0, $offset);
 							}
+							// add the selected context
+							$credentials['username'] .= '@'. $context;
 						}
 					} else {
 						// check if we want to do suffix stuff, typically for Google Apps for Your Domain

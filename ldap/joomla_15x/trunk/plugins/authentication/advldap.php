@@ -91,7 +91,7 @@ class plgAuthenticationAdvLdap extends JPlugin
 		$use_contexts   = $this->params->get('use_contexts',0);
 		$context = '';
 		if($use_contexts) {
-			$context = JAuthToolsHelper::getContext(JRequest::getInt('context',-1));
+			$context = JAuthToolsHelper::getContext(JRequest::getInt('context',-1), null, JRequest::getInt('contextlogin_moduleid', 0));
 		}
 
 		jimport('joomla.client.ldap');
