@@ -17,6 +17,7 @@ defined('_JEXEC') or die('Restricted access');
 // Include the syndicate functions only once
 require_once (dirname(__FILE__).DS.'helper.php');
 
+$params->def('moduleid', $module->id);
 $params->def('greeting', 1);
 
 $type 	= modContextLoginHelper::getType();
