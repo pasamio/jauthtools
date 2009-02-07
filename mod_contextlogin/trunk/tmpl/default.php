@@ -80,6 +80,7 @@ endif; ?>
 	<input type="hidden" name="option" value="com_user" />
 	<input type="hidden" name="task" value="login" />
 	<input type="hidden" name="return" value="<?php echo $return; ?>" />
+	<input type="hidden" name="contextlogin_moduleid" value="<?php echo $params->get('moduleid', 0) ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
 </form>
 <?php endif; ?>
