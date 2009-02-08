@@ -11,6 +11,9 @@
 	<description>DESCCONTEXTLOGINFORM</description>
 	<files>
 		<filename module="mod_contextlogin">mod_contextlogin.php</filename>
+		<filename>index.html</filename>
+		<filename>helper.php</filename>
+		<folder>tmpl</folder>
 	</files>
 	<params>
 		<param name="cache" type="list" default="1" label="Caching" description="Select whether to cache the content of this module">
