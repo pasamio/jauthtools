@@ -26,7 +26,8 @@
 		<param name="use_contexts" type="radio" default="0" label="Use Contexts" description="Use contexts for users (requires mod_contextlogin or equivalent). If contexts are enabled they will override suffix settings.">
 			<option value="0">No</option>
 			<option value="1">Yes</option>
-		</param>		
-		<param name="user_blacklist" type="text" size="20" default="" label="User blacklist" description="PARAMUSERBLACKLIST" />
+			<option value="2">Require</option>
+		</param>
+		<param name="user_blacklist" type="text" size="20" default="" label="User blacklist" description="A list of users to black list seperated by comma" />
 	</params>
 </install>
