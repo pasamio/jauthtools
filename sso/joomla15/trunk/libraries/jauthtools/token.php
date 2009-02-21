@@ -25,6 +25,9 @@ class JAuthToolsToken extends JTable {
 	var $expiry = '';
 	var $landingpage = '';
 	
+	/**
+	 * Constructor
+	 */
 	function __construct(&$db) {
 		parent::__construct( '#__jauthtools_tokens', 'logintoken', $db );
 	}
@@ -50,14 +53,26 @@ class JAuthToolsToken extends JTable {
 		}
 	}
 	
-	function generateLoginURL() {
-		if($this->logintoken) {
-			return str_replace('administrator/','', JURI::base()).'index.php?option=com_tokenlogin&logintoken='. md5(substr($this->logintoken, 0, 32)).md5(substr($this->logintoken, 32,32));
-		} else {
-			return '';
+	/**
+	 * Generate a login url for a token (either from the loaded object or from a given param)
+	 * @param string Token to use, if blank uses the logintoken attribute of the current object
+	 * @return string URL to redirect to, alternatively blank on failure
+	 */
+	function generateLoginURL($token='') {
+		if(!$token) {
+			if(!isset($this->logintoken)) {
+				return '';
+			} else {
+				$token = $this->logintoken;
+			}
 		}
+		return str_replace('administrator/','', JURI::base()).'index.php?option=com_tokenlogin&logintoken='. md5(substr($token, 0, 32)).md5(substr($token, 32,32));
 	}
 	
+	/**
+	 * Map an object to this object
+	 * @param object Object to map to this object
+	 */
 	function mapObject($object) {
 		$vars = get_object_vars($object);
 		$class_vars = get_class_vars(get_class($this));
@@ -102,23 +117,35 @@ class JAuthToolsToken extends JTable {
 			return true;
 		}
 	}
-	
-	function load($oid = null) {
-		parent::load($oid);
-	}
 
+	/**
+	 * Revoke a given token
+	 * @param string Token to revoke
+	 * @return boolean result of db operation
+	 */
 	function revokeToken($token) {
 		$dbo =& JFactory::getDBO();
 		$dbo->setQuery('DELETE FROM #__jauthtools_tokens WHERE logintoken = '. $dbo->Quote($token));
 		return $dbo->query();
 	}
 	
+	/**
+	 * Revoke a users outstanding tokens
+	 * @param string Username to revoke
+	 * @return boolean result of db operation
+	 */
 	function revokeUserTokens($username) {
 		$dbo =& JFactory::getDBO();
 		$dbo->setQuery('DELETE FROM #__jauthtools_tokens WHERE username = '. $dbo->Quote($username));
 		return $dbo->query();
 	}
+	
 
+	/**
+	 * Validate a given token
+	 * @param string Token to validate
+	 * @return boolean Result of validation
+	 */
 	function validateToken($key) {
 		$dbo =& JFactory::getDBO();
 		// delete any older tokens
