@@ -58,15 +58,20 @@ class JAuthToolsToken extends JTable {
 	 * @param string Token to use, if blank uses the logintoken attribute of the current object
 	 * @return string URL to redirect to, alternatively blank on failure
 	 */
-	function generateLoginURL($token='') {
+	function generateLoginURL($token='', $encoded = false) {
 		if(!$token) {
 			if(!isset($this->logintoken)) {
 				return '';
 			} else {
 				$token = $this->logintoken;
+				$encoded = false; // the login token is never encoded
 			}
 		}
-		return str_replace('administrator/','', JURI::base()).'index.php?option=com_tokenlogin&logintoken='. md5(substr($token, 0, 32)).md5(substr($token, 32,32));
+		if($encoded) {
+			return str_replace('administrator/','', JURI::base()).'index.php?option=com_tokenlogin&logintoken='. $token);
+		} else {
+			return str_replace('administrator/','', JURI::base()).'index.php?option=com_tokenlogin&logintoken='. md5(substr($token, 0, 32)).md5(substr($token, 32,32));
+		}
 	}
 	
 	/**
