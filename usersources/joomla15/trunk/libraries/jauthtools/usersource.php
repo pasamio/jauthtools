@@ -90,8 +90,8 @@ class JAuthUserSource extends JObservable {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::doUserSynchronization: Could not load ' . $className);
 				continue;
 			}
-			// Fire a user sync event
-			if($user = $plugin->doUserSync($username)) {
+			// Fire a user sync event; this is done poorly, we will fix this for 1.6
+			if(method_exists($plugin, 'doUserSync') && $user = $plugin->doUserSync($username)) {
 				// if we succeeded then lets bail out
 				// means the first system gets priority
 				// and no other system will overwrite the values
@@ -126,7 +126,7 @@ class JAuthUserSource extends JObservable {
 			}
 			// Try to find user
 			$user = new JUser();
-			if($plugin->getUser($username,$user)) {
+			if(method_exists($plugin, 'getUser') && $plugin->getUser($username,$user)) {
 				return $user; //return the first user we find
 				break;
 			} else {
@@ -149,7 +149,7 @@ class JAuthUserSource extends JObservable {
 			}
 			// Try to find user
 			$user = new JUser();
-			if($plugin->getUser($username,$user)) {
+			if(method_exists($plugin, 'getUser') && $plugin->getUser($username,$user)) {
 				$users[$plugin->name] = clone($user); // clone the user before putting them into the array
 			}
 		}
