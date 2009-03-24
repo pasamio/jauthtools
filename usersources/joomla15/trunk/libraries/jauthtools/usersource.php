@@ -119,7 +119,7 @@ class JAuthUserSource extends JObservable {
 		foreach ($plugins as $plugin) {
 			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
-				$plugin = new $className ($this);
+				$plugin = new $className ($this, (array)$plugin);
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::discoverUser: Could not load ' . $className);
 				continue;
@@ -142,7 +142,7 @@ class JAuthUserSource extends JObservable {
 		foreach ($plugins as $plugin) {
 			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
-				$plugin = new $className ($this);
+				$plugin = new $className ($this, (array)$plugin);
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::discoverUsers: Could not load ' . $className);
 				continue;
