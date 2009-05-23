@@ -11,9 +11,9 @@ if(function_exists('addLogEntry')) {
 	function addLogEntry($dummy1, $dummy2, $dummy3, $dummy4) { }
 }
 
-class plgUserAdvSync extends JPlugin {
+class plgUserLDAPSync extends JPlugin {
 
-	function plgUserAdvSync($subject, $params) {
+	function plgUserLDAPSync($subject, $params) {
 
 	}
 
