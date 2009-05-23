@@ -171,13 +171,14 @@ class plgUserLDAP extends JPlugin {
 				}
 			}
 			unset($ldapuser[$ldap_rdnprefix]); // ensure we don't wipe out their rdn if we don't have to
-			unset($ldapuser['objectclass']); // unset the object class at this point if someone else has it
+			$ldapuser['objectclass'] = array_merge($ldapuser['objectclass'], $result[1]['objectClass']); // reset the object class at this point if someone else has it
 			if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
 				JError::raiseWarning(44, JText::sprintf('LDAP Modify failed: %s; %s', $ldap->getErrorMsg(), print_r($ldapuser,1)));
 			}
 		} else {
-			if(!$this->_createUser($ldap, $dn, $ldapuser))
+			if(!$this->_createUser($ldap, $dn, $ldapuser)) {
 				JError::raiseWarning(45, JText::sprintf('Failed to create user: %s', $ldap->getErrorMsg()));
+			}
 		}
 		
 		// testing code; delete the user after they've been created
