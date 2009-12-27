@@ -105,6 +105,37 @@ class JAuthUserSource extends JObservable {
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$result = $user->save(); 	// save us, now the db is up
 				$my->get('gid', $oldgid);	// set back to old value
+				
+				// Contribution from Mark Snead via the forums
+				// @see http://forum.joomla.org/viewtopic.php?p=1811943#p1811943
+				// UPDATE SESSION ARRAY
+	            $instance = $my;
+	
+	            // Get an ACL object
+	            $acl =& JFactory::getACL();
+	
+	            // Get the newly updated user group from the ACL
+	            if ($instance->get('tmp_user') == 1) {
+	               $grp = new JObject;
+	               // This should be configurable at some point
+	               $grp->set('name', 'Registered');
+	            } else {
+	               $grp = $acl->getAroGroup($instance->get('id'));
+	            }
+	
+	            // Update the aid to 2 for Authors, Editors, Publishers and Super Administrators into the special access group
+	            if ($acl->is_group_child_of($grp->name, 'Registered')      ||
+	               $acl->is_group_child_of($grp->name, 'Public Backend'))    {
+	               $instance->set('aid', 2);
+	            }
+	            //Set the usertype and gid based on the ACL group name
+	            $instance->set('usertype', $grp->name);
+	            $instance->set('gid', $grp->id);
+	
+	            // Register the needed session variables
+	            $session =& JFactory::getSession();
+	            $session->set('user', $instance);
+				
 				return true;				// thats all folks
 				break;
 			}
