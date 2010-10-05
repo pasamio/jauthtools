@@ -3,11 +3,11 @@
 	<name>SSO Manager</name>
 	<author>Sam Moffatt</author>
 	<creationDate>November 2008</creationDate>
-	<copyright>Sam Moffatt/Toowoomba Regional Council</copyright>
+	<copyright>Sam Moffatt</copyright>
 	<license>GNU/GPL</license>
 	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>http://sammoffatt.com.au</authorUrl>
-	<version>1.5.4</version>
+	<version>1.5.5</version>
 	<description>
 		SSO Manager is a beta component designed to provide
 		functionality to manage SSO related plugins.
@@ -79,20 +79,11 @@
 		</files>
 		<menu admin_menu_link="option=com_ssomanager"
 			admin_menu_alt="SSO Manager"
-			admin_menu_img="js/ThemeOffice/component.png">
-			SSO Manager
-		</menu>
+			admin_menu_img="js/ThemeOffice/component.png">SSO Manager</menu>
 		<submenu>
-			<menu
-				link="option=com_ssomanager&amp;task=entries&amp;mode=serviceprovider">
-				Service Providers
-			</menu>
-			<menu link="option=com_ssomanager&amp;task=entries&amp;mode=usersource">
-				User Source Plugins</menu>
-			<menu
-				link="option=com_ssomanager&amp;task=entries&amp;mode=sso">
-				SSO Plugins
-			</menu>
+			<menu link="option=com_ssomanager&amp;task=entries&amp;mode=serviceprovider">Service Providers</menu>
+			<menu link="option=com_ssomanager&amp;task=entries&amp;mode=usersource">User Source Plugins</menu>
+			<menu link="option=com_ssomanager&amp;task=entries&amp;mode=sso">SSO Plugins</menu>
 			<menu task="configuration">Configuration</menu>
 		</submenu>
 	</administration>

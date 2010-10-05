@@ -3,7 +3,7 @@
 * @version		$Id: view.html.php 11376 2008-12-31 00:14:24Z eddieajau $
 * @package		Joomla
 * @subpackage	Modules
-* @copyright	Copyright (C) 2005 - 2008 Open Source Matters, Inc. All rights reserved.
+* @copyright	Copyright (C) 2009 - 2008 Open Source Matters, Inc. All rights reserved.
 * @license		GNU General Public License, see LICENSE.php
 */
 
