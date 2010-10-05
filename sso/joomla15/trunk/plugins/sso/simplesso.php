@@ -11,7 +11,7 @@
  * @package JAuthTools
  * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Sam Moffatt 
+ * @copyright 2009 Sam Moffatt 
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -91,7 +91,7 @@ class plgSSOSimpleSSO extends JPlugin {
 		$params->merge($instance_params); // merge over the new params
 		$supplier = $params->get('supplier');
 		
-		$base = JAuthSSOAuthentication::getBaseURL($params->get('prefer_component',true));
+		$base = JAuthSSOAuthentication::getBaseURL($params->get('prefer_component',true),'simplesso');
 		if(strpos($supplier, '?')) {
 			$supplier .= '&landingpage='. $base;
 		} else {

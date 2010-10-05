@@ -11,7 +11,7 @@
  * @package JAuthTools
  * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Sam Moffatt 
+ * @copyright 2009 Sam Moffatt 
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -47,15 +47,40 @@ class plgSSOIP extends JPlugin {
 		$params = new JParameter($plugin->params);
 		$ip_list = $params->get('ip_list','');
 		$user = $params->get('user','admin');
-		$list = explode("\n", $ip_list);
-		$ip = $_SERVER['REMOTE_ADDR'];
-		if(in_array($ip,$list)) {
-			return $user;
+		$use_table = $params->get('use_table', 0);
+		if($use_table) 
+		{
+			$dbo =& JFactory::getDBO();
+			$dbo->setQuery('SELECT entry, username FROM #__jauthtools_ipmap');
+			$rows = $dbo->loadObjectList('entry');
+			$list = array_keys($rows);
+		} else {
+			$list = explode("\n", $ip_list);
 		}
 		
-		foreach($list as $range) {
-			if(strstr($range,'/')) {
-				if(Net_IPv4::ipInNetwork($ip,$range)) return $user;
+		$ip = $_SERVER['REMOTE_ADDR'];
+		
+		if(in_array($ip,$list))
+		{
+			if($use_table) {
+				return $rows[$ip]->username;
+			} else {
+				return $user;
+			}
+		}
+		
+		foreach($list as $range) 
+		{
+			if(strstr($range,'/')) 
+			{
+				if(Net_IPv4::ipInNetwork($ip,$range)) 
+				{
+					if($use_table) {
+						return $rows[$range]->username;	
+					} else {
+						return $user;
+					}
+				}
 			}
 		}
 		
@@ -63,7 +88,8 @@ class plgSSOIP extends JPlugin {
 	}
 }
 
-if(!class_exists('Net_IPv4')) {
+if(!class_exists('Net_IPv4')) 
+{
 	/**
 	* Class to provide IPv4 calculations
 	*
