@@ -3,11 +3,11 @@
 	<name>System - Single Sign On</name>
 	<author>Sam Moffatt</author>
 	<creationDate>April 2007</creationDate>
-	<copyright>(C) 2008 Toowoomba Regional Council/Sam Moffatt. All rights reserved.</copyright>
+	<copyright>(C) 2009 Sam Moffatt. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
+	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>sammoffatt.com.au/jauthtools/</authorUrl>
-	<version id="5">1.5.4</version>
+	<version>1.5.5</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgsystemsso</update>
 	<description>This plugin provides the base of the JAuthTools SSO infrastructure.</description>
 	<files>

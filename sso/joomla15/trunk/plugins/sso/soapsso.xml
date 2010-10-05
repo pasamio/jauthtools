@@ -3,11 +3,11 @@
 	<name>SSO - SOAP SSO</name>
 	<author>Sam Moffatt</author>
 	<creationDate>July 2008</creationDate>
-	<copyright>(C) 2008 Sam Moffatt Consulting. All rights reserved.</copyright>
+	<copyright>(C) 2009 Sam Moffatt Consulting. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>sammoffatt.com.au</authorUrl>
-	<version id="2">1.5.4</version>
+	<version>1.5.5</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgssosoapsso</update>
 	<description>Uses a SOAP SSO provider to login</description>
 	<files>
