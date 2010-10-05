@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<params>
+		<param name="landingpage" type="text" default="index.php" label="Landing Page" description="Page to redirect the user to after they have been logged in" />
+		<param name="autocreate" type="radio" default="0" label="Autocreate users" description="Autocreate SSO users">
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</param>
+	</params>
+</config>
