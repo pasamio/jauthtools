@@ -3,11 +3,11 @@
 	<name>User Source - LDAP</name>
 	<author>Sam Moffatt</author>
 	<creationDate>April 2007</creationDate>
-	<copyright>(C) 2008 Toowoomba Regional Council/Sam Moffatt. All rights reserved.</copyright>
+	<copyright>(C) 2009 Sam Moffatt. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
-	<authorUrl>www.toowoombarc.qld.gov.au</authorUrl>
-	<version id="5">1.5.4</version>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>http://sammoffatt.com.au/</authorUrl>
+	<version>1.5.5</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgusersourceldap</update>
 	<description>Retrieves users from an LDAP directory</description>
 	<files>
@@ -20,6 +20,12 @@
 		<param name="ldap_groupmember" type="text" size="20" default="member" label="Map Group Members" description="The attribute in LDAP storing the member of a given group. This is used by the group mapping system in reverse." />
 		<param name="groupMap" type="textarea" cols="100" rows="10" default="" label="Group Map" description="Maps LDAP Groups to Joomla! Groups" />
 		<!--  Group Mapping Details -->
+		<param name="defaultgroup" type="list" default="frontend" label="Default Group" description="The default group to autocreate users in.">
+			<option value="frontend">Frontend User</option>
+			<option value="registered">Registered</option>
+			<option value="author">Author</option>
+			<option value="editor">Editor</option>
+		</param>
 		<param name="reversegroupmembership" type="radio" default="0" label="Use reverse group membership" description="Look at the group to find if the user is a member instead of looking at the user; use for Apache DS or environments that may not have dynamic attributes">
 			<option value="0">No</option>
 			<option value="1">Yes</option>

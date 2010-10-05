@@ -8,7 +8,7 @@
   <authorUrl>http://pasamio.id.au</authorUrl>
   <copyright>2007 (C) Sam Moffatt</copyright>
   <license>GNU/GPL</license>
-  <version id="5">1.5.4</version>
+  <version>1.5.5</version>
   <description>JAuthTools Synchronization utilizes user source plugins to update user details</description>
   <files>
     <filename plugin="sync">sync.php</filename>

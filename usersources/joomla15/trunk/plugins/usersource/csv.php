@@ -9,10 +9,9 @@
  * Created on Apr 17, 2007
  *
  * @package JAuthTools
- * @author Sam Moffatt <sam.moffatt@toowoombarc.qld.gov.au>
- * @author Toowoomba Regional Council Information Management Department
+ * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Toowoomba Regional Council/Sam Moffatt
+ * @copyright 2009 Sam Moffatt
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
