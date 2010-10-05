@@ -1,17 +1,17 @@
 <?php
 /**
  * JAuthTools: User Sources
- * 
+ *
  * This file handles the retrieval and autocreation of a user
- * 
+ *
  * PHP4/5
- *  
+ *
  * Created on Apr 17, 2007
- * 
+ *
  * @package JAuthTools
  * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2009 Sam Moffatt 
+ * @copyright 2009 Sam Moffatt
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -43,11 +43,11 @@ class JAuthUserSource extends JObservable {
 		}
 		$this->_options = $options;
 	}
-	
+
 	function doUserCreation($username) {
 		// Do not create user if they exist already
-		if(intval(JUserHelper::getUserId($username))) { 
-			return true; 
+		if(intval(JUserHelper::getUserId($username))) {
+			return true;
 		}
 
 		// Load up User Source plugins
@@ -71,13 +71,13 @@ class JAuthUserSource extends JObservable {
 			if(!$result) {
 				JError::raiseNotice(1, 'User creation failed: '. $user->getError());
 			}
-			$my->get('gid', $oldgid);	// set back to old value 
+			$my->set('gid', $oldgid);	// set back to old value
 			return $result;
 			break;
 		}
-		return false;		
+		return false;
 	}
-	
+
 	function doUserSynchronization($username) {
 		// Load up User Source plugins
 		$plugins = JPluginHelper :: getPlugin('usersource');
@@ -99,50 +99,50 @@ class JAuthUserSource extends JObservable {
 				// by default we demote users
 				if(isset($options['demoteuser']) && !$options['demoteuser']) {
 					// reset the gid if new gid less than old gid or new gid is 29 (public frontend)
-					if($user->get('gid') == 29 && $my->get('gid') < $user->get('gid')) $user->set('gid',$my->get('gid')); 
+					if($user->get('gid') == 29 && $my->get('gid') < $user->get('gid')) $user->set('gid',$my->get('gid'));
 				}
 				$oldgid = $my->get('gid');	// grab the current gid
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$result = $user->save(); 	// save us, now the db is up
 				$my->get('gid', $oldgid);	// set back to old value
-				
+
 				// Contribution from Mark Snead via the forums
 				// @see http://forum.joomla.org/viewtopic.php?p=1811943#p1811943
 				// UPDATE SESSION ARRAY
-	            $instance = $my;
-	
-	            // Get an ACL object
-	            $acl =& JFactory::getACL();
-	
-	            // Get the newly updated user group from the ACL
-	            if ($instance->get('tmp_user') == 1) {
-	               $grp = new JObject;
-	               // This should be configurable at some point
-	               $grp->set('name', 'Registered');
-	            } else {
-	               $grp = $acl->getAroGroup($instance->get('id'));
-	            }
-	
-	            // Update the aid to 2 for Authors, Editors, Publishers and Super Administrators into the special access group
-	            if ($acl->is_group_child_of($grp->name, 'Registered')      ||
-	               $acl->is_group_child_of($grp->name, 'Public Backend'))    {
-	               $instance->set('aid', 2);
-	            }
-	            //Set the usertype and gid based on the ACL group name
-	            $instance->set('usertype', $grp->name);
-	            $instance->set('gid', $grp->id);
-	
-	            // Register the needed session variables
-	            $session =& JFactory::getSession();
-	            $session->set('user', $instance);
-				
+				$instance = $my;
+
+				// Get an ACL object
+				$acl =& JFactory::getACL();
+
+				// Get the newly updated user group from the ACL
+				if ($instance->get('tmp_user') == 1) {
+					$grp = new JObject;
+					// This should be configurable at some point
+					$grp->set('name', 'Registered');
+				} else {
+					$grp = $acl->getAroGroup($instance->get('id'));
+				}
+
+				// Update the aid to 2 for Authors, Editors, Publishers and Super Administrators into the special access group
+				if ($acl->is_group_child_of($grp->name, 'Registered')      ||
+				$acl->is_group_child_of($grp->name, 'Public Backend'))    {
+					$instance->set('aid', 2);
+				}
+				//Set the usertype and gid based on the ACL group name
+				$instance->set('usertype', $grp->name);
+				$instance->set('gid', $grp->id);
+
+				// Register the needed session variables
+				$session =& JFactory::getSession();
+				$session->set('user', $instance);
+
 				return true;				// thats all folks
 				break;
 			}
 		}
 		return false;
 	}
-	
+
 	function discoverUser($username) {
 		// Load up User Source plugins
 		$plugins = JPluginHelper :: getPlugin('usersource');
@@ -164,7 +164,7 @@ class JAuthUserSource extends JObservable {
 			}
 		}
 	}
-	
+
 	function discoverUsers($username) {
 		// Load up User Source plugins
 		$users = Array();
@@ -183,6 +183,6 @@ class JAuthUserSource extends JObservable {
 				$users[$plugin->name] = clone($user); // clone the user before putting them into the array
 			}
 		}
-		return $users;			
+		return $users;
 	}
 }
