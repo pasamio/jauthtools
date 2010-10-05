@@ -3,11 +3,11 @@
   <name>Token Login</name>
   <author>Sam Moffatt</author>
   <creationDate>November 2008</creationDate>
-  <copyright>(C) 2008 Sam Moffatt</copyright>
+  <copyright>(C) 2009 Sam Moffatt</copyright>
   <license>GNU GPLv2</license>
   <authorEmail>pasamio@gmail.com</authorEmail>
   <authorUrl>http://sammoffatt.com.au</authorUrl>
-  <version>1.5.4</version>
+  <version>1.5.5</version>
   <description>Token Login enables users to log into their sites using tokens issued by the systems. Tokens remain valid for a number of login or attempts or until they expire, which ever comes first. Token Login comes with a library that can be used by thrid party developers to issue tokens and then have this system log the user in automatically and redirect them to the correct location.</description>
   <files folder="site">
     <file>index.html</file>

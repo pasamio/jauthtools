@@ -9,13 +9,10 @@
  * Created on Sep 28, 2007
  * 
  * @package JLibMan
- * @author Your Name <author@toowoombarc.qld.gov.au>
- * @author Toowoomba Regional Council Information Management Branch
+ * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Toowoomba Regional Council/Sam Moffatt 
+ * @copyright 2009 Sam Moffatt 
  * @version SVN: $Id:$
- * @see Project Documentation DM Number: #???????
- * @see Gaza Documentation: http://gaza.toowoomba.qld.gov.au
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/
  */
  
