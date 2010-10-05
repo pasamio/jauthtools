@@ -9,10 +9,9 @@
  * Created on Apr 17, 2007
  *
  * @package JAuthTools
- * @author Sam Moffatt <sam.moffatt@toowoombarc.qld.gov.au>
- * @author Toowoomba Regional Council Information Management Department
+ * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Toowoomba Regional Council/Sam Moffatt
+ * @copyright 2009 Sam Moffatt
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -57,6 +56,7 @@ class JAuthSSOAuthentication extends JObservable {
 			// If authentication is successful break out of the loop
 			if ($username != '') {
 				if($autocreate) {
+					jimport('jauthtools.usersource');
 					$usersource = new JAuthUserSource();
 					$usersource->doUserCreation($username);
 				}
@@ -214,10 +214,14 @@ class JAuthSSOAuthentication extends JObservable {
 		return $plugins;
 	}
 	
-	function getBaseUrl($prefer_component=true) {
+	function getBaseUrl($prefer_component=true, $plugin='') {
 		if($prefer_component && JComponentHelper::getComponent('com_ssomanager', true)) {
 			// if we have a component, use it
-			return urlencode(JURI::base().'index.php?option=com_ssomanager&task=delegate');	
+			if(!empty($plugin)) {
+				return urlencode(JURI::base().'index.php?option=com_ssomanager&task=delegate&plugin=simplesso');	
+			} else {
+				return urlencode(JURI::base().'index.php?option=com_ssomanager&task=delegate');	
+			}
 		} else {
 			// hope that the plugin is active or a module
 			return urlencode(JURI::base());
