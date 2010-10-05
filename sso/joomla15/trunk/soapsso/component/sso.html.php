@@ -4,7 +4,7 @@
 * @package 	SSO
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
-* @copyright 	(C) 2007 SSO Team, UL FGG
+* @copyright 	(C) 2009 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
 */
@@ -49,7 +49,7 @@ class ssoHTML {
 		* @version $Id: login.html.php,v 1.6 2005/01/15 06:49:01 stingrey Exp $
 		* @package Joomla
 		* @subpackage Users
-		* @copyright (C) 2000 - 2005 Miro International Pty Ltd
+		* @copyright (C) 2009 - 2005 Miro International Pty Ltd
 		* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
 		* Joomla! is Free Software
 		*/

@@ -4,7 +4,7 @@
 * @package 	SSO
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
-* @copyright 	(C) 2007 SSO Team, UL FGG
+* @copyright 	(C) 2009 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
 */
@@ -33,7 +33,7 @@ function com_install() {
 	<code>Installation: <font color="green">successful</font></code><br />
 	<h2>
 	Thank you for installing Joomla! Single Sign-On!</h2>
-	Copyright (C) 2007 Tomo Cerovsek & Damjan Murn <br />
+	Copyright (C) 2009 Tomo Cerovsek & Damjan Murn <br />
 	Distributed under the terms of the GNU General Public License <br />
 
 	This software may be used without warranty provided and these statements are left intact.<br />

@@ -4,7 +4,7 @@
 * @package 	SSO
 * @author	Tomo Cerovsek <Tomo.Cerovsek.fgg.uni-lj.si> 
 * @author	Damjan Murn <Damjan.Murn.uni-lj.si>
-* @copyright 	(C) 2007 SSO Team, UL FGG
+* @copyright 	(C) 2009 SSO Team, UL FGG
 * @license 	http://www.gnu.org/copyleft/gpl.html GNU/GPL
 * SSO was initiated during the EU CONNIE project
 */
