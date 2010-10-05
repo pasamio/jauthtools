@@ -41,6 +41,7 @@ if(!function_exists('getLinkFromItemID')) {
 	}
 }
 
+
 $ip_blacklist = $params->get('ip_blacklist','');
 $list = explode("\n", $ip_blacklist);
 if(in_array($_SERVER['REMOTE_ADDR'],$list)) {
@@ -93,12 +94,14 @@ if($before != $user->id) { // user id changed
 		if(method_exists($plugin,'getForm')) {
 			echo $plugin->getForm();
 		} else if (method_exists($plugin, 'getSPLink')) {
-			JAuthSSOAuthentication::getProvider($name);
-			echo '<ul>';
-			foreach($providers as $provider) {
-				echo '<li><a href="'.$plugin->getSPLink($provider) .'">'. $provider->name .'</a>';
-			} 
-			echo '</ul>';
+			$providers = JAuthSSOAuthentication::getProvider($name);
+			if(is_array($providers) && count($providers)) {
+				echo '<ul>';
+				foreach($providers as $provider) {
+					echo '<li><a href="'.$plugin->getSPLink($provider) .'">'. $provider->name .'</a>';
+				} 
+				echo '</ul>';
+			}
 		}
 	} else {
 		$plugins = JPluginHelper :: getPlugin('sso');
@@ -121,8 +124,10 @@ if($before != $user->id) { // user id changed
 			}
 			if (method_exists($plugin, 'getSPLink')) {
 				$providers = JAuthSSOAuthentication::getProvider($name);
-				foreach($providers as $provider) {
-					$links[] = '<a href="'.$plugin->getSPLink($provider) .'">'. $provider->name .'</a>';
+				if(is_array($providers) && count($providers)) {
+					foreach($providers as $provider) {
+						$links[] = '<a href="'.$plugin->getSPLink($provider) .'">'. $provider->name .'</a>';
+					}
 				}
 			}		
 		}
