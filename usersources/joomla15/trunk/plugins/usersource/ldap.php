@@ -9,10 +9,9 @@
  * Created on Apr 17, 2007
  *
  * @package JAuthTools
- * @author Sam Moffatt <sam.moffatt@toowoombarc.qld.gov.au>
- * @author Toowoomba Regional Council Information Management Department
+ * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Toowoomba Regional Council/Sam Moffatt
+ * @copyright 2009 Sam Moffatt
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -125,8 +124,26 @@ class plgUserSourceLDAP extends JPlugin {
 		$groupmember = $this->params->getValue('ldap_groupmember','member');
 		$user->username = $username;
 		$userdetails = $ldap->simple_search(str_replace("[search]", $user->username, $this->params->getValue('search_string')));
+		// Set default group mapping
+		$defaultgroup = $this->params->get('defaultgroup', 'public frontend');
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
+		if(strlen($this->defaultgroup)) { // TODO: need to switch this to a db lookup
+			switch($this->defaultgroup) {
+				case 'registered':
+					$user->gid = 18;
+					$user->usertype = 'Registered';
+					break;
+				case 'author':
+					$user->gid = 19;
+					$user->usertype = 'Author';
+					break;
+				case 'editor':
+					$user->gid = 20;
+					$user->usertype = 'Editor';
+					break;
+			}
+		} // Note: default case taken care of already!
 		$user->email = $user->username; // Set Defaults
 		$user->name = $user->username; // Set Defaults		
 		$ldap_email = $this->params->getValue('ldap_email','mail');
@@ -142,17 +159,20 @@ class plgUserSourceLDAP extends JPlugin {
 	
 			if ($map) {
 				$groupMap = $this->_parseGroupMap($map);
+				
+				if($this->params->getValue('authenticategroupsearch',0)) {
+                    // since we are bound as the user, we have to bind as
+                    // admin in order to search the groups and their attributes
+                    $ldap_bind_uid = $this->params->get('username');
+                    $ldap_bind_password = $this->params->get('password');
+                    $ldap->bind($ldap_bind_uid , $ldap_bind_password , 1);
+                }
+				
 				// add group memberships for active directory or other systems that don't store it in the user
 				if($this->params->getValue('reversegroupmembership',0)) {
 					$groupMemberships = Array();
 					$cnt = 0;
-				    if($this->params->getValue('authenticategroupsearch',0)) {
-                        // since we are bound as the user, we have to bind as
-                        // admin in order to search the groups and their attributes
-                        $ldap_bind_uid = $this->params->get('username');
-                        $ldap_bind_password = $this->params->get('password');
-                        $ldap->bind($ldap_bind_uid , $ldap_bind_password , 1);
-                     }
+				    
                      		
 					foreach ($groupMap as $groupMapEntry) {
 						$group = $groupMapEntry['groupname'];

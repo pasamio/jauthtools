@@ -3,11 +3,11 @@
 	<name>User Source - Session</name>
 	<author>Sam Moffatt</author>
 	<creationDate>July 2008</creationDate>
-	<copyright>(C) 2008 Toowoomba Regional Council/Sam Moffatt. All rights reserved.</copyright>
+	<copyright>(C) 2009 Sam Moffatt. All rights reserved.</copyright>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<authorEmail>sam.moffatt@toowoombarc.qld.gov.au</authorEmail>
-	<authorUrl>www.toowoombarc.qld.gov.au</authorUrl>
-	<version id="5">1.5.4</version>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>http://sammoffatt.com.au/</authorUrl>
+	<version>1.5.5</version>
 	<update>http://www.jsitepoint.com/update/plugins/plgusersourcesession</update>
 	<description>Grabs users details from the session, typically provided by the SSO plugin</description>
 	<files>

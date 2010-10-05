@@ -15,7 +15,7 @@
  * @package Joomla! Authentication Tools
  * @author Sam Moffatt <pasamio@gmail.com>
  * @license GNU/GPL http://www.gnu.org/licenses/gpl.html
- * @copyright 2008 Sam Moffatt 
+ * @copyright 2009 Sam Moffatt 
  * @version SVN: $Id:$
  * @see JoomlaCode Project: http://joomlacode.org/gf/project/jauthtools/
  */
@@ -70,4 +70,8 @@ class plgUserSourceSession extends JPlugin {
 		}
 		return false;		
 	} 
+
+	function &doUserSync($username) {
+		return false;
+	}
 }
