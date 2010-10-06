@@ -185,7 +185,7 @@ class plgUserSourceLDAP extends JPlugin {
 						$groupMembers = isset($groupdetails[0][$groupmember]) ? $groupdetails[0][$groupmember] : Array();
 						
 						foreach ($groupMembers as $groupMember) {
-							if($groupMember == $userdetails[0]['dn']) {
+							if(strtolower($groupMember) == strtolower($userdetails[0]['dn'])) {
 								$groupMemberships[$cnt++] = $group;
 							}
 						}
