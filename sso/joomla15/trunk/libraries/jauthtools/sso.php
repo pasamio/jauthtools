@@ -214,14 +214,23 @@ class JAuthSSOAuthentication extends JObservable {
 		return $plugins;
 	}
 	
-	function getBaseUrl($prefer_component=true, $plugin='') {
+	function getBaseUrl($prefer_component=true, $plugin='',$task='delegate') {
 		if($prefer_component && JComponentHelper::getComponent('com_ssomanager', true)) {
+			$url = JURI::base().'index.php?option=com_ssomanager';
+			
 			// if we have a component, use it
 			if(!empty($plugin)) {
-				return urlencode(JURI::base().'index.php?option=com_ssomanager&task=delegate&plugin=simplesso');	
-			} else {
-				return urlencode(JURI::base().'index.php?option=com_ssomanager&task=delegate');	
+				$url .= '&plugin='.$plugin;
 			}
+			if(!empty($task))
+			{
+				$url .= '&task='. $task;
+			}
+			else
+			{
+				$url .= '&task=delegate';
+			}
+			return urlencode($url);	
 		} else {
 			// hope that the plugin is active or a module
 			return urlencode(JURI::base());
