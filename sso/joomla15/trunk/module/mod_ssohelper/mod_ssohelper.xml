@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<install type="module" version="1.5.0">
+	<name>Single Sign-On Helper</name>
+	<creationDate>2008-10-08</creationDate>
+	<author>Sam Moffatt</author>
+	<copyright>GNU GPL</copyright>
+	<authorEmail>pasamio@gmail.com</authorEmail>
+	<authorUrl>http://sammoffatt.com.au</authorUrl>
+	<version>1.5.4</version>
+	<description>Single Sign-On Helper to initiate an SSO attempt</description>
+
+	<files>
+		<filename module="mod_ssohelper">mod_ssohelper.php</filename>
+	</files>
+
+</install>
