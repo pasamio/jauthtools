@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin"  group="sso">
+	<name>SSO - USQ SSO</name>
+	<author>Sam Moffatt</author>
+	<creationDate>January 2011</creationDate>
+	<copyright>(C) 2011 University of Southern Queensland. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>moffatts@usq.edu.au</authorEmail>
+	<authorUrl>usq.edu.au</authorUrl>
+	<version>1.5.5</version>
+	<description>USQ SSO Plugin</description>
+	<files>
+		<filename plugin="usqsso">usqsso.php</filename>
+	</files>
+	<params>
+<param name="usq_web_service" type="text" size="20" default="" label="USQ Web Service" description="This is the SSO server to authenticate from." />
+	</params>
+	<sso> <!--  special sso items -->
+		<type>C</type>
+	</sso>
+</install>

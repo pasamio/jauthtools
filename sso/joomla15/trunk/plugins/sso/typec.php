@@ -30,7 +30,7 @@ class plgSSOTypeC extends JPlugin {
 	}
 
 	function getForm() {
-		$component = JComponentHelper::getComponent('com_sso', true);
+		$component = JComponentHelper::getComponent('com_ssomanager', true);
 		$result = '<form method="post" action="'. JURI::base() .'">'
 			. 'Requested Username: '
 			. '<input type="text" name="remote_username" value="" />'
