@@ -180,13 +180,37 @@ class plgAuthenticationAdvLdap extends JPlugin
 			$response->error_message = '';
 			
 			// Check if we want to run user sync
-			if($this->params->get('enable_usersource_sync',0) && $current_uid) {
-				jimport('jauthtools.usersource');
-				$params =& JAuthToolsHelper::getPluginParams('system','sync');
-				if($params) {
-					$sync = new JAuthUserSource(Array('demoteuser'=>$params->get('demoteuser',1)));
-					$sync->doUserSynchronization($credentials['username']);
-				}			
+			if($this->params->get('enable_usersource_sync',0)) {
+				if(!$current_uid)
+				{
+					// create the user so we can sync them;
+					// ordinarily this would be done external to this system!
+					$user = new JUser();
+					$user->username = $response->username;
+					$user->email = $response->email;
+					$user->name = $response->fullname;
+
+					// Set the default group up
+					$config   = &JComponentHelper::getParams( 'com_users' );
+                			$usertype = $config->get( 'new_usertype', 'Registered' );
+					$acl =& JFactory::getACL();
+					$user->gid = $acl->get_group_id( '', $usertype);
+					$user->usertype = $usertype;
+					// Store the user and squirrel away the user id
+					if($user->save())
+					{
+						$current_uid = $user->id;
+					}
+				}
+				if($current_uid)
+				{
+					jimport('jauthtools.usersource');
+					$params =& JAuthToolsHelper::getPluginParams('system','sync');
+					if($params) {
+						$sync = new JAuthUserSource(Array('demoteuser'=>$params->get('demoteuser',1)));
+						$sync->doUserSynchronization($credentials['username']);
+					}
+				}				
 			}
 		}
 
