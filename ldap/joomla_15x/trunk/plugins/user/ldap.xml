@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>pasamio@gmail.com</authorEmail>
 	<authorUrl>http://sammoffatt.com.au/</authorUrl>
-	<version>1.5.1</version>
+	<version>1.5.5</version>
 	<description>LDAP User Plugin</description>
 	<files>
 		<filename plugin="ldap">ldap.php</filename>

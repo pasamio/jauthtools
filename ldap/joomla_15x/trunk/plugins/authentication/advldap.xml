@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
-	<version>1.5</version>
+	<version>1.5.5</version>
 	<description>Handles user authentication against an LDAP server. 
 		This extension relies upon settings in the regular LDAP plugin to work properly but has some of its own settings.
 		It relies on the User Source system to determine users credentials where possible and perform user synchronisation events.
