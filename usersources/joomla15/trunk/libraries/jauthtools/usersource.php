@@ -104,7 +104,7 @@ class JAuthUserSource extends JObservable {
 				$oldgid = $my->get('gid');	// grab the current gid
 				$my->set('gid', 25); 		// and fake things to by pass security
 				$result = $user->save(); 	// save us, now the db is up
-				$my->get('gid', $oldgid);	// set back to old value
+				$my->set('gid', $oldgid);	// set back to old value
 
 				// Contribution from Mark Snead via the forums
 				// @see http://forum.joomla.org/viewtopic.php?p=1811943#p1811943
