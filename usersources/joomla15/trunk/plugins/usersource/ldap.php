@@ -128,8 +128,8 @@ class plgUserSourceLDAP extends JPlugin {
 		$defaultgroup = $this->params->get('defaultgroup', 'public frontend');
 		$user->gid = 29;
 		$user->usertype = 'Public Frontend';
-		if(strlen($this->defaultgroup)) { // TODO: need to switch this to a db lookup
-			switch($this->defaultgroup) {
+		if(strlen($defaultgroup)) { // TODO: need to switch this to a db lookup
+			switch($defaultgroup) {
 				case 'registered':
 					$user->gid = 18;
 					$user->usertype = 'Registered';
