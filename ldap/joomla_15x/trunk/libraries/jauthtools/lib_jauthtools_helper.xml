@@ -7,7 +7,7 @@
 	<packager>Sam Moffatt</packager>
 	<packagerurl>http://sammoffatt.com.au/</packagerurl>
 	<update>http://www.jsitepoint.com/update/libraries/lib_jauthtools_helper</update>
-	<version id="5">1.5.4</version>
+	<version>1.5.5</version>
 	<files>
 		<file>helper.php</file>
 	</files>
