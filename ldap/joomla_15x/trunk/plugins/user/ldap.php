@@ -26,7 +26,6 @@ jimport('joomla.client.ldap');
  * @since 		1.5
  */
 class plgUserLDAP extends JPlugin {
-
 	/**
 	 * Constructor
 	 *
@@ -171,7 +170,7 @@ class plgUserLDAP extends JPlugin {
 				}
 			}
 			unset($ldapuser[$ldap_rdnprefix]); // ensure we don't wipe out their rdn if we don't have to
-			$ldapuser['objectclass'] = array_merge($ldapuser['objectclass'], $result[1]['objectClass']); // reset the object class at this point if someone else has it
+			$ldapuser['objectclass'] = array_merge($ldapuser['objectclass'], $result[0]['objectClass']); // reset the object class at this point if someone else has it
 			if(!$ldap->modify($result[0]['dn'],$ldapuser)) {
 				JError::raiseWarning(44, JText::sprintf('LDAP Modify failed: %s; %s', $ldap->getErrorMsg(), print_r($ldapuser,1)));
 			}
