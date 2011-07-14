@@ -172,14 +172,14 @@ class JAuthUserSource extends JObservable {
 		foreach ($plugins as $plugin) {
 			$className = 'plg' . $plugin->type . $plugin->name;
 			if (class_exists($className)) {
-				$plugin = new $className ($this, (array)$plugin);
+				$usersourceplugin = new $className ($this, (array)$plugin);
 			} else {
 				JError :: raiseWarning('SOME_ERROR_CODE', 'JAuthUserSource::discoverUsers: Could not load ' . $className);
 				continue;
 			}
 			// Try to find user
 			$user = new JUser();
-			if(method_exists($plugin, 'getUser') && $plugin->getUser($username,$user)) {
+			if(method_exists($usersourceplugin, 'getUser') && $usersourceplugin->getUser($username,$user)) {
 				$users[$plugin->name] = clone($user); // clone the user before putting them into the array
 			}
 		}
